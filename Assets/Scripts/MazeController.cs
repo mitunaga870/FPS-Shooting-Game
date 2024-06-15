@@ -4,8 +4,10 @@ using Enums;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
+
 public class MazeController : MonoBehaviour
 {
+    const float TILE_SIZE = 1;
     
     [SerializeField] private MazeData mazeData;
     [SerializeField] private Tile tile;
@@ -55,11 +57,6 @@ public class MazeController : MonoBehaviour
         isOneStrokeMode = false;
     }
     
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
     /**
      * 迷路の生成
      * すべてのタイルを生成し、初期化する
@@ -78,7 +75,7 @@ public class MazeController : MonoBehaviour
             for (int column = 0; column < mazeData.MAZE_COLUMNS; column++)
             {
                 // タイルを生成し、初期化する
-                Tile newTile = Instantiate(tile, new Vector3(column, 0, row) - mazeOrigin , Quaternion.identity);
+                Tile newTile = Instantiate(tile, new Vector3(column, 0, row) * TILE_SIZE - mazeOrigin , Quaternion.identity);
                 newTile.Initialize(this, row, column);
                 
                 // タイルを迷路に追加する
@@ -114,13 +111,35 @@ public class MazeController : MonoBehaviour
         // 変数確認
         if (startEditRow == null || startEditCol == null || editingTargetTileType == null) return;
         
-        TileTypes targetType = (TileTypes)editingTargetTileType;
+        // 既存の道を削除
+        List<Dictionary<string,int>> roadAddresses = getRoadAddresses();
+        foreach (var address in roadAddresses)
+        {
+            maze[address["row"]][address["col"]].SetNone();
+        }
         
+        // 既存の道にプレビュー中の道を追加
+        List<Dictionary<string,int>> newRoadAddresses = new List<Dictionary<string, int>>();
+        foreach (var address in roadAddresses)
+        {
+            newRoadAddresses.Add(address);
+        }
+
         foreach (var address in previewAddresses)
+        {
+            newRoadAddresses.Add(address);
+        }
+        
+        // 道を設置
+        foreach (var address in newRoadAddresses)
         {
             if (address == null || !address.ContainsKey("row") || !address.ContainsKey("col")) continue;
             
-            maze[address["row"]][address["col"]].SetTileType(targetType);
+            // つながり肩を取得
+            RoadAdjust roadAdjust = GetRoadAdjust(address["col"], address["row"], newRoadAddresses);
+            
+            // タイルの種類を変更
+            maze[address["row"]][address["col"]].SetRoad(roadAdjust);
         }
         previewAddresses.Clear();
         
@@ -263,5 +282,110 @@ public class MazeController : MonoBehaviour
         // プレビュー中のタイルに追加
         maze[row][col].SetPreview();
         previewAddresses.Add(new Dictionary<string, int>{["col"] = col, ["row"] = row});
+    }
+    
+    // ==================== プライベート関数 ====================
+
+    /**
+     * タイルのつながり肩を取得
+     */
+    private RoadAdjust GetRoadAdjust(int col, int row, List<Dictionary<string,int>> connectedTileAddress)
+    {
+        // 上下左右のタイルがつながっているか
+        bool top = row - 1 >= 0 && connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row - 1);
+        bool left = col - 1 >= 0 && connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row);
+        bool right = col + 1 < mazeData.MAZE_COLUMNS &&
+                     connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
+        bool bottom = row + 1 < mazeData.MAZE_ROWS &&
+                      connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
+        
+        // 十字
+        if (top && left && right && bottom)
+        {
+            return RoadAdjust.Cross;
+        }
+        // T字
+        else if (top && left && right && !bottom)
+        {
+            return RoadAdjust.TopRightLeft;
+        }
+        else if (top && left && !right && bottom)
+        {
+            return RoadAdjust.LeftTopBottom;
+        }
+        else if (top && !left && right && bottom)
+        {
+            return RoadAdjust.RightBottomTop;
+        }
+        else if (!top && left && right && bottom)
+        {
+            return RoadAdjust.BottomLeftRight;
+        }
+        // L字
+        else if (top && left && !right && !bottom)
+        {
+            return RoadAdjust.TopLeft;
+        }
+        else if (top && !left && right && !bottom)
+        {
+            return RoadAdjust.TopRight;
+        }
+        else if (!top && left && !right && bottom)
+        {
+            return RoadAdjust.BottomLeft;
+        }
+        else if (!top && !left && right && bottom)
+        {
+            return RoadAdjust.RightBottom;
+        }
+        // 直線
+        else if (top && !left && !right && bottom)
+        {
+            return RoadAdjust.TopBottom;
+        }
+        else if (!top && left && right && !bottom)
+        {
+            return RoadAdjust.LeftRight;
+        }
+        // 行き止まり
+        else if (top && !left && !right && !bottom)
+        {
+            return RoadAdjust.TopDeadEnd;
+        }
+        else if (!top && left && !right && !bottom)
+        {
+            return RoadAdjust.LeftDeadEnd;
+        }
+        else if (!top && !left && right && !bottom)
+        {
+            return RoadAdjust.RightDeadEnd;
+        }
+        else if (!top && !left && !right && bottom)
+        {
+            return RoadAdjust.BottomDeadEnd;
+        }
+        else
+        {
+            return RoadAdjust.None;
+        }
+    }
+    
+    /**
+     * 道のアドレスを取得
+     */
+    private List<Dictionary<string,int>> getRoadAddresses()
+    {
+        List<Dictionary<string,int>> roadAddresses = new List<Dictionary<string, int>>();
+        for (int row = 0; row < mazeData.MAZE_ROWS; row++)
+        {
+            for (int col = 0; col < mazeData.MAZE_COLUMNS; col++)
+            {
+                if (maze[row][col].GetTileType() == TileTypes.Road)
+                {
+                    roadAddresses.Add(new Dictionary<string, int>{["col"] = col, ["row"] = row});
+                }
+            }
+        }
+        return roadAddresses;
     }
 }

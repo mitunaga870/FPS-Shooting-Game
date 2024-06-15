@@ -42,29 +42,6 @@ public class Tile : MonoBehaviour
         continuousMouseEnterFlag = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        // タイルの種類によって色を変える
-        switch (TileType)
-        {
-            case TileTypes.None:
-                GetComponent<Renderer>().material.color = Color.white;
-                break;
-            case TileTypes.Road:
-                GetComponent<MeshFilter>().mesh = deadEndModel;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-        
-        // プレビューの際は色を変える
-        if (isPreview)
-        {
-            GetComponent<Renderer>().material.color = Color.green;
-        }
-    }
-
     /**
      * クリック時にタイルの種類を変更開始・終了する
      */
@@ -150,12 +127,57 @@ public class Tile : MonoBehaviour
     }
 
     /**
-     * タイルの種類を設定する
+     * タイルを道に設定する
+     * @param roadAdjust 道の形状
      */
-    public void SetTileType(TileTypes tileType)
+    public void SetRoad(RoadAdjust roadAdjust)
     {
-        TileType = tileType;
-        isPreview = false;
+        // 既に道・トラップが設定されている場合は処理しない
+        if (TileType == TileTypes.Road) return;
+        
+        // タイルの種類を道に設定
+        TileType = TileTypes.Road;
+        
+        // 道の形状によってモデルを変更
+        // とりあえず色を変えるだけ
+        Renderer renderer = GetComponent<Renderer>();
+        switch (roadAdjust)
+        {
+            case RoadAdjust.LeftDeadEnd:
+            case RoadAdjust.BottomDeadEnd:
+            case RoadAdjust.RightDeadEnd:
+            case RoadAdjust.TopDeadEnd:
+                renderer.material.color = Color.red;
+                // TODO: 行き止まりのモデルを設定
+                break;
+            case RoadAdjust.LeftRight:
+            case RoadAdjust.TopBottom:
+                renderer.material.color = Color.blue;
+                // TODO: 直線のモデルを設定
+                break;
+            case RoadAdjust.LeftTop:
+            case RoadAdjust.LeftBottom:
+            case RoadAdjust.TopRight:
+            case RoadAdjust.TopLeft:
+            case RoadAdjust.RightBottom:
+            case RoadAdjust.RightTop:
+            case RoadAdjust.BottomRight:
+            case RoadAdjust.BottomLeft:
+                renderer.material.color = Color.green;
+                // TODO: コーナーのモデルを設定
+                break;
+            case RoadAdjust.LeftTopBottom:
+            case RoadAdjust.TopRightLeft:
+            case RoadAdjust.RightBottomTop:
+            case RoadAdjust.BottomLeftRight:
+                renderer.material.color = Color.yellow;
+                // TODO: T字路のモデルを設定
+                break;
+            case RoadAdjust.Cross:
+                renderer.material.color = Color.magenta;
+                // TODO: 交差点のモデルを設定
+                break;
+        }
     }
     
     /**
@@ -163,7 +185,14 @@ public class Tile : MonoBehaviour
      */
     public void SetPreview()
     {
+        // 既にプレビュー中の場合は処理しない
+        if (isPreview) return;
+        
         isPreview = true;
+        
+        // プレビュー中のタイルの色を変更
+        Renderer renderer = GetComponent<Renderer>();
+        renderer.material.color = Color.gray;
     }
     
     /**
@@ -171,6 +200,34 @@ public class Tile : MonoBehaviour
      */
     public void ResetPreview()
     {
+        // プレビュー中でない場合は処理しない
+        if (!isPreview) return;
+        
         isPreview = false;
+        
+        // プレビュー中のタイルの色を元に戻す
+        Renderer renderer = GetComponent<Renderer>();
+        renderer.material.color = Color.white;
+    }
+
+    /**
+     * タイルタイプ取得
+     */
+    public TileTypes GetTileType()
+    {
+        return TileType;
+    }
+
+    /**
+     * タイルを空に設定する
+     */
+    public void SetNone()
+    {
+        // タイルの種類を空に設定
+        TileType = TileTypes.None;
+        
+        // タイルを空のオブジェクトに変更
+        Renderer renderer = GetComponent<Renderer>();
+        renderer.material.color = Color.white;
     }
 }
