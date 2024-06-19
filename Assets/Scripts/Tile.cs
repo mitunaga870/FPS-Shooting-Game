@@ -7,12 +7,37 @@ using UnityEngine;
 public class Tile : MonoBehaviour
 {
     /** 連続入力防止時間 */
-    private const float ContinuousInputPreventionTime = 0.5f;
-    
+    private const float ContinuousInputPreventionTime = 1f;
+
+    /** デフォルトのモデル */
+    [SerializeField] private Mesh defaultModel;
+
+    /** どこにもつながっていないモデル */
+    [SerializeField] private Mesh noneModel;
+
     /** 行き止まりのモデル */
     [SerializeField] private Mesh deadEndModel;
 
+    /** 直線のモデル */
+    [SerializeField] private Mesh straightModel;
+
+    /** コーナーのモデル */
+    [SerializeField] private Mesh cornerModel;
+
+    /** T字路のモデル */
+    [SerializeField] private Mesh tJunctionModel;
+
+    /** 十字路のモデル */
+    [SerializeField] private Mesh crossroadsModel;
+
+    /** 通常時のマテリアル */
+    [SerializeField] private Material defaultMaterial;
+
+    /** プレビュー時のマテリアル */
+    [SerializeField] private Material previewMaterial;
+
     private TileTypes _tileType;
+
     private TileTypes TileType
     {
         get => _tileType;
@@ -22,22 +47,24 @@ public class Tile : MonoBehaviour
             OnTileTypeChanged();
         }
     }
+
     private MazeController mazeController;
     private int row;
     private int column;
-    
+
     /** クリックの連続入力を防ぐためのフラグ */
     private bool continuousClickFlag;
+
     /** マウスエンターの連続入力を防ぐためのフラグ */
     private bool continuousMouseEnterFlag;
-    
+
     /** プレビュー中フラグ */
     public bool isPreview;
 
     // Start is called before the first frame update
     void Start()
     {
-        TileType = TileTypes.None;
+        TileType = TileTypes.Nothing;
         continuousClickFlag = false;
         continuousMouseEnterFlag = false;
     }
@@ -47,26 +74,43 @@ public class Tile : MonoBehaviour
      */
     private void OnMouseOver()
     {
+        Debug.Log("mouse over");
         // 連続入力を防ぐ
         if (continuousClickFlag) return;
-        
+
         // タイルの種類を道と道路でトグル
-        if (!Input.GetMouseButton(0)) return;
-        
-        // タイルの種類を道と道路でトグル
-        if (!mazeController.IsEditingRoad)
+        if (!mazeController.IsEditingRoad && Input.GetMouseButton(0))
         {
-            mazeController.StartRoadEdit(column, row, TileType == TileTypes.None ? TileTypes.Road : TileTypes.None);
+            mazeController.StartRoadEdit(column, row, TileTypes.Road);
+            // 連続入力フラグを立てる
+            continuousClickFlag = true;
+            // 0.5秒後に連続入力フラグを下ろす
+            StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => continuousClickFlag = false));
         }
-        else
+        else if (!mazeController.IsEditingRoad && Input.GetMouseButton(1))
+        {
+            mazeController.StartRoadEdit(column, row, TileTypes.Nothing);
+            // 連続入力フラグを立てる
+            continuousClickFlag = true;
+            // 0.5秒後に連続入力フラグを下ろす
+            StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => continuousClickFlag = false));
+        }
+        // 道編集中の同ボタンは終了
+        else if (mazeController.IsEditingRoad && mazeController.EditingTargetTileType == TileTypes.Road &&
+                 Input.GetMouseButtonUp(0))
         {
             mazeController.EndRoadEdit();
         }
-        
-        // 連続入力フラグを立てる
-        continuousClickFlag = true;
-        // 0.5秒後に連続入力フラグを下ろす
-        StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => continuousClickFlag = false));
+        else if (mazeController.IsEditingRoad && mazeController.EditingTargetTileType == TileTypes.Nothing &&
+                 Input.GetMouseButtonUp(1))
+        {
+            mazeController.EndRoadEdit();
+        }
+        // プレビュー中の場合は終了
+        else if (mazeController.IsEditingRoad && (Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(0)))
+        {
+            mazeController.CancelRoadEdit();
+        }
     }
 
     /**
@@ -76,7 +120,6 @@ public class Tile : MonoBehaviour
     {
         // 連続入力を防ぐ
         if (continuousMouseEnterFlag) return;
-        
         // 道編集中でない場合は処理しない
         if (!mazeController.IsEditingRoad) return;
 
@@ -94,8 +137,8 @@ public class Tile : MonoBehaviour
         // 0.5秒後に連続入力フラグを下ろす
         StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => continuousMouseEnterFlag = false));
     }
-    
-    
+
+
     /**
      * タイルのステータスの変更
      */
@@ -103,7 +146,7 @@ public class Tile : MonoBehaviour
     {
         // タイルのステータスが変わった時の処理
     }
-    
+
     /**
      * 遅延処理用コルーチン
      */
@@ -112,7 +155,7 @@ public class Tile : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         action?.Invoke();
     }
-    
+
     /**
      * コントローラー・行列を設定する
      * 初回のみ設定可能
@@ -120,7 +163,7 @@ public class Tile : MonoBehaviour
     public void Initialize(MazeController mazeController, int row, int column)
     {
         if (this.mazeController != null) return;
-        
+
         this.mazeController = mazeController;
         this.row = row;
         this.column = column;
@@ -134,52 +177,85 @@ public class Tile : MonoBehaviour
     {
         // 既に道・トラップが設定されている場合は処理しない
         if (TileType == TileTypes.Road) return;
-        
+
         // タイルの種類を道に設定
         TileType = TileTypes.Road;
-        
+
         // 道の形状によってモデルを変更
-        // とりあえず色を変えるだけ
-        Renderer renderer = GetComponent<Renderer>();
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        // つながった道の回転を設定
+        Quaternion rotation = transform.rotation;
         switch (roadAdjust)
         {
+            // ========== 行き止まり ==========
             case RoadAdjust.LeftDeadEnd:
+                meshFilter.mesh = deadEndModel;
+                rotation = Quaternion.Euler(-90, 180, 0);
+                break;
             case RoadAdjust.BottomDeadEnd:
+                meshFilter.mesh = deadEndModel;
+                rotation = Quaternion.Euler(-90, 90, 0);
+                break;
             case RoadAdjust.RightDeadEnd:
+                meshFilter.mesh = deadEndModel;
+                break;
             case RoadAdjust.TopDeadEnd:
-                renderer.material.color = Color.red;
-                // TODO: 行き止まりのモデルを設定
+                meshFilter.mesh = deadEndModel;
+                rotation = Quaternion.Euler(-90, -90, 0);
+                break;
+            // ========== 直線 ==========
+            case RoadAdjust.TopBottom:
+                rotation = Quaternion.Euler(-90, 90, 0);
+                meshFilter.mesh = straightModel;
                 break;
             case RoadAdjust.LeftRight:
-            case RoadAdjust.TopBottom:
-                renderer.material.color = Color.blue;
-                // TODO: 直線のモデルを設定
+                meshFilter.mesh = straightModel;
+                break;
+            // ========== コーナー ==========
+            case RoadAdjust.TopRight:
+            case RoadAdjust.RightTop:
+                meshFilter.mesh = cornerModel;
                 break;
             case RoadAdjust.LeftTop:
-            case RoadAdjust.LeftBottom:
-            case RoadAdjust.TopRight:
             case RoadAdjust.TopLeft:
-            case RoadAdjust.RightBottom:
-            case RoadAdjust.RightTop:
-            case RoadAdjust.BottomRight:
+                meshFilter.mesh = cornerModel;
+                rotation = Quaternion.Euler(-90, -90, 0);
+                break;
+            case RoadAdjust.LeftBottom:
             case RoadAdjust.BottomLeft:
-                renderer.material.color = Color.green;
-                // TODO: コーナーのモデルを設定
+                meshFilter.mesh = cornerModel;
+                rotation = Quaternion.Euler(-90, 180, 0);
+                break;
+            case RoadAdjust.RightBottom:
+            case RoadAdjust.BottomRight:
+                meshFilter.mesh = cornerModel;
+                rotation = Quaternion.Euler(-90, 90, 0);
+                break;
+            // ========== T字路 ==========
+            case RoadAdjust.TopRightLeft:
+                meshFilter.mesh = tJunctionModel;
+                break;
+            case RoadAdjust.RightBottomTop:
+                meshFilter.mesh = tJunctionModel;
+                rotation = Quaternion.Euler(-90, 90, 0);
                 break;
             case RoadAdjust.LeftTopBottom:
-            case RoadAdjust.TopRightLeft:
-            case RoadAdjust.RightBottomTop:
+                meshFilter.mesh = tJunctionModel;
+                rotation = Quaternion.Euler(-90, -90, 0);
+                break;
             case RoadAdjust.BottomLeftRight:
-                renderer.material.color = Color.yellow;
-                // TODO: T字路のモデルを設定
+                meshFilter.mesh = tJunctionModel;
+                rotation = Quaternion.Euler(-90, 180, 0);
                 break;
             case RoadAdjust.Cross:
-                renderer.material.color = Color.magenta;
-                // TODO: 交差点のモデルを設定
+                meshFilter.mesh = crossroadsModel;
                 break;
         }
+
+        // つながった道の回転を設定
+        transform.rotation = rotation;
     }
-    
+
     /**
      * プレビュー中のフラグを立てる
      */
@@ -187,14 +263,14 @@ public class Tile : MonoBehaviour
     {
         // 既にプレビュー中の場合は処理しない
         if (isPreview) return;
-        
+
         isPreview = true;
-        
+
         // プレビュー中のタイルの色を変更
         Renderer renderer = GetComponent<Renderer>();
-        renderer.material.color = Color.gray;
+        renderer.material = previewMaterial;
     }
-    
+
     /**
      * プレビュー中のフラグを下ろす
      */
@@ -202,12 +278,12 @@ public class Tile : MonoBehaviour
     {
         // プレビュー中でない場合は処理しない
         if (!isPreview) return;
-        
+
         isPreview = false;
-        
+
         // プレビュー中のタイルの色を元に戻す
         Renderer renderer = GetComponent<Renderer>();
-        renderer.material.color = Color.white;
+        renderer.material = defaultMaterial;
     }
 
     /**
@@ -224,10 +300,17 @@ public class Tile : MonoBehaviour
     public void SetNone()
     {
         // タイルの種類を空に設定
-        TileType = TileTypes.None;
-        
-        // タイルを空のオブジェクトに変更
+        TileType = TileTypes.Nothing;
+
+        // モデルを変更
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        meshFilter.mesh = defaultModel;
+
+        // マテリアルを変更
         Renderer renderer = GetComponent<Renderer>();
-        renderer.material.color = Color.white;
+        renderer.material = defaultMaterial;
+
+        // 回転を元に戻す
+        transform.rotation = Quaternion.Euler(-90, 0, 0);
     }
 }

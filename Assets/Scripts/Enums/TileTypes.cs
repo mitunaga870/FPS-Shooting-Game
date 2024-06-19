@@ -5,7 +5,7 @@
     /// </summary>
     public enum TileTypes
     {
-        None,
+        Nothing,
         Road,
     }
 }
