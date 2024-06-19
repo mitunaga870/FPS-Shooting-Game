@@ -15,7 +15,7 @@ public class Camera : MonoBehaviour
     void Update()
     {
         var cam = GetComponent<Camera>();
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(2))
         {
             float moveX = Input.GetAxis("Mouse X") * MOUSE_SENSITIVETY;
             float moveY = Input.GetAxis("Mouse Y") * MOUSE_SENSITIVETY;
