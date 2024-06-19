@@ -30,12 +30,6 @@ public class Tile : MonoBehaviour
     /** 十字路のモデル */
     [SerializeField] private Mesh crossroadsModel;
 
-    /** 通常時のマテリアル */
-    [SerializeField] private Material defaultMaterial;
-
-    /** プレビュー時のマテリアル */
-    [SerializeField] private Material previewMaterial;
-
     private TileTypes _tileType;
 
     private TileTypes TileType
@@ -67,6 +61,7 @@ public class Tile : MonoBehaviour
         TileType = TileTypes.Nothing;
         continuousClickFlag = false;
         continuousMouseEnterFlag = false;
+        GetComponent<Outline>().enabled = false;
     }
 
     /**
@@ -267,8 +262,7 @@ public class Tile : MonoBehaviour
         isPreview = true;
 
         // プレビュー中のタイルの色を変更
-        Renderer renderer = GetComponent<Renderer>();
-        renderer.material = previewMaterial;
+        GetComponent<Outline>().enabled = true;
     }
 
     /**
@@ -282,8 +276,7 @@ public class Tile : MonoBehaviour
         isPreview = false;
 
         // プレビュー中のタイルの色を元に戻す
-        Renderer renderer = GetComponent<Renderer>();
-        renderer.material = defaultMaterial;
+        GetComponent<Outline>().enabled = false;
     }
 
     /**
@@ -306,9 +299,9 @@ public class Tile : MonoBehaviour
         MeshFilter meshFilter = GetComponent<MeshFilter>();
         meshFilter.mesh = defaultModel;
 
-        // マテリアルを変更
-        Renderer renderer = GetComponent<Renderer>();
-        renderer.material = defaultMaterial;
+        // アウトラインを消す
+        GetComponent<Outline>().enabled = false;
+
 
         // 回転を元に戻す
         transform.rotation = Quaternion.Euler(-90, 0, 0);
