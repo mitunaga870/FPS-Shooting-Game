@@ -168,7 +168,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mazeData: {fileID: 11400000, guid: a76e0ed324fb0cf4ea3980131a4f296f, type: 2}
   tile: {fileID: 2227749310468335157, guid: 26a8b4975ac1871409a5e906e043cdeb, type: 3}
-  isOneStrokeMode: 0
 --- !u!1 &914301573
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,6 +273,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2025fe8d6399ff47819f55b35d4f77c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mazeController: {fileID: 321828198}
 --- !u!1 &1213779126
 GameObject:
   m_ObjectHideFlags: 0
