@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Enums;
+using lib;
 using UnityEngine;
 
 
@@ -29,6 +30,9 @@ public class Tile : MonoBehaviour
 
     /** 十字路のモデル */
     [SerializeField] private Mesh crossroadsModel;
+
+    /** UIのキャンパス */
+    [SerializeField] private CanvasGroup uiCanvas;
 
     private TileTypes _tileType;
 
@@ -69,7 +73,8 @@ public class Tile : MonoBehaviour
      */
     private void OnMouseOver()
     {
-        Debug.Log("mouse over");
+        // UIでブロックされている場合は処理しない
+        if (General.IsPointerOverUIObject()) return;
         // 連続入力を防ぐ
         if (continuousClickFlag) return;
 
@@ -113,6 +118,8 @@ public class Tile : MonoBehaviour
      */
     private void OnMouseEnter()
     {
+        // UIでブロックされている場合は処理しない
+        if (General.IsPointerOverUIObject()) return;
         // 連続入力を防ぐ
         if (continuousMouseEnterFlag) return;
         // 道編集中でない場合は処理しない

@@ -10,6 +10,13 @@ public class MazeController : MonoBehaviour
     const float TILE_SIZE = 1;
 
     [SerializeField] private MazeData mazeData;
+
+    /** MazeDataのゲッター */
+    public MazeData MazeData
+    {
+        get => mazeData;
+    }
+
     [SerializeField] private Tile tile;
 
     /** 迷路の原点 */
@@ -77,7 +84,7 @@ public class MazeController : MonoBehaviour
     private void CreateMaze()
     {
         // 原点を設定
-        mazeOrigin = new Vector3(mazeData.MAZE_ROWS / 2, 0, mazeData.MAZE_COLUMNS / 2);
+        mazeOrigin = new Vector3(-(mazeData.MAZE_COLUMNS - 1) / 2.0f, 0, -(mazeData.MAZE_ROWS - 1) / 2.0f);
         // すべてのタイルを生成し、初期化する
         // 行の初期化
         maze = new Tile[mazeData.MAZE_ROWS][];
@@ -88,7 +95,7 @@ public class MazeController : MonoBehaviour
             for (int column = 0; column < mazeData.MAZE_COLUMNS; column++)
             {
                 // タイルの位置と回転を設定
-                Vector3 tilePosition = new Vector3(column, 0, row) * TILE_SIZE - mazeOrigin;
+                Vector3 tilePosition = new Vector3(column, 0, row) * TILE_SIZE + mazeOrigin;
                 Quaternion tileRotation = Quaternion.Euler(-90, 0, 0);
                 // タイルを生成し、初期化する
                 Tile newTile = Instantiate(tile, tilePosition, tileRotation);
