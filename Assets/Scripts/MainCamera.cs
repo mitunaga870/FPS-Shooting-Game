@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Camera : MonoBehaviour
+public class MainCamera : MonoBehaviour
 {
     /** カメラの初期高さ */
     private const float CAMERA_HEIGHT = 10;
@@ -37,7 +37,7 @@ public class Camera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var cam = GetComponent<Camera>();
+        var cam = GetComponent<MainCamera>();
 
         // マウスの位置でカメラを移動
         if (Input.GetMouseButton(2))
