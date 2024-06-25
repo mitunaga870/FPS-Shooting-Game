@@ -66,17 +66,17 @@ public class MazeController : MonoBehaviour
         // すべてのタイルを生成し、初期化する
         // 行の初期化
         _maze = new Tile[mazeData.MazeRows][];
-        for (int row = 0; row < mazeData.MazeRows; row++)
+        for (var row = 0; row < mazeData.MazeRows; row++)
         {
             // 列の初期化
             _maze[row] = new Tile[MazeData.MazeColumns];
-            for (int column = 0; column < MazeData.MazeColumns; column++)
+            for (var column = 0; column < MazeData.MazeColumns; column++)
             {
                 // タイルの位置と回転を設定
-                Vector3 tilePosition = new Vector3(column, 0, row) * TileSize + _mazeOrigin;
-                Quaternion tileRotation = Quaternion.Euler(-90, 0, 0);
+                var tilePosition = new Vector3(column, 0, row) * TileSize + _mazeOrigin;
+                var tileRotation = Quaternion.Euler(-90, 0, 0);
                 // タイルを生成し、初期化する
-                Tile newTile = Instantiate(tile, tilePosition, tileRotation);
+                var newTile = Instantiate(tile, tilePosition, tileRotation);
                 newTile.Initialize(this, row, column);
 
                 // タイルを迷路に追加する
@@ -86,11 +86,11 @@ public class MazeController : MonoBehaviour
 
         // ============== トラップ設置 ================
         // トラップの設置数分乱数をもとに場所を決定
-        for (int i = 0; i < mazeData.TrapCount; i++)
+        for (var i = 0; i < mazeData.TrapCount; i++)
         {
             // 乱数をもとに場所を決定
-            int row = Random.Range(0, mazeData.MazeRows);
-            int column = Random.Range(0, MazeData.MazeColumns);
+            var row = Random.Range(0, mazeData.MazeRows);
+            var column = Random.Range(0, MazeData.MazeColumns);
             // トラップを設置
             var trap = _maze[row][column].SetTrap();
             trap.Awake();
@@ -123,7 +123,7 @@ public class MazeController : MonoBehaviour
         if (_startEditRow == null || _startEditCol == null || EditingTargetTileType == null) return;
 
         // 既存の道を削除
-        List<Dictionary<string, int>> roadAddresses = GetRoadAddresses();
+        var roadAddresses = GetRoadAddresses();
         foreach (var address in roadAddresses)
         {
             _maze[address["row"]][address["col"]].SetNone();
@@ -135,7 +135,7 @@ public class MazeController : MonoBehaviour
             _maze[address["row"]][address["col"]].ResetPreview();
         }
 
-        List<Dictionary<string, int>> newRoadAddresses = new List<Dictionary<string, int>>();
+        var newRoadAddresses = new List<Dictionary<string, int>>();
         // 道を設置のとき
         if (this.EditingTargetTileType == TileTypes.Road)
         {
@@ -173,7 +173,7 @@ public class MazeController : MonoBehaviour
             if (address == null || !address.ContainsKey("row") || !address.ContainsKey("col")) continue;
 
             // つながり肩を取得
-            RoadAdjust roadAdjust = GetRoadAdjust(address["col"], address["row"], newRoadAddresses);
+            var roadAdjust = GetRoadAdjust(address["col"], address["row"], newRoadAddresses);
 
             // タイルの種類を変更
             _maze[address["row"]][address["col"]].SetRoad(roadAdjust);
@@ -200,12 +200,12 @@ public class MazeController : MonoBehaviour
         if (_startEditRow == null || _startEditCol == null || EditingTargetTileType == null) return;
 
         // 最初の列と行を取得
-        int startCol = (int)_startEditCol;
-        int startRow = (int)_startEditRow;
+        var startCol = (int)_startEditCol;
+        var startRow = (int)_startEditRow;
 
         // 横からつないだか縦からつないだか判定
-        int lastCol = _previewAddresses[_previewAddresses.Count - 1]["col"];
-        int lastRow = _previewAddresses[_previewAddresses.Count - 1]["row"];
+        var lastCol = _previewAddresses[_previewAddresses.Count - 1]["col"];
+        var lastRow = _previewAddresses[_previewAddresses.Count - 1]["row"];
         if (lastCol == endCol)
         {
             _lastEditVertical = false;
@@ -248,13 +248,13 @@ public class MazeController : MonoBehaviour
         }
 
         // カレントの列と行を設定
-        int currentCol = startCol;
-        int currentRow = startRow;
+        var currentCol = startCol;
+        var currentRow = startRow;
 
         if (_lastEditVertical)
         {
             // 行を合わせる
-            for (int i = 0; i < Mathf.Abs(endRow - startRow); i++)
+            for (var i = 0; i < Mathf.Abs(endRow - startRow); i++)
             {
                 // タイルの種類を変更
                 _maze[currentRow][currentCol].SetPreview();
@@ -265,7 +265,7 @@ public class MazeController : MonoBehaviour
             }
 
             // 列を先に合わせる
-            for (int i = 0; i < Mathf.Abs(endCol - startCol) + 1; i++)
+            for (var i = 0; i < Mathf.Abs(endCol - startCol) + 1; i++)
             {
                 // タイルの種類を変更
                 _maze[currentRow][currentCol].SetPreview();
@@ -278,7 +278,7 @@ public class MazeController : MonoBehaviour
         else
         {
             // 列を先に合わせる
-            for (int i = 0; i < Mathf.Abs(endCol - startCol); i++)
+            for (var i = 0; i < Mathf.Abs(endCol - startCol); i++)
             {
                 // タイルの種類を変更
                 _maze[currentRow][currentCol].SetPreview();
@@ -289,7 +289,7 @@ public class MazeController : MonoBehaviour
             }
 
             // 行を合わせる
-            for (int i = 0; i < Mathf.Abs(endRow - startRow) + 1; i++)
+            for (var i = 0; i < Mathf.Abs(endRow - startRow) + 1; i++)
             {
                 // タイルの種類を変更
                 _maze[currentRow][currentCol].SetPreview();
@@ -310,8 +310,8 @@ public class MazeController : MonoBehaviour
         if (_startEditRow == null || _startEditCol == null || EditingTargetTileType == null) return;
 
         // 斜めにつなごうとしたときに中継地点を設定
-        int lastCol = _previewAddresses[_previewAddresses.Count - 1]["col"];
-        int lastRow = _previewAddresses[_previewAddresses.Count - 1]["row"];
+        var lastCol = _previewAddresses[_previewAddresses.Count - 1]["col"];
+        var lastRow = _previewAddresses[_previewAddresses.Count - 1]["row"];
         if (lastCol != col && lastRow != row)
         {
             // 中継地点を設定
@@ -332,14 +332,14 @@ public class MazeController : MonoBehaviour
     private RoadAdjust GetRoadAdjust(int col, int row, List<Dictionary<string, int>> connectedTileAddress)
     {
         // 上下左右のタイルがつながっているか
-        bool bottom = row - 1 >= 0 &&
-                      connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row - 1);
-        bool left = col - 1 >= 0 &&
-                    connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row);
-        bool right = col + 1 < MazeData.MazeColumns &&
-                     connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
-        bool top = row + 1 < mazeData.MazeRows &&
-                   connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
+        var bottom = row - 1 >= 0 &&
+                     connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row - 1);
+        var left = col - 1 >= 0 &&
+                   connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row);
+        var right = col + 1 < MazeData.MazeColumns &&
+                    connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
+        var top = row + 1 < mazeData.MazeRows &&
+                  connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
 
         // 十字
         if (top && left && right && bottom)
@@ -417,10 +417,10 @@ public class MazeController : MonoBehaviour
      */
     private List<Dictionary<string, int>> GetRoadAddresses()
     {
-        List<Dictionary<string, int>> roadAddresses = new List<Dictionary<string, int>>();
-        for (int row = 0; row < mazeData.MazeRows; row++)
+        var roadAddresses = new List<Dictionary<string, int>>();
+        for (var row = 0; row < mazeData.MazeRows; row++)
         {
-            for (int col = 0; col < MazeData.MazeColumns; col++)
+            for (var col = 0; col < MazeData.MazeColumns; col++)
             {
                 if (_maze[row][col].GetTileType() == TileTypes.Road)
                 {

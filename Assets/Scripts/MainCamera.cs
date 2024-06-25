@@ -40,15 +40,15 @@ public class MainCamera : MonoBehaviour
         // マウスの位置でカメラを移動
         if (Input.GetMouseButton(2))
         {
-            float moveX = Input.GetAxis("Mouse X") * MouseSensitivity;
-            float moveZ = Input.GetAxis("Mouse Y") * MouseSensitivity;
+            var moveX = Input.GetAxis("Mouse X") * MouseSensitivity;
+            var moveZ = Input.GetAxis("Mouse Y") * MouseSensitivity;
             cam.transform.localPosition -= new Vector3(moveX, 0, moveZ);
         }
 
         // マウスホイールでズーム
         if (Input.mouseScrollDelta.y != 0)
         {
-            float moveY = Input.mouseScrollDelta.y;
+            var moveY = Input.mouseScrollDelta.y;
             cam.transform.localPosition -= new Vector3(0, moveY, 0);
         }
 

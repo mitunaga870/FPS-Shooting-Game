@@ -186,9 +186,9 @@ public class Tile : MonoBehaviour
         TileType = TileTypes.Road;
 
         // 道の形状によってモデルを変更
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        var meshFilter = GetComponent<MeshFilter>();
         // つながった道の回転を設定
-        Quaternion rotation = transform.rotation;
+        var rotation = transform.rotation;
         switch (roadAdjust)
         {
             // ========== 行き止まり ==========
@@ -305,7 +305,7 @@ public class Tile : MonoBehaviour
         TileType = TileTypes.Nothing;
 
         // モデルを変更
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        var meshFilter = GetComponent<MeshFilter>();
         meshFilter.mesh = defaultModel;
 
         // アウトラインを消す
@@ -324,7 +324,7 @@ public class Tile : MonoBehaviour
         // タイルの種類をトラップに設定
         TileType = TileTypes.Trap;
 
-        ATrap[] traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
+        var traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
         ATrap trap = null;
 
         // ランダムなトラップを設定
@@ -334,12 +334,11 @@ public class Tile : MonoBehaviour
             if (trap != null) Destroy(trap);
 
             // ランダムなトラップ用インデックスを取得
-            int randomIndex = UnityEngine.Random.Range(0, traps.Length);
+            var randomIndex = UnityEngine.Random.Range(0, traps.Length);
 
             // トラップを生成
             trap = Instantiate(traps[randomIndex], transform.position, Quaternion.identity);
         } while (trap.IsProhibitedArea(_row, _column));
-
 
         return trap;
     }
