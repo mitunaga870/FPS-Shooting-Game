@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Enums;
+using Traps;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -84,15 +85,15 @@ public class MazeController : MonoBehaviour
     private void CreateMaze()
     {
         // 原点を設定
-        mazeOrigin = new Vector3(-(mazeData.MAZE_COLUMNS - 1) / 2.0f, 0, -(mazeData.MAZE_ROWS - 1) / 2.0f);
+        mazeOrigin = new Vector3(-(MazeData.MAZE_COLUMNS - 1) / 2.0f, 0, -(mazeData.MAZE_ROWS - 1) / 2.0f);
         // すべてのタイルを生成し、初期化する
         // 行の初期化
         maze = new Tile[mazeData.MAZE_ROWS][];
         for (int row = 0; row < mazeData.MAZE_ROWS; row++)
         {
             // 列の初期化
-            maze[row] = new Tile[mazeData.MAZE_COLUMNS];
-            for (int column = 0; column < mazeData.MAZE_COLUMNS; column++)
+            maze[row] = new Tile[MazeData.MAZE_COLUMNS];
+            for (int column = 0; column < MazeData.MAZE_COLUMNS; column++)
             {
                 // タイルの位置と回転を設定
                 Vector3 tilePosition = new Vector3(column, 0, row) * TILE_SIZE + mazeOrigin;
@@ -106,7 +107,17 @@ public class MazeController : MonoBehaviour
             }
         }
 
-        // トラップ設置
+        // ============== トラップ設置 ================
+        // トラップの設置数分乱数をもとに場所を決定
+        for (int i = 0; i < mazeData.TRAP_COUNT; i++)
+        {
+            // 乱数をもとに場所を決定
+            int row = Random.Range(0, mazeData.MAZE_ROWS);
+            int column = Random.Range(0, MazeData.MAZE_COLUMNS);
+            // トラップを設置
+            var trap = maze[row][column].SetTrap();
+            trap.Awake();
+        }
     }
 
     // パブリック関数
@@ -348,7 +359,7 @@ public class MazeController : MonoBehaviour
                       connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row - 1);
         bool left = col - 1 >= 0 &&
                     connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row);
-        bool right = col + 1 < mazeData.MAZE_COLUMNS &&
+        bool right = col + 1 < MazeData.MAZE_COLUMNS &&
                      connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
         bool top = row + 1 < mazeData.MAZE_ROWS &&
                    connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
@@ -432,7 +443,7 @@ public class MazeController : MonoBehaviour
         List<Dictionary<string, int>> roadAddresses = new List<Dictionary<string, int>>();
         for (int row = 0; row < mazeData.MAZE_ROWS; row++)
         {
-            for (int col = 0; col < mazeData.MAZE_COLUMNS; col++)
+            for (int col = 0; col < MazeData.MAZE_COLUMNS; col++)
             {
                 if (maze[row][col].GetTileType() == TileTypes.Road)
                 {

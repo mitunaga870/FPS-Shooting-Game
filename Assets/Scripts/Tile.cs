@@ -2,7 +2,10 @@ using System;
 using System.Collections;
 using Enums;
 using lib;
+using Traps;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 public class Tile : MonoBehaviour
@@ -31,9 +34,7 @@ public class Tile : MonoBehaviour
     /** 十字路のモデル */
     [SerializeField] private Mesh crossroadsModel;
 
-    /** UIのキャンパス */
-    [SerializeField] private CanvasGroup uiCanvas;
-
+    /** 現在のタイルタイプ */
     private TileTypes _tileType;
 
     private TileTypes TileType
@@ -62,10 +63,13 @@ public class Tile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // 初期状態指定
         TileType = TileTypes.Nothing;
         continuousClickFlag = false;
         continuousMouseEnterFlag = false;
         GetComponent<Outline>().enabled = false;
+        // ========= トラップのプレハブを取得 =========
+        // ゲームオブジェクトとしてトラップを取得
     }
 
     /**
@@ -312,5 +316,22 @@ public class Tile : MonoBehaviour
 
         // 回転を元に戻す
         transform.rotation = Quaternion.Euler(-90, 0, 0);
+    }
+
+    public ATrap SetTrap()
+    {
+        // 既に道・トラップが設定されている場合は処理しない
+        if (TileType == TileTypes.Trap) return null;
+
+        // タイルの種類をトラップに設定
+        TileType = TileTypes.Trap;
+
+        ATrap[] _traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
+
+        // ランダムなトラップを設定
+        int randomIndex = UnityEngine.Random.Range(0, _traps.Length);
+
+        ATrap trap = Instantiate(_traps[randomIndex], transform.position, Quaternion.identity);
+        return trap;
     }
 }
