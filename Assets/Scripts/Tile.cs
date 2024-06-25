@@ -3,9 +3,7 @@ using System.Collections;
 using Enums;
 using lib;
 using Traps;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 
 public class Tile : MonoBehaviour
@@ -47,15 +45,15 @@ public class Tile : MonoBehaviour
         }
     }
 
-    private MazeController mazeController;
-    private int row;
-    private int column;
+    private MazeController _mazeController;
+    private int _row;
+    private int _column;
 
     /** クリックの連続入力を防ぐためのフラグ */
-    private bool continuousClickFlag;
+    private bool _continuousClickFlag;
 
     /** マウスエンターの連続入力を防ぐためのフラグ */
-    private bool continuousMouseEnterFlag;
+    private bool _continuousMouseEnterFlag;
 
     /** プレビュー中フラグ */
     public bool isPreview;
@@ -65,8 +63,8 @@ public class Tile : MonoBehaviour
     {
         // 初期状態指定
         TileType = TileTypes.Nothing;
-        continuousClickFlag = false;
-        continuousMouseEnterFlag = false;
+        _continuousClickFlag = false;
+        _continuousMouseEnterFlag = false;
         GetComponent<Outline>().enabled = false;
         // ========= トラップのプレハブを取得 =========
         // ゲームオブジェクトとしてトラップを取得
@@ -80,40 +78,40 @@ public class Tile : MonoBehaviour
         // UIでブロックされている場合は処理しない
         if (General.IsPointerOverUIObject()) return;
         // 連続入力を防ぐ
-        if (continuousClickFlag) return;
+        if (_continuousClickFlag) return;
 
         // タイルの種類を道と道路でトグル
-        if (!mazeController.IsEditingRoad && Input.GetMouseButton(0))
+        if (!_mazeController.IsEditingRoad && Input.GetMouseButton(0))
         {
-            mazeController.StartRoadEdit(column, row, TileTypes.Road);
+            _mazeController.StartRoadEdit(_column, _row, TileTypes.Road);
             // 連続入力フラグを立てる
-            continuousClickFlag = true;
+            _continuousClickFlag = true;
             // 0.5秒後に連続入力フラグを下ろす
-            StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => continuousClickFlag = false));
+            StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
         }
-        else if (!mazeController.IsEditingRoad && Input.GetMouseButton(1))
+        else if (!_mazeController.IsEditingRoad && Input.GetMouseButton(1))
         {
-            mazeController.StartRoadEdit(column, row, TileTypes.Nothing);
+            _mazeController.StartRoadEdit(_column, _row, TileTypes.Nothing);
             // 連続入力フラグを立てる
-            continuousClickFlag = true;
+            _continuousClickFlag = true;
             // 0.5秒後に連続入力フラグを下ろす
-            StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => continuousClickFlag = false));
+            StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
         }
         // 道編集中の同ボタンは終了
-        else if (mazeController.IsEditingRoad && mazeController.EditingTargetTileType == TileTypes.Road &&
+        else if (_mazeController.IsEditingRoad && _mazeController.EditingTargetTileType == TileTypes.Road &&
                  Input.GetMouseButtonUp(0))
         {
-            mazeController.EndRoadEdit();
+            _mazeController.EndRoadEdit();
         }
-        else if (mazeController.IsEditingRoad && mazeController.EditingTargetTileType == TileTypes.Nothing &&
+        else if (_mazeController.IsEditingRoad && _mazeController.EditingTargetTileType == TileTypes.Nothing &&
                  Input.GetMouseButtonUp(1))
         {
-            mazeController.EndRoadEdit();
+            _mazeController.EndRoadEdit();
         }
         // プレビュー中の場合は終了
-        else if (mazeController.IsEditingRoad && (Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(0)))
+        else if (_mazeController.IsEditingRoad && (Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(0)))
         {
-            mazeController.CancelRoadEdit();
+            _mazeController.CancelRoadEdit();
         }
     }
 
@@ -125,23 +123,23 @@ public class Tile : MonoBehaviour
         // UIでブロックされている場合は処理しない
         if (General.IsPointerOverUIObject()) return;
         // 連続入力を防ぐ
-        if (continuousMouseEnterFlag) return;
+        if (_continuousMouseEnterFlag) return;
         // 道編集中でない場合は処理しない
-        if (!mazeController.IsEditingRoad) return;
+        if (!_mazeController.IsEditingRoad) return;
 
-        if (mazeController.IsOneStrokeMode)
+        if (_mazeController.IsOneStrokeMode)
         {
-            mazeController.PreviewOneStrokeMode(column, row);
+            _mazeController.PreviewOneStrokeMode(_column, _row);
         }
         else
         {
-            mazeController.PreviewRoadEdit(column, row);
+            _mazeController.PreviewRoadEdit(_column, _row);
         }
 
         // 連続入力フラグを立てる
-        continuousMouseEnterFlag = true;
+        _continuousMouseEnterFlag = true;
         // 0.5秒後に連続入力フラグを下ろす
-        StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => continuousMouseEnterFlag = false));
+        StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => _continuousMouseEnterFlag = false));
     }
 
 
@@ -168,11 +166,11 @@ public class Tile : MonoBehaviour
      */
     public void Initialize(MazeController mazeController, int row, int column)
     {
-        if (this.mazeController != null) return;
+        if (this._mazeController != null) return;
 
-        this.mazeController = mazeController;
-        this.row = row;
-        this.column = column;
+        this._mazeController = mazeController;
+        this._row = row;
+        this._column = column;
     }
 
     /**
@@ -326,12 +324,23 @@ public class Tile : MonoBehaviour
         // タイルの種類をトラップに設定
         TileType = TileTypes.Trap;
 
-        ATrap[] _traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
+        ATrap[] traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
+        ATrap trap = null;
 
         // ランダムなトラップを設定
-        int randomIndex = UnityEngine.Random.Range(0, _traps.Length);
+        do
+        {
+            // トラップがある場合は削除
+            if (trap != null) Destroy(trap);
 
-        ATrap trap = Instantiate(_traps[randomIndex], transform.position, Quaternion.identity);
+            // ランダムなトラップ用インデックスを取得
+            int randomIndex = UnityEngine.Random.Range(0, traps.Length);
+
+            // トラップを生成
+            trap = Instantiate(traps[randomIndex], transform.position, Quaternion.identity);
+        } while (trap.IsProhibitedArea(_row, _column));
+
+
         return trap;
     }
 }
