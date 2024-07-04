@@ -21,6 +21,28 @@
         RightBottomTop,
         BottomLeftRight,
         Cross,
-        None, 
+        None,
+
+        // 太い道路
+        // 4方向
+        NoWall,
+
+        // 直線
+        FatTopBottomLeft,
+        FatTopBottomRight,
+        FatLeftRightTop,
+        FatLeftRightBottom,
+
+        // L字外側
+        FatTopLeftOuter,
+        FatBottomLeftOuter,
+        FatTopRightOuter,
+        FatBottomRightOuter,
+
+        // L字内側
+        FatTopLeftInner,
+        FatBottomLeftInner,
+        FatTopRightInner,
+        FatBottomRightInner,
     }
 }

@@ -4,6 +4,8 @@ using Enums;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
+// ReSharper disable ConvertIfStatementToSwitchStatement
+
 
 public class MazeController : MonoBehaviour
 {
@@ -344,17 +346,83 @@ public class MazeController : MonoBehaviour
     private RoadAdjust GetRoadAdjust(int col, int row, List<Dictionary<string, int>> connectedTileAddress)
     {
         // 上下左右のタイルがつながっているか
-        bool bottom = row - 1 >= 0 &&
-                      connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row - 1);
-        bool left = col - 1 >= 0 &&
-                    connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row);
-        bool right = col + 1 < mazeData.MAZE_COLUMNS &&
-                     connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
-        bool top = row + 1 < mazeData.MAZE_ROWS &&
-                   connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
+        var bottom = row - 1 >= 0 &&
+                     connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row - 1);
+        var left = col - 1 >= 0 &&
+                   connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row);
+        var right = col + 1 < mazeData.MAZE_COLUMNS &&
+                    connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
+        var top = row + 1 < mazeData.MAZE_ROWS &&
+                  connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
+        // 斜めのタイルがつながっているか
+        var topLeft = row + 1 < mazeData.MAZE_ROWS && col - 1 >= 0 &&
+                      connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row + 1);
+        var topRight = row + 1 < mazeData.MAZE_ROWS && col + 1 < mazeData.MAZE_COLUMNS &&
+                       connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row + 1);
+        var bottomLeft = row - 1 >= 0 && col - 1 >= 0 &&
+                         connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row - 1);
+        var bottomRight = row - 1 >= 0 && col + 1 < mazeData.MAZE_COLUMNS &&
+                          connectedTileAddress.Exists(address =>
+                              address["col"] == col + 1 && address["row"] == row - 1);
 
+        // 壁なし
+        if (top && left && right && bottom && topLeft && topRight && bottomLeft && bottomRight)
+        {
+            return RoadAdjust.NoWall;
+        }
+        // 太い道路のL字内側
+        else if (top && left && right && bottom && topRight && bottomLeft && bottomRight)
+        {
+            return RoadAdjust.FatTopLeftInner;
+        }
+        else if (top && left && right && bottom && topLeft && topRight && bottomRight)
+        {
+            return RoadAdjust.FatBottomLeftInner;
+        }
+        else if (top && left && right && bottom && topLeft && bottomRight && bottomLeft)
+        {
+            return RoadAdjust.FatTopRightInner;
+        }
+        else if (top && left && right && bottom && topLeft && bottomLeft && topRight)
+        {
+            return RoadAdjust.FatBottomRightInner;
+        }
+        // 太い道路の直線片側
+        else if (left && right && bottom && bottomLeft && bottomRight)
+        {
+            return RoadAdjust.FatTopBottomLeft;
+        }
+        else if (left && right && top && topLeft && topRight)
+        {
+            return RoadAdjust.FatTopBottomRight;
+        }
+        else if (top && bottom && left && topLeft && bottomLeft)
+        {
+            return RoadAdjust.FatLeftRightTop;
+        }
+        else if (top && bottom && right && topRight && bottomRight)
+        {
+            return RoadAdjust.FatLeftRightBottom;
+        }
+        // 太い道路のL字外側
+        else if (top && left && bottom && bottomLeft)
+        {
+            return RoadAdjust.FatTopLeftOuter;
+        }
+        else if (top && right && bottom && bottomRight)
+        {
+            return RoadAdjust.FatTopRightOuter;
+        }
+        else if (top && left && right && topLeft)
+        {
+            return RoadAdjust.FatBottomLeftOuter;
+        }
+        else if (top && right && bottom && topRight)
+        {
+            return RoadAdjust.FatBottomRightOuter;
+        }
         // 十字
-        if (top && left && right && bottom)
+        else if (top && left && right && bottom)
         {
             return RoadAdjust.Cross;
         }
