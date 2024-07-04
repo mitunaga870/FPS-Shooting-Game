@@ -329,7 +329,11 @@ public class Tile : MonoBehaviour
 
             // トラップを生成
             trap = Instantiate(traps[randomIndex], transform.position, Quaternion.identity);
-            // TODO: トラップが埋まるので位置を調整（高さのポリシーがどうなるか）
+
+            // トラップの高さを設定
+            var position = trap.transform.position;
+            position = new Vector3(position.x, trap.GetHeight(), position.z);
+            trap.transform.position = position;
         } while (ATrap.IsProhibitedArea(_row, _column));
 
         return trap;

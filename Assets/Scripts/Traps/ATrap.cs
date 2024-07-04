@@ -14,6 +14,11 @@ namespace Traps
         public abstract void Awake();
 
         /**
+         * トラップの高さ取得
+         */
+        public abstract float GetHeight();
+
+        /**
          * トラップごとの禁止エリア処理
          * - 禁止エリアのときはtrueを返す
          */

@@ -11,5 +11,7 @@ namespace ScriptableObjects
         [Tooltip("テストトラップのクールダウン")] public float TestTrapCoolDown;
 
         [Tooltip("テストトラップのコスト")] public int TestTrapCost;
+
+        [Tooltip("テストトラップの高さ")] public float TestTrapHeight;
     }
 }
