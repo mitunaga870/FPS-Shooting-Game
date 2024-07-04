@@ -53,7 +53,7 @@ public class MazeController : MonoBehaviour
     public bool IsOneStrokeMode { get; private set; }
 
     /** 設置したトラップ情報 */
-    public TrapData[] TrapData { get; private set; }
+    private TrapData[] TrapData { get; set; }
 
     // Start is called before the first frame update
     private void Start()
