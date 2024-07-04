@@ -1,9 +1,13 @@
+using ScriptableObjects;
 using UnityEngine;
 
 namespace Traps
 {
     public abstract class ATrap : MonoBehaviour
     {
+        /** トラップ用のデータ用スクリプタブルオブジェクト */
+        [SerializeField] protected TrapData trapData;
+
         /**
          * トラップの発火
          */
@@ -13,7 +17,7 @@ namespace Traps
          * トラップごとの禁止エリア処理
          * - 禁止エリアのときはtrueを返す
          */
-        public bool IsProhibitedArea(int row, int col)
+        public static bool IsProhibitedArea(int row, int col)
         {
             return false;
         }

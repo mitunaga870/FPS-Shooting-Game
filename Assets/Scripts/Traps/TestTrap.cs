@@ -6,7 +6,7 @@ namespace Traps
     {
         public override void Awake()
         {
-            Debug.Log("VAR");
+            Debug.Log("Damage: " + trapData.TestTrapAtk);
         }
     }
 }

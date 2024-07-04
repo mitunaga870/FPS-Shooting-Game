@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
@@ -15,6 +17,15 @@ namespace lib
             var results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
             return results.Count > 0;
+        }
+
+        /**
+         * 遅延処理用コルーチン
+         */
+        public static IEnumerator DelayCoroutine(float seconds, Action action)
+        {
+            yield return new WaitForSeconds(seconds);
+            action?.Invoke();
         }
     }
 }

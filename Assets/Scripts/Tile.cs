@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using Enums;
 using lib;
 using Traps;
@@ -15,7 +13,9 @@ public class Tile : MonoBehaviour
     [SerializeField] private Mesh defaultModel;
 
     /** どこにもつながっていないモデル */
+#pragma warning disable CS0414 // フィールドは割り当てられていますがその値は使用されていません
     [SerializeField] private Mesh noneModel;
+#pragma warning restore CS0414 // フィールドは割り当てられていますがその値は使用されていません
 
     /** 行き止まりのモデル */
     [SerializeField] private Mesh deadEndModel;
@@ -87,7 +87,7 @@ public class Tile : MonoBehaviour
             // 連続入力フラグを立てる
             _continuousClickFlag = true;
             // 0.5秒後に連続入力フラグを下ろす
-            StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
+            StartCoroutine(General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
         }
         else if (!_mazeController.IsEditingRoad && Input.GetMouseButton(1))
         {
@@ -95,7 +95,7 @@ public class Tile : MonoBehaviour
             // 連続入力フラグを立てる
             _continuousClickFlag = true;
             // 0.5秒後に連続入力フラグを下ろす
-            StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
+            StartCoroutine(General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
         }
         // 道編集中の同ボタンは終了
         else if (_mazeController.IsEditingRoad && _mazeController.EditingTargetTileType == TileTypes.Road &&
@@ -139,7 +139,7 @@ public class Tile : MonoBehaviour
         // 連続入力フラグを立てる
         _continuousMouseEnterFlag = true;
         // 0.5秒後に連続入力フラグを下ろす
-        StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => _continuousMouseEnterFlag = false));
+        StartCoroutine(General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousMouseEnterFlag = false));
     }
 
 
@@ -149,15 +149,6 @@ public class Tile : MonoBehaviour
     private void OnTileTypeChanged()
     {
         // タイルのステータスが変わった時の処理
-    }
-
-    /**
-     * 遅延処理用コルーチン
-     */
-    private IEnumerator DelayCoroutine(float seconds, Action action)
-    {
-        yield return new WaitForSeconds(seconds);
-        action?.Invoke();
     }
 
     /**
@@ -334,12 +325,17 @@ public class Tile : MonoBehaviour
             if (trap != null) Destroy(trap);
 
             // ランダムなトラップ用インデックスを取得
-            var randomIndex = UnityEngine.Random.Range(0, traps.Length);
+            var randomIndex = Random.Range(0, traps.Length);
 
             // トラップを生成
             trap = Instantiate(traps[randomIndex], transform.position, Quaternion.identity);
-        } while (trap.IsProhibitedArea(_row, _column));
+            // TODO: トラップが埋まるので位置を調整（高さのポリシーがどうなるか）
+        } while (ATrap.IsProhibitedArea(_row, _column));
 
         return trap;
+    }
+
+    public void ResetTile()
+    {
     }
 }
