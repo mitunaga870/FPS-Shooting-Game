@@ -119,19 +119,26 @@ public class MazeController : MonoBehaviour
         // トラップの設置数分乱数をもとに場所を決定
         for (var i = 0; i < mazeData.TrapCount; i++)
         {
-            // 乱数をもとに場所を決定
-            var row = Random.Range(0, mazeData.MazeRows);
-            var column = Random.Range(0, MazeData.MazeColumns);
-            // トラップを設置
             ATrap trap = null;
+
+            var loopCount = 0;
+
             // nullの場合は設置できてないので再度設置
             while (trap == null)
             {
-                trap = Maze[row][column].SetTrap();
-            }
+                // 乱数をもとに場所を決定
+                var row = Random.Range(0, mazeData.MazeRows);
+                var column = Random.Range(0, MazeData.MazeColumns);
 
-            // トラップ情報を格納
-            TrapData[i] = new TrapData(row, column, trap);
+                // トラップを設置
+                trap = Maze[row][column].SetTrap();
+
+                // トラップ情報を格納
+                TrapData[i] = new TrapData(row, column, trap);
+
+                // 設置できるものがない等で無限ループになる場合があるので、10回で終了
+                if (loopCount++ > 10) break;
+            }
         }
     }
 

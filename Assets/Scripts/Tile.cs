@@ -318,6 +318,9 @@ public class Tile : MonoBehaviour
         var traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
         ATrap trap = null;
 
+        // 無限ループ禁止用
+        var loopCount = 0;
+
         // ランダムなトラップを設定
         do
         {
@@ -334,6 +337,11 @@ public class Tile : MonoBehaviour
             var position = trap.transform.position;
             position = new Vector3(position.x, trap.GetHeight(), position.z);
             trap.transform.position = position;
+
+            // 設置できるものがない等で無限ループになる場合があるので、10回で終了
+            if (loopCount++ > 10) break;
+
+            // トラップが禁止エリアかどうか
         } while (ATrap.IsProhibitedArea(_row, _column));
 
         return trap;
