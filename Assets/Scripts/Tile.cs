@@ -337,5 +337,6 @@ public class Tile : MonoBehaviour
 
     public void ResetTile()
     {
+        Destroy(gameObject);
     }
 }

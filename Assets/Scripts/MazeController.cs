@@ -5,6 +5,7 @@ using ScriptableObjects;
 using Traps;
 using UI;
 using UnityEngine;
+using TrapData = DataClass.TrapData;
 
 
 public class MazeController : MonoBehaviour
@@ -50,8 +51,9 @@ public class MazeController : MonoBehaviour
 
     /** 道制作モードの一筆書きモードのフラグのゲッター */
     public bool IsOneStrokeMode { get; private set; }
-    
+
     /** 設置したトラップ情報 */
+    public TrapData[] TrapData { get; private set; }
 
     // Start is called before the first frame update
     private void Start()
@@ -66,7 +68,7 @@ public class MazeController : MonoBehaviour
         CreateMaze();
 
         // リロールボタンの表示
-        // reRollButton.Show(mazeData.ReRollWaitTime);
+        reRollButton.Show(mazeData.ReRollWaitTime);
 
         reRollButton.AddClickEvent(() =>
         {
@@ -74,6 +76,8 @@ public class MazeController : MonoBehaviour
             ResetMaze();
             // 迷路の再生成
             CreateMaze();
+            // リロールボタンを消す
+            reRollButton.Hide();
         });
 
         // ユーザーに設定される可能性あり
@@ -110,6 +114,8 @@ public class MazeController : MonoBehaviour
         }
 
         // ============== トラップ設置 ================
+        // トラップ配列を初期化
+        TrapData = new TrapData[mazeData.TrapCount];
         // トラップの設置数分乱数をもとに場所を決定
         for (var i = 0; i < mazeData.TrapCount; i++)
         {
@@ -123,6 +129,9 @@ public class MazeController : MonoBehaviour
             {
                 trap = Maze[row][column].SetTrap();
             }
+
+            // トラップ情報を格納
+            TrapData[i] = new TrapData(row, column, trap);
         }
     }
 
@@ -138,6 +147,12 @@ public class MazeController : MonoBehaviour
             {
                 Maze[row][column].ResetTile();
             }
+        }
+
+        // トラップ情報を削除
+        foreach (var trapData in TrapData)
+        {
+            trapData.Dispose();
         }
     }
 

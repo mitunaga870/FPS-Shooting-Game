@@ -21,5 +21,10 @@ namespace Traps
         {
             return false;
         }
+
+        public void Destroy()
+        {
+            Destroy(gameObject);
+        }
     }
 }
