@@ -1,9 +1,8 @@
 using System;
 using lib;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace UI
+namespace CreatePhase.UI
 {
     public class ReRollButton : MonoBehaviour
     {

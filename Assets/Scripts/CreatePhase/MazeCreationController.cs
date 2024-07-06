@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using CreatePhase.UI;
 using Enums;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using Traps;
-using UI;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using TrapData = DataClass.TrapData;
