@@ -1,82 +1,89 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Enums;
+using ScriptableObjects;
+using Traps;
+using UI;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
+using TrapData = DataClass.TrapData;
 
 // ReSharper disable ConvertIfStatementToSwitchStatement
 
 
 public class MazeController : MonoBehaviour
 {
-    const float TILE_SIZE = 1;
+    private const float TileSize = 1;
 
-    [SerializeField] private MazeData mazeData;
+    /** 各迷路の行列数等の情報格納するスクリプタブルオブジェクト */
+    [Header("迷路データ")] [SerializeField] public MazeData mazeData;
 
     /** MazeDataのゲッター */
-    public MazeData MazeData
-    {
-        get => mazeData;
-    }
+    public MazeData MazeData => mazeData;
 
+    /** タイルのプレハブ */
     [SerializeField] private Tile tile;
 
+    /** リロールボタン */
+    [SerializeField] private ReRollButton reRollButton;
+
     /** 迷路の原点 */
-    private Vector3 mazeOrigin;
+    private Vector3 _mazeOrigin;
 
     /** 迷路のデータ */
-    private Tile[][] maze;
-
-    /** 道路編集中フラグ */
-    private bool isEditingRoad;
+    // ReSharper disable once MemberCanBePrivate.Global 確実に外部から呼ぶので一時的に黙らせる
+    public Tile[][] Maze { get; private set; }
 
     /** 道路編集中フラグのゲッター */
-    public bool IsEditingRoad
-    {
-        get => isEditingRoad;
-    }
+    public bool IsEditingRoad { get; private set; }
 
     /** 道路の編集開始列 */
-    private int? startEditCol;
+    private int? _startEditCol;
 
     /** 道路の編集開始行 */
-    private int? startEditRow;
-
-    /** 道路編集のターゲット状態 */
-    private TileTypes? editingTargetTileType;
+    private int? _startEditRow;
 
     /** 道路編集のターゲット状態のゲッター */
-    public TileTypes? EditingTargetTileType
-    {
-        get => editingTargetTileType;
-    }
+    public TileTypes? EditingTargetTileType { get; private set; }
 
     /** プレビュー中のタイル */
-    private List<Dictionary<string, int>> previewAddresses;
+    private List<Dictionary<string, int>> _previewAddresses;
 
     /** 最後に縦からつないだ時のフラグ */
-    private bool lastEditVertical;
-
-    /** 道制作モードの一筆書きモードのフラグ */
-    private bool isOneStrokeMode = false;
+    private bool _lastEditVertical;
 
     /** 道制作モードの一筆書きモードのフラグのゲッター */
-    public bool IsOneStrokeMode
-    {
-        get => isOneStrokeMode;
-    }
+    public bool IsOneStrokeMode { get; private set; }
+
+    /** 設置したトラップ情報 */
+    private TrapData[] TrapData { get; set; }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        isEditingRoad = false;
-        mazeOrigin = new Vector3(0, 0, 0);
-        previewAddresses = new List<Dictionary<string, int>>();
-        lastEditVertical = false;
+        // 初期値設定
+        IsEditingRoad = false;
+        _mazeOrigin = new Vector3(0, 0, 0);
+        _previewAddresses = new List<Dictionary<string, int>>();
+        _lastEditVertical = false;
+
+        // 迷路の生成
         CreateMaze();
 
+        // リロールボタンの表示
+        reRollButton.Show(mazeData.ReRollWaitTime);
+
+        reRollButton.AddClickEvent(() =>
+        {
+            // 迷路を消す
+            ResetMaze();
+            // 迷路の再生成
+            CreateMaze();
+            // リロールボタンを消す
+            reRollButton.Hide();
+        });
+
         // ユーザーに設定される可能性あり
-        isOneStrokeMode = false;
+        IsOneStrokeMode = false;
     }
 
     /**
@@ -86,29 +93,76 @@ public class MazeController : MonoBehaviour
     private void CreateMaze()
     {
         // 原点を設定
-        mazeOrigin = new Vector3(-(mazeData.MAZE_COLUMNS - 1) / 2.0f, 0, -(mazeData.MAZE_ROWS - 1) / 2.0f);
+        _mazeOrigin = new Vector3(-(MazeData.MazeColumns - 1) / 2.0f, 0, -(mazeData.MazeRows - 1) / 2.0f);
         // すべてのタイルを生成し、初期化する
         // 行の初期化
-        maze = new Tile[mazeData.MAZE_ROWS][];
-        for (int row = 0; row < mazeData.MAZE_ROWS; row++)
+        Maze = new Tile[mazeData.MazeRows][];
+        for (var row = 0; row < mazeData.MazeRows; row++)
         {
             // 列の初期化
-            maze[row] = new Tile[mazeData.MAZE_COLUMNS];
-            for (int column = 0; column < mazeData.MAZE_COLUMNS; column++)
+            Maze[row] = new Tile[MazeData.MazeColumns];
+            for (var column = 0; column < MazeData.MazeColumns; column++)
             {
                 // タイルの位置と回転を設定
-                Vector3 tilePosition = new Vector3(column, 0, row) * TILE_SIZE + mazeOrigin;
-                Quaternion tileRotation = Quaternion.Euler(-90, 0, 0);
+                var tilePosition = new Vector3(column, 0, row) * TileSize + _mazeOrigin;
+                var tileRotation = Quaternion.Euler(-90, 0, 0);
                 // タイルを生成し、初期化する
-                Tile newTile = Instantiate(tile, tilePosition, tileRotation);
+                var newTile = Instantiate(tile, tilePosition, tileRotation);
                 newTile.Initialize(this, row, column);
 
                 // タイルを迷路に追加する
-                maze[row][column] = newTile;
+                Maze[row][column] = newTile;
             }
         }
 
-        // トラップ設置
+        // ============== トラップ設置 ================
+        // トラップ配列を初期化
+        TrapData = new TrapData[mazeData.TrapCount];
+        // トラップの設置数分乱数をもとに場所を決定
+        for (var i = 0; i < mazeData.TrapCount; i++)
+        {
+            ATrap trap = null;
+
+            var loopCount = 0;
+
+            // nullの場合は設置できてないので再度設置
+            while (trap == null)
+            {
+                // 乱数をもとに場所を決定
+                var row = Random.Range(0, mazeData.MazeRows);
+                var column = Random.Range(0, MazeData.MazeColumns);
+
+                // トラップを設置
+                trap = Maze[row][column].SetTrap();
+
+                // トラップ情報を格納
+                TrapData[i] = new TrapData(row, column, trap);
+
+                // 設置できるものがない等で無限ループになる場合があるので、10回で終了
+                if (loopCount++ > 10) break;
+            }
+        }
+    }
+
+    /**
+     * 迷路をリセットする
+     */
+    private void ResetMaze()
+    {
+        // すべてのタイルをリセットする
+        for (var row = 0; row < mazeData.MazeRows; row++)
+        {
+            for (var column = 0; column < MazeData.MazeColumns; column++)
+            {
+                Maze[row][column].ResetTile();
+            }
+        }
+
+        // トラップ情報を削除
+        foreach (var trapData in TrapData)
+        {
+            trapData.Dispose();
+        }
     }
 
     // パブリック関数
@@ -118,14 +172,14 @@ public class MazeController : MonoBehaviour
     public void StartRoadEdit(int startCol, int startRow, TileTypes targetTypes)
     {
         // 道制作モードの開始処理
-        startEditCol = startCol;
-        startEditRow = startRow;
-        isEditingRoad = true;
-        editingTargetTileType = targetTypes;
+        _startEditCol = startCol;
+        _startEditRow = startRow;
+        IsEditingRoad = true;
+        EditingTargetTileType = targetTypes;
 
         // プレビュー中のタイルに追加
-        maze[startRow][startCol].SetPreview();
-        previewAddresses.Add(new Dictionary<string, int> { ["col"] = startCol, ["row"] = startRow });
+        Maze[startRow][startCol].SetPreview();
+        _previewAddresses.Add(new Dictionary<string, int> { ["col"] = startCol, ["row"] = startRow });
     }
 
     /**
@@ -134,24 +188,24 @@ public class MazeController : MonoBehaviour
     public void EndRoadEdit()
     {
         // 変数確認
-        if (startEditRow == null || startEditCol == null || editingTargetTileType == null) return;
+        if (_startEditRow == null || _startEditCol == null || EditingTargetTileType == null) return;
 
         // 既存の道を削除
-        List<Dictionary<string, int>> roadAddresses = getRoadAddresses();
+        var roadAddresses = GetRoadAddresses();
         foreach (var address in roadAddresses)
         {
-            maze[address["row"]][address["col"]].SetNone();
+            Maze[address["row"]][address["col"]].SetNone();
         }
 
         // プレビューを下げる
-        foreach (var address in previewAddresses)
+        foreach (var address in _previewAddresses)
         {
-            maze[address["row"]][address["col"]].ResetPreview();
+            Maze[address["row"]][address["col"]].ResetPreview();
         }
 
-        List<Dictionary<string, int>> newRoadAddresses = new List<Dictionary<string, int>>();
+        var newRoadAddresses = new List<Dictionary<string, int>>();
         // 道を設置のとき
-        if (this.editingTargetTileType == TileTypes.Road)
+        if (this.EditingTargetTileType == TileTypes.Road)
         {
             // 既存の道にプレビュー中の道を追加
             foreach (var address in roadAddresses)
@@ -159,18 +213,18 @@ public class MazeController : MonoBehaviour
                 newRoadAddresses.Add(address);
             }
 
-            foreach (var address in previewAddresses)
+            foreach (var address in _previewAddresses)
             {
                 newRoadAddresses.Add(address);
             }
         }
         // 道を削除のとき
-        else if (this.editingTargetTileType == TileTypes.Nothing)
+        else if (this.EditingTargetTileType == TileTypes.Nothing)
         {
             // 既存の道からプレビュー中の道を削除
             foreach (var address in roadAddresses)
             {
-                if (previewAddresses.Exists(previewAddress =>
+                if (_previewAddresses.Exists(previewAddress =>
                         previewAddress["col"] == address["col"] && previewAddress["row"] == address["row"]))
                 {
                     continue;
@@ -187,21 +241,21 @@ public class MazeController : MonoBehaviour
             if (address == null || !address.ContainsKey("row") || !address.ContainsKey("col")) continue;
 
             // つながり肩を取得
-            RoadAdjust roadAdjust = GetRoadAdjust(address["col"], address["row"], newRoadAddresses);
+            var roadAdjust = GetRoadAdjust(address["col"], address["row"], newRoadAddresses);
 
             // タイルの種類を変更
-            maze[address["row"]][address["col"]].SetRoad(roadAdjust);
+            Maze[address["row"]][address["col"]].SetRoad(roadAdjust);
         }
 
-        previewAddresses.Clear();
+        _previewAddresses.Clear();
 
         // 道制作モードの終了処理
-        isEditingRoad = false;
+        IsEditingRoad = false;
 
         // 道制作モードの開始列と行をリセット
-        startEditCol = null;
-        startEditRow = null;
-        editingTargetTileType = null;
+        _startEditCol = null;
+        _startEditRow = null;
+        EditingTargetTileType = null;
     }
 
 
@@ -211,33 +265,33 @@ public class MazeController : MonoBehaviour
     public void PreviewRoadEdit(int endCol, int endRow)
     {
         // 変数確認
-        if (startEditRow == null || startEditCol == null || editingTargetTileType == null) return;
+        if (_startEditRow == null || _startEditCol == null || EditingTargetTileType == null) return;
 
         // 最初の列と行を取得
-        int startCol = (int)startEditCol;
-        int startRow = (int)startEditRow;
+        var startCol = (int)_startEditCol;
+        var startRow = (int)_startEditRow;
 
         // 横からつないだか縦からつないだか判定
-        int lastCol = previewAddresses[previewAddresses.Count - 1]["col"];
-        int lastRow = previewAddresses[previewAddresses.Count - 1]["row"];
+        var lastCol = _previewAddresses[^1]["col"];
+        var lastRow = _previewAddresses[^1]["row"];
         if (lastCol == endCol)
         {
-            lastEditVertical = false;
+            _lastEditVertical = false;
         }
         else if (lastRow == endRow)
         {
-            lastEditVertical = true;
+            _lastEditVertical = true;
         }
 
         // プレビュー中のタイルを削除
-        foreach (var address in previewAddresses)
+        foreach (var address in _previewAddresses)
         {
             if (address == null || !address.ContainsKey("row") || !address.ContainsKey("col")) continue;
 
-            maze[address["row"]][address["col"]].ResetPreview();
+            Maze[address["row"]][address["col"]].ResetPreview();
         }
 
-        previewAddresses.Clear();
+        _previewAddresses.Clear();
 
         // 行を左右どちらにずらすか
         int diffCol;
@@ -262,29 +316,29 @@ public class MazeController : MonoBehaviour
         }
 
         // カレントの列と行を設定
-        int currentCol = startCol;
-        int currentRow = startRow;
+        var currentCol = startCol;
+        var currentRow = startRow;
 
-        if (lastEditVertical)
+        if (_lastEditVertical)
         {
             // 行を合わせる
-            for (int i = 0; i < Mathf.Abs(endRow - startRow); i++)
+            for (var i = 0; i < Mathf.Abs(endRow - startRow); i++)
             {
                 // タイルの種類を変更
-                maze[currentRow][currentCol].SetPreview();
+                Maze[currentRow][currentCol].SetPreview();
                 // プレビュー用のタイルを追加
-                previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
+                _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                 // インクリメント
                 currentRow += diffRow;
             }
 
             // 列を先に合わせる
-            for (int i = 0; i < Mathf.Abs(endCol - startCol) + 1; i++)
+            for (var i = 0; i < Mathf.Abs(endCol - startCol) + 1; i++)
             {
                 // タイルの種類を変更
-                maze[currentRow][currentCol].SetPreview();
+                Maze[currentRow][currentCol].SetPreview();
                 // プレビュー用のタイルを追加
-                previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
+                _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                 // インクリメント
                 currentCol += diffCol;
             }
@@ -292,23 +346,23 @@ public class MazeController : MonoBehaviour
         else
         {
             // 列を先に合わせる
-            for (int i = 0; i < Mathf.Abs(endCol - startCol); i++)
+            for (var i = 0; i < Mathf.Abs(endCol - startCol); i++)
             {
                 // タイルの種類を変更
-                maze[currentRow][currentCol].SetPreview();
+                Maze[currentRow][currentCol].SetPreview();
                 // プレビュー用のタイルを追加
-                previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
+                _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                 // インクリメント
                 currentCol += diffCol;
             }
 
             // 行を合わせる
-            for (int i = 0; i < Mathf.Abs(endRow - startRow) + 1; i++)
+            for (var i = 0; i < Mathf.Abs(endRow - startRow) + 1; i++)
             {
                 // タイルの種類を変更
-                maze[currentRow][currentCol].SetPreview();
+                Maze[currentRow][currentCol].SetPreview();
                 // プレビュー用のタイルを追加
-                previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
+                _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                 // インクリメント
                 currentRow += diffRow;
             }
@@ -321,21 +375,21 @@ public class MazeController : MonoBehaviour
     public void PreviewOneStrokeMode(int col, int row)
     {
         // 変数確認
-        if (startEditRow == null || startEditCol == null || editingTargetTileType == null) return;
+        if (_startEditRow == null || _startEditCol == null || EditingTargetTileType == null) return;
 
         // 斜めにつなごうとしたときに中継地点を設定
-        int lastCol = previewAddresses[previewAddresses.Count - 1]["col"];
-        int lastRow = previewAddresses[previewAddresses.Count - 1]["row"];
+        var lastCol = _previewAddresses[^1]["col"];
+        var lastRow = _previewAddresses[^1]["row"];
         if (lastCol != col && lastRow != row)
         {
             // 中継地点を設定
-            maze[lastRow][col].SetPreview();
-            previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = lastRow });
+            Maze[lastRow][col].SetPreview();
+            _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = lastRow });
         }
 
         // プレビュー中のタイルに追加
-        maze[row][col].SetPreview();
-        previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
+        Maze[row][col].SetPreview();
+        _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
     }
 
     // ==================== プライベート関数 ====================
@@ -495,14 +549,14 @@ public class MazeController : MonoBehaviour
     /**
      * 道のアドレスを取得
      */
-    private List<Dictionary<string, int>> getRoadAddresses()
+    private List<Dictionary<string, int>> GetRoadAddresses()
     {
-        List<Dictionary<string, int>> roadAddresses = new List<Dictionary<string, int>>();
-        for (int row = 0; row < mazeData.MAZE_ROWS; row++)
+        var roadAddresses = new List<Dictionary<string, int>>();
+        for (var row = 0; row < mazeData.MazeRows; row++)
         {
-            for (int col = 0; col < mazeData.MAZE_COLUMNS; col++)
+            for (var col = 0; col < MazeData.MazeColumns; col++)
             {
-                if (maze[row][col].GetTileType() == TileTypes.Road)
+                if (Maze[row][col].GetTileType() == TileTypes.Road)
                 {
                     roadAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
                 }
@@ -515,21 +569,20 @@ public class MazeController : MonoBehaviour
     public void CancelRoadEdit()
     {
         // プレビュー中のタイルを削除
-        foreach (var address in previewAddresses)
+        foreach (var address in _previewAddresses.Where(address =>
+                     address != null && address.ContainsKey("row") && address.ContainsKey("col")))
         {
-            if (address == null || !address.ContainsKey("row") || !address.ContainsKey("col")) continue;
-
-            maze[address["row"]][address["col"]].ResetPreview();
+            Maze[address["row"]][address["col"]].ResetPreview();
         }
 
-        previewAddresses.Clear();
+        _previewAddresses.Clear();
 
         // 道制作モードの終了処理
-        isEditingRoad = false;
+        IsEditingRoad = false;
 
         // 道制作モードの開始列と行をリセット
-        startEditCol = null;
-        startEditRow = null;
-        editingTargetTileType = null;
+        _startEditCol = null;
+        _startEditRow = null;
+        EditingTargetTileType = null;
     }
 }

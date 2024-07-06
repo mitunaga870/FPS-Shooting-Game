@@ -1,7 +1,6 @@
-using System;
-using System.Collections;
 using Enums;
 using lib;
+using Traps;
 using UnityEngine;
 
 
@@ -14,7 +13,9 @@ public class Tile : MonoBehaviour
     [SerializeField] private Mesh defaultModel;
 
     /** どこにもつながっていないモデル */
+#pragma warning disable CS0414 // フィールドは割り当てられていますがその値は使用されていません
     [SerializeField] private Mesh noneModel;
+#pragma warning restore CS0414 // フィールドは割り当てられていますがその値は使用されていません
 
     /** 行き止まりのモデル */
     [SerializeField] private Mesh deadEndModel;
@@ -31,9 +32,7 @@ public class Tile : MonoBehaviour
     /** 十字路のモデル */
     [SerializeField] private Mesh crossroadsModel;
 
-    /** UIのキャンパス */
-    [SerializeField] private CanvasGroup uiCanvas;
-
+    /** 現在のタイルタイプ */
     private TileTypes _tileType;
 
     private TileTypes TileType
@@ -46,15 +45,15 @@ public class Tile : MonoBehaviour
         }
     }
 
-    private MazeController mazeController;
-    private int row;
-    private int column;
+    private MazeController _mazeController;
+    private int _row;
+    private int _column;
 
     /** クリックの連続入力を防ぐためのフラグ */
-    private bool continuousClickFlag;
+    private bool _continuousClickFlag;
 
     /** マウスエンターの連続入力を防ぐためのフラグ */
-    private bool continuousMouseEnterFlag;
+    private bool _continuousMouseEnterFlag;
 
     /** プレビュー中フラグ */
     public bool isPreview;
@@ -62,10 +61,13 @@ public class Tile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // 初期状態指定
         TileType = TileTypes.Nothing;
-        continuousClickFlag = false;
-        continuousMouseEnterFlag = false;
+        _continuousClickFlag = false;
+        _continuousMouseEnterFlag = false;
         GetComponent<Outline>().enabled = false;
+        // ========= トラップのプレハブを取得 =========
+        // ゲームオブジェクトとしてトラップを取得
     }
 
     /**
@@ -76,40 +78,40 @@ public class Tile : MonoBehaviour
         // UIでブロックされている場合は処理しない
         if (General.IsPointerOverUIObject()) return;
         // 連続入力を防ぐ
-        if (continuousClickFlag) return;
+        if (_continuousClickFlag) return;
 
         // タイルの種類を道と道路でトグル
-        if (!mazeController.IsEditingRoad && Input.GetMouseButton(0))
+        if (!_mazeController.IsEditingRoad && Input.GetMouseButton(0))
         {
-            mazeController.StartRoadEdit(column, row, TileTypes.Road);
+            _mazeController.StartRoadEdit(_column, _row, TileTypes.Road);
             // 連続入力フラグを立てる
-            continuousClickFlag = true;
+            _continuousClickFlag = true;
             // 0.5秒後に連続入力フラグを下ろす
-            StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => continuousClickFlag = false));
+            StartCoroutine(General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
         }
-        else if (!mazeController.IsEditingRoad && Input.GetMouseButton(1))
+        else if (!_mazeController.IsEditingRoad && Input.GetMouseButton(1))
         {
-            mazeController.StartRoadEdit(column, row, TileTypes.Nothing);
+            _mazeController.StartRoadEdit(_column, _row, TileTypes.Nothing);
             // 連続入力フラグを立てる
-            continuousClickFlag = true;
+            _continuousClickFlag = true;
             // 0.5秒後に連続入力フラグを下ろす
-            StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => continuousClickFlag = false));
+            StartCoroutine(General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
         }
         // 道編集中の同ボタンは終了
-        else if (mazeController.IsEditingRoad && mazeController.EditingTargetTileType == TileTypes.Road &&
+        else if (_mazeController.IsEditingRoad && _mazeController.EditingTargetTileType == TileTypes.Road &&
                  Input.GetMouseButtonUp(0))
         {
-            mazeController.EndRoadEdit();
+            _mazeController.EndRoadEdit();
         }
-        else if (mazeController.IsEditingRoad && mazeController.EditingTargetTileType == TileTypes.Nothing &&
+        else if (_mazeController.IsEditingRoad && _mazeController.EditingTargetTileType == TileTypes.Nothing &&
                  Input.GetMouseButtonUp(1))
         {
-            mazeController.EndRoadEdit();
+            _mazeController.EndRoadEdit();
         }
         // プレビュー中の場合は終了
-        else if (mazeController.IsEditingRoad && (Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(0)))
+        else if (_mazeController.IsEditingRoad && (Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(0)))
         {
-            mazeController.CancelRoadEdit();
+            _mazeController.CancelRoadEdit();
         }
     }
 
@@ -121,23 +123,23 @@ public class Tile : MonoBehaviour
         // UIでブロックされている場合は処理しない
         if (General.IsPointerOverUIObject()) return;
         // 連続入力を防ぐ
-        if (continuousMouseEnterFlag) return;
+        if (_continuousMouseEnterFlag) return;
         // 道編集中でない場合は処理しない
-        if (!mazeController.IsEditingRoad) return;
+        if (!_mazeController.IsEditingRoad) return;
 
-        if (mazeController.IsOneStrokeMode)
+        if (_mazeController.IsOneStrokeMode)
         {
-            mazeController.PreviewOneStrokeMode(column, row);
+            _mazeController.PreviewOneStrokeMode(_column, _row);
         }
         else
         {
-            mazeController.PreviewRoadEdit(column, row);
+            _mazeController.PreviewRoadEdit(_column, _row);
         }
 
         // 連続入力フラグを立てる
-        continuousMouseEnterFlag = true;
+        _continuousMouseEnterFlag = true;
         // 0.5秒後に連続入力フラグを下ろす
-        StartCoroutine(DelayCoroutine(ContinuousInputPreventionTime, () => continuousMouseEnterFlag = false));
+        StartCoroutine(General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousMouseEnterFlag = false));
     }
 
 
@@ -150,25 +152,16 @@ public class Tile : MonoBehaviour
     }
 
     /**
-     * 遅延処理用コルーチン
-     */
-    private IEnumerator DelayCoroutine(float seconds, Action action)
-    {
-        yield return new WaitForSeconds(seconds);
-        action?.Invoke();
-    }
-
-    /**
      * コントローラー・行列を設定する
      * 初回のみ設定可能
      */
     public void Initialize(MazeController mazeController, int row, int column)
     {
-        if (this.mazeController != null) return;
+        if (this._mazeController != null) return;
 
-        this.mazeController = mazeController;
-        this.row = row;
-        this.column = column;
+        this._mazeController = mazeController;
+        this._row = row;
+        this._column = column;
     }
 
     /**
@@ -184,9 +177,9 @@ public class Tile : MonoBehaviour
         TileType = TileTypes.Road;
 
         // 道の形状によってモデルを変更
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        var meshFilter = GetComponent<MeshFilter>();
         // つながった道の回転を設定
-        Quaternion rotation = transform.rotation;
+        var rotation = transform.rotation;
         switch (roadAdjust)
         {
             // ========== 行き止まり ==========
@@ -303,7 +296,7 @@ public class Tile : MonoBehaviour
         TileType = TileTypes.Nothing;
 
         // モデルを変更
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        var meshFilter = GetComponent<MeshFilter>();
         meshFilter.mesh = defaultModel;
 
         // アウトラインを消す
@@ -312,5 +305,50 @@ public class Tile : MonoBehaviour
 
         // 回転を元に戻す
         transform.rotation = Quaternion.Euler(-90, 0, 0);
+    }
+
+    public ATrap SetTrap()
+    {
+        // 既に道・トラップが設定されている場合は処理しない
+        if (TileType == TileTypes.Trap) return null;
+
+        // タイルの種類をトラップに設定
+        TileType = TileTypes.Trap;
+
+        var traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
+        ATrap trap = null;
+
+        // 無限ループ禁止用
+        var loopCount = 0;
+
+        // ランダムなトラップを設定
+        do
+        {
+            // トラップがある場合は削除
+            if (trap != null) Destroy(trap);
+
+            // ランダムなトラップ用インデックスを取得
+            var randomIndex = Random.Range(0, traps.Length);
+
+            // トラップを生成
+            trap = Instantiate(traps[randomIndex], transform.position, Quaternion.identity);
+
+            // トラップの高さを設定
+            var position = trap.transform.position;
+            position = new Vector3(position.x, trap.GetHeight(), position.z);
+            trap.transform.position = position;
+
+            // 設置できるものがない等で無限ループになる場合があるので、10回で終了
+            if (loopCount++ > 10) break;
+
+            // トラップが禁止エリアかどうか
+        } while (ATrap.IsProhibitedArea(_row, _column));
+
+        return trap;
+    }
+
+    public void ResetTile()
+    {
+        Destroy(gameObject);
     }
 }

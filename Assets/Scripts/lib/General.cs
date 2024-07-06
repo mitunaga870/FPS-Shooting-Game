@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
@@ -10,11 +12,20 @@ namespace lib
     {
         public static bool IsPointerOverUIObject()
         {
-            PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+            var eventDataCurrentPosition = new PointerEventData(EventSystem.current);
             eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-            List<RaycastResult> results = new List<RaycastResult>();
+            var results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
             return results.Count > 0;
+        }
+
+        /**
+         * 遅延処理用コルーチン
+         */
+        public static IEnumerator DelayCoroutine(float seconds, Action action)
+        {
+            yield return new WaitForSeconds(seconds);
+            action?.Invoke();
         }
     }
 }

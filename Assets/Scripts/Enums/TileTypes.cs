@@ -7,5 +7,6 @@
     {
         Nothing,
         Road,
+        Trap
     }
 }
