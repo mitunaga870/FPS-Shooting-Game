@@ -1,4 +1,6 @@
+using CreatePhase;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class MainCamera : MonoBehaviour
 {
@@ -21,13 +23,14 @@ public class MainCamera : MonoBehaviour
     private float _mouseZLimit;
 
     /** 迷路コントローラ */
-    [SerializeField] private MazeController mazeController;
+    [FormerlySerializedAs("mazeController")] [SerializeField]
+    private MazeCreationController mazeCreationController;
 
     // Start is called before the first frame update
     void Start()
     {
-        _mouseXLimit = mazeController.MazeData.MazeColumns * 0.5f;
-        _mouseZLimit = mazeController.MazeData.MazeRows * 0.5f;
+        _mouseXLimit = mazeCreationController.MazeData.MazeColumns * 0.5f;
+        _mouseZLimit = mazeCreationController.MazeData.MazeRows * 0.5f;
         Debug.Log(_mouseXLimit);
         Debug.Log(_mouseZLimit);
     }

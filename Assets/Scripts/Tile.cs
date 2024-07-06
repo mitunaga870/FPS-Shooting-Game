@@ -1,3 +1,4 @@
+using CreatePhase;
 using Enums;
 using lib;
 using Traps;
@@ -45,7 +46,7 @@ public class Tile : MonoBehaviour
         }
     }
 
-    private MazeController _mazeController;
+    private MazeCreationController _mazeCreationController;
     private int _row;
     private int _column;
 
@@ -81,37 +82,39 @@ public class Tile : MonoBehaviour
         if (_continuousClickFlag) return;
 
         // タイルの種類を道と道路でトグル
-        if (!_mazeController.IsEditingRoad && Input.GetMouseButton(0))
+        if (!_mazeCreationController.IsEditingRoad && Input.GetMouseButton(0))
         {
-            _mazeController.StartRoadEdit(_column, _row, TileTypes.Road);
+            _mazeCreationController.StartRoadEdit(_column, _row, TileTypes.Road);
             // 連続入力フラグを立てる
             _continuousClickFlag = true;
             // 0.5秒後に連続入力フラグを下ろす
             StartCoroutine(General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
         }
-        else if (!_mazeController.IsEditingRoad && Input.GetMouseButton(1))
+        else if (!_mazeCreationController.IsEditingRoad && Input.GetMouseButton(1))
         {
-            _mazeController.StartRoadEdit(_column, _row, TileTypes.Nothing);
+            _mazeCreationController.StartRoadEdit(_column, _row, TileTypes.Nothing);
             // 連続入力フラグを立てる
             _continuousClickFlag = true;
             // 0.5秒後に連続入力フラグを下ろす
             StartCoroutine(General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
         }
         // 道編集中の同ボタンは終了
-        else if (_mazeController.IsEditingRoad && _mazeController.EditingTargetTileType == TileTypes.Road &&
+        else if (_mazeCreationController.IsEditingRoad &&
+                 _mazeCreationController.EditingTargetTileType == TileTypes.Road &&
                  Input.GetMouseButtonUp(0))
         {
-            _mazeController.EndRoadEdit();
+            _mazeCreationController.EndRoadEdit();
         }
-        else if (_mazeController.IsEditingRoad && _mazeController.EditingTargetTileType == TileTypes.Nothing &&
+        else if (_mazeCreationController.IsEditingRoad &&
+                 _mazeCreationController.EditingTargetTileType == TileTypes.Nothing &&
                  Input.GetMouseButtonUp(1))
         {
-            _mazeController.EndRoadEdit();
+            _mazeCreationController.EndRoadEdit();
         }
         // プレビュー中の場合は終了
-        else if (_mazeController.IsEditingRoad && (Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(0)))
+        else if (_mazeCreationController.IsEditingRoad && (Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(0)))
         {
-            _mazeController.CancelRoadEdit();
+            _mazeCreationController.CancelRoadEdit();
         }
     }
 
@@ -125,15 +128,15 @@ public class Tile : MonoBehaviour
         // 連続入力を防ぐ
         if (_continuousMouseEnterFlag) return;
         // 道編集中でない場合は処理しない
-        if (!_mazeController.IsEditingRoad) return;
+        if (!_mazeCreationController.IsEditingRoad) return;
 
-        if (_mazeController.IsOneStrokeMode)
+        if (_mazeCreationController.IsOneStrokeMode)
         {
-            _mazeController.PreviewOneStrokeMode(_column, _row);
+            _mazeCreationController.PreviewOneStrokeMode(_column, _row);
         }
         else
         {
-            _mazeController.PreviewRoadEdit(_column, _row);
+            _mazeCreationController.PreviewRoadEdit(_column, _row);
         }
 
         // 連続入力フラグを立てる
@@ -155,11 +158,11 @@ public class Tile : MonoBehaviour
      * コントローラー・行列を設定する
      * 初回のみ設定可能
      */
-    public void Initialize(MazeController mazeController, int row, int column)
+    public void Initialize(MazeCreationController mazeCreationController, int row, int column)
     {
-        if (this._mazeController != null) return;
+        if (this._mazeCreationController != null) return;
 
-        this._mazeController = mazeController;
+        this._mazeCreationController = mazeCreationController;
         this._row = row;
         this._column = column;
     }
