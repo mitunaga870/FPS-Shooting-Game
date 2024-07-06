@@ -13,8 +13,8 @@ using TrapData = DataClass.TrapData;
 namespace CreatePhase
 {
     /**
- * 迷路の生成を制御するクラス
- */
+     * 制作フェーズでの迷路の生成を管理するクラス
+     */
     public class MazeCreationController : MonoBehaviour
     {
         private const float TileSize = 1;
