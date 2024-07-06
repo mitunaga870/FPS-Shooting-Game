@@ -404,18 +404,18 @@ public class MazeController : MonoBehaviour
                      connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row - 1);
         var left = col - 1 >= 0 &&
                    connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row);
-        var right = col + 1 < mazeData.MAZE_COLUMNS &&
+        var right = col + 1 < mazeData.MazeColumns &&
                     connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
-        var top = row + 1 < mazeData.MAZE_ROWS &&
+        var top = row + 1 < mazeData.MazeRows &&
                   connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
         // 斜めのタイルがつながっているか
-        var topLeft = row + 1 < mazeData.MAZE_ROWS && col - 1 >= 0 &&
+        var topLeft = row + 1 < mazeData.MazeRows && col - 1 >= 0 &&
                       connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row + 1);
-        var topRight = row + 1 < mazeData.MAZE_ROWS && col + 1 < mazeData.MAZE_COLUMNS &&
+        var topRight = row + 1 < mazeData.MazeRows && col + 1 < mazeData.MazeColumns &&
                        connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row + 1);
         var bottomLeft = row - 1 >= 0 && col - 1 >= 0 &&
                          connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row - 1);
-        var bottomRight = row - 1 >= 0 && col + 1 < mazeData.MAZE_COLUMNS &&
+        var bottomRight = row - 1 >= 0 && col + 1 < mazeData.MazeColumns &&
                           connectedTileAddress.Exists(address =>
                               address["col"] == col + 1 && address["row"] == row - 1);
 
