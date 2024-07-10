@@ -12,10 +12,9 @@ GameObject:
   - component: {fileID: 8799254654065812575}
   - component: {fileID: 2058733520144812619}
   - component: {fileID: 6106677941650244620}
-  - component: {fileID: -5480727036225223257}
-  - component: {fileID: -2511744610846245713}
+  - component: {fileID: -5516297106693624721}
   m_Layer: 5
-  m_Name: CreatePhaseTile
+  m_Name: InvasionPhaseTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,7 +107,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.02, y: 0.02, z: 0.02}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-5480727036225223257
+--- !u!114 &-5516297106693624721
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,25 +116,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5083374711521878939}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineMode: 0
-  outlineColor: {r: 0.745283, g: 0, b: 0, a: 1}
-  outlineWidth: 10
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
---- !u!114 &-2511744610846245713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5083374711521878939}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a992a005d8f096469c3e2eb98f75bf8, type: 3}
+  m_Script: {fileID: 11500000, guid: 3cec65fc7fc84c12a2857ebce103828c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   defaultModel: {fileID: -3084497227037556731, guid: ab0a6f60044f8d14192971310666449f, type: 3}
@@ -145,4 +126,3 @@ MonoBehaviour:
   cornerModel: {fileID: 4932170253921981256, guid: 0be1faee2b7ffd8479cdff2de7072011, type: 3}
   tJunctionModel: {fileID: 6750382564028958556, guid: 68136e2c800b0664189b53e07fec4ee2, type: 3}
   crossroadsModel: {fileID: -7532876345782023577, guid: f97e0ca8eb6a9044b8c25f71ba8cb863, type: 3}
-  isPreview: 0

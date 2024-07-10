@@ -162,25 +162,5 @@ namespace CreatePhase
         {
             return TileType;
         }
-
-        /**
-     * タイルを空に設定する
-     */
-        public void SetNone()
-        {
-            // タイルの種類を空に設定
-            TileType = TileTypes.Nothing;
-
-            // モデルを変更
-            var meshFilter = GetComponent<MeshFilter>();
-            meshFilter.mesh = defaultModel;
-
-            // アウトラインを消す
-            GetComponent<Outline>().enabled = false;
-
-
-            // 回転を元に戻す
-            transform.rotation = Quaternion.Euler(-90, 0, 0);
-        }
     }
 }
