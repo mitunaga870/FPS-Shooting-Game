@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6106677941650244620}
   - component: {fileID: -5480727036225223257}
   m_Layer: 5
-  m_Name: Tile
+  m_Name: CreatePhaseTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,7 +106,6 @@ MonoBehaviour:
   cornerModel: {fileID: 4932170253921981256, guid: 0be1faee2b7ffd8479cdff2de7072011, type: 3}
   tJunctionModel: {fileID: 6750382564028958556, guid: 68136e2c800b0664189b53e07fec4ee2, type: 3}
   crossroadsModel: {fileID: -7532876345782023577, guid: f97e0ca8eb6a9044b8c25f71ba8cb863, type: 3}
-  testTrap: {fileID: -549976925186524320, guid: 5d9caeed219cd314d87f1df094afd075, type: 3}
   isPreview: 0
 --- !u!65 &6106677941650244620
 BoxCollider:

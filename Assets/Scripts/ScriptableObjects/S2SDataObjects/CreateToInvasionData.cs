@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using TrapData = DataClass.TrapData;
 
 namespace ScriptableObjects.S2SDataObjects
 {
@@ -10,12 +9,12 @@ namespace ScriptableObjects.S2SDataObjects
     [CreateAssetMenu(fileName = "CreateToInvasionData", menuName = "S2SData/CreateToInvasionData")]
     public class CreateToInvasionData : AS2SData, ISerializationCallbackReceiver
     {
-        [NonSerialized] public Tile[][] Tiles;
+        [NonSerialized] public DataClass.TileData[][] TileData;
         [NonSerialized] public DataClass.TrapData[] TrapData;
 
         public void OnBeforeSerialize()
         {
-            Tiles = Array.Empty<Tile[]>();
+            TileData = Array.Empty<DataClass.TileData[]>();
             TrapData = Array.Empty<DataClass.TrapData>();
         }
 
@@ -25,7 +24,7 @@ namespace ScriptableObjects.S2SDataObjects
 
         public override string ToString()
         {
-            var message = $"MazeSize: {Tiles.Length}*{Tiles[0].Length}\n";
+            var message = $"MazeSize: {TileData.Length}*{TileData[0].Length}\n";
             message += $"TrapsCount: {TrapData.Length}:\n";
 
             return message;
@@ -34,13 +33,13 @@ namespace ScriptableObjects.S2SDataObjects
         /** 迷路のタイル情報 */
         public int GetMazeRow()
         {
-            return Tiles.Length;
+            return TileData.Length;
         }
 
         /** 迷路のタイル情報 */
         public int GetMazeColumn()
         {
-            return Tiles[0].Length;
+            return TileData[0].Length;
         }
 
         /** トラップ情報 */

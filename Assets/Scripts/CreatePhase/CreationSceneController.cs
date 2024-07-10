@@ -25,6 +25,9 @@ namespace CreatePhase
         public void GoToInvasionPhase()
         {
             // ========= シーン間のデータ共有オブジェクト関連 =========
+            // 迷路情報を取得
+            mazeCreationController.SetS2SData();
+
             // 迷路情報が正しいか確認
             if (!(
                     stageData.MazeColumns == createToInvasionData.GetMazeColumn() &&
