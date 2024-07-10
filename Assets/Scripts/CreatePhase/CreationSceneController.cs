@@ -24,6 +24,14 @@ namespace CreatePhase
          */
         public void GoToInvasionPhase()
         {
+            // 迷路がつながってるか確認
+            var shortestPath = mazeCreationController.GetShortestPath();
+            if (shortestPath == null)
+            {
+                Debug.Log("迷路がつながってないよ");
+                return;
+            }
+
             // ========= シーン間のデータ共有オブジェクト関連 =========
             // 迷路情報を取得
             mazeCreationController.SetS2SData();

@@ -17,7 +17,7 @@ namespace CreatePhase
     /**
      * 制作フェーズでの迷路の生成を管理するクラス
      */
-    public class MazeCreationController : MonoBehaviour
+    public class MazeCreationController : AMazeController
     {
         /** 各迷路の行列数等の情報格納するスクリプタブルオブジェクト */
         [Header("迷路データ")] [SerializeField] public MazeData mazeData;
@@ -38,8 +38,10 @@ namespace CreatePhase
         /** 迷路の原点 */
         private Vector3 _mazeOrigin;
 
+
         /** 迷路のデータ */
-        private CreatePhaseTile[][] Maze { get; set; }
+        private new CreatePhaseTile[][] Maze { get; set; }
+
 
         /** 道路編集中フラグのゲッター */
         public bool IsEditingRoad { get; private set; }
@@ -557,6 +559,21 @@ namespace CreatePhase
             {
                 createToInvasionData.TrapData[i] = TrapData[i];
             }
+        }
+
+        protected override void Sync()
+        {
+            var maze = new ATile[Maze.Length][];
+            for (var i = 0; i < Maze.Length; i++)
+            {
+                maze[i] = new ATile[Maze[i].Length];
+                for (var j = 0; j < Maze[i].Length; j++)
+                {
+                    maze[i][j] = Maze[i][j];
+                }
+            }
+
+            SyncMazeData(maze);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace InvasionPhase
             Row = row;
             Column = column;
 
+            // タイルのステータスによって処理を変える
             if (tileType == TileTypes.Nothing)
             {
                 SetNone();

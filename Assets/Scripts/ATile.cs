@@ -30,10 +30,10 @@ public abstract class ATile : MonoBehaviour
     /** 現在のタイルタイプ */
     private TileTypes _tileType;
 
-    protected TileTypes TileType
+    public TileTypes TileType
     {
         get => _tileType;
-        set
+        protected set
         {
             _tileType = value;
             OnTileTypeChanged();
@@ -210,5 +210,14 @@ public abstract class ATile : MonoBehaviour
 
         // 回転を元に戻す
         transform.rotation = Quaternion.Euler(-90, 0, 0);
+    }
+
+    /**
+     * デバッグの為にタイルの色を変更する
+     */
+    public void SetColor(Color color)
+    {
+        var meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer.material.color = color;
     }
 }

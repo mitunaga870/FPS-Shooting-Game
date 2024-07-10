@@ -1,3 +1,5 @@
+using DataClass;
+using JetBrains.Annotations;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 
