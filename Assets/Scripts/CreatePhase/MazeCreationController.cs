@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using AClass;
 using CreatePhase.UI;
 using Enums;
 using ScriptableObjects.S2SDataObjects;
@@ -571,6 +572,9 @@ namespace CreatePhase
             {
                 createToInvasionData.TrapData[i] = TrapData[i];
             }
+
+            // 迷路の原点を設定
+            createToInvasionData.MazeOrigin = _mazeOrigin;
         }
 
         protected override void Sync()

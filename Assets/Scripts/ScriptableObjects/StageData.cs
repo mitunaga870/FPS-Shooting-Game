@@ -7,21 +7,25 @@ namespace ScriptableObjects
     [CreateAssetMenu]
     public class StageData : ScriptableObject
     {
-        [Tooltip("リロール待機時間")] public int OneOneReRollWaitTime;
+        [Header("1-1: データ")]
+        /* ここから1-1のデータ */
+        [Tooltip("1-1: リロール待機時間")]
+        public int OneOneReRollWaitTime;
 
-        [Tooltip("迷路の行数")] public int OneOneMazeRows;
+        [Tooltip("1-1: 迷路の行数")] public int OneOneMazeRows;
 
-        [Tooltip("迷路の列数")] public int OneOneMazeColumns;
+        [Tooltip("1-1: 迷路の列数")] public int OneOneMazeColumns;
 
-        [Tooltip("トラップの設置数")] public int OneOneTrapCount;
+        [Tooltip("1-1: トラップの設置数")] public int OneOneTrapCount;
 
-        [Tooltip("スタートの列")] public int OneOneStartRow;
+        [Tooltip("1-1: スタートの列")] public int OneOneStartRow;
 
-        [Tooltip("スタートの行")] public int OneOneStartColumn;
+        [Tooltip("1-1: スタートの行")] public int OneOneStartColumn;
 
-        [Tooltip("ゴールの列")] public int OneOneGoalRow;
+        [Tooltip("1-1: ゴールの列")] public int OneOneGoalRow;
 
-        [Tooltip("ゴールの行")] public int OneOneGoalColumn;
+        [Tooltip("1-1: ゴールの行")] public int OneOneGoalColumn;
+
 
         private StageData()
         {

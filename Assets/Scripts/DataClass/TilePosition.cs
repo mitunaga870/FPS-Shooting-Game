@@ -1,3 +1,6 @@
+using UnityEngine;
+using UnityEngine.UIElements;
+
 namespace DataClass
 {
     public class TilePosition
@@ -9,6 +12,10 @@ namespace DataClass
         {
             Col = col;
             Row = row;
+        }
+
+        public TilePosition(Vector3 position, Vector3 origin)
+        {
         }
 
         public override int GetHashCode()
@@ -27,9 +34,15 @@ namespace DataClass
             return Col == p.Col && Row == p.Row;
         }
 
-        protected bool Equals(TilePosition other)
+        public bool Equals(TilePosition other)
         {
             return Col == other.Col && Row == other.Row;
+        }
+
+        public Vector3 ToVector3(Vector3 origin)
+        {
+            var relativePosition = new Vector3(Col, 0, Row);
+            return origin + relativePosition;
         }
     }
 }

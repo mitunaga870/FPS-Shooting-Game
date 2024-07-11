@@ -48,7 +48,7 @@ namespace DataClass
             Array.Copy(_rows, newRows, _rows.Length);
             newColumns[_columns.Length] = col;
             newRows[_rows.Length] = row;
-            return new Path(newColumns, newRows);
+            return new Path(newRows, newColumns);
         }
 
         /**
@@ -98,7 +98,46 @@ namespace DataClass
 
         public TilePosition GetLast()
         {
-            return new TilePosition(_columns[Length() - 1], _rows[Length() - 1]);
+            return new TilePosition(_rows[Length() - 1], _columns[Length() - 1]);
+        }
+
+        public int? Index(TilePosition currentPosition)
+        {
+            for (var i = 0; i < Length(); i++)
+            {
+                if (_columns[i] == currentPosition.Col && _rows[i] == currentPosition.Row)
+                {
+                    return i;
+                }
+            }
+
+            return null;
+        }
+
+        /**
+         * 指定インデックスの位置を取得する
+         */
+        public TilePosition Get(int index)
+        {
+            int row = _rows[index];
+            int col = _columns[index];
+
+            return new TilePosition(row, col);
+        }
+
+        public override string ToString()
+        {
+            var result = "";
+            for (var i = 0; i < Length(); i++)
+            {
+                result += $"({_rows[i]}, {_columns[i]})";
+                if (i != Length() - 1)
+                {
+                    result += " -> ";
+                }
+            }
+
+            return result;
         }
     }
 }

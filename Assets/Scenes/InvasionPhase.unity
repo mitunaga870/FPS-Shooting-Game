@@ -168,6 +168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   createToInvasionData: {fileID: 11400000, guid: 66aec002291057341bcb6f1da637634b, type: 2}
   mazeController: {fileID: 998101140}
+  _testEnemy: {fileID: 2268769492562611707, guid: 13b0f5ce6af07c448b106ad1fa142c4c, type: 3}
 --- !u!1001 &624135493
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -576,6 +577,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91991389372cd9944a8eaf505baf9651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stageData: {fileID: 11400000, guid: a76e0ed324fb0cf4ea3980131a4f296f, type: 2}
+  generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
   createPhaseTilePrefab: {fileID: -5516297106693624721, guid: abd90deeafc55a44ea812a9e246a2a13, type: 3}
 --- !u!1 &1522057559
 GameObject:
@@ -656,6 +659,7 @@ GameObject:
   - component: {fileID: 1679000100}
   - component: {fileID: 1679000099}
   - component: {fileID: 1679000098}
+  - component: {fileID: 1679000101}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -737,6 +741,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &1679000101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1679000097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2025fe8d6399ff47819f55b35d4f77c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stageData: {fileID: 11400000, guid: a76e0ed324fb0cf4ea3980131a4f296f, type: 2}
+  _generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
 --- !u!1 &1855792346
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 /**
  * 環境情報を保持するクラス
  */

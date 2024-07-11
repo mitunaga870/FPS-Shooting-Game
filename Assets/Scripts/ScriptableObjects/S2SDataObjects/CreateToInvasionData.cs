@@ -11,11 +11,13 @@ namespace ScriptableObjects.S2SDataObjects
     {
         [NonSerialized] public DataClass.TileData[][] TileData;
         [NonSerialized] public DataClass.TrapData[] TrapData;
+        [NonSerialized] public Vector3 MazeOrigin;
 
         public override void OnBeforeSerialize()
         {
             TileData = Array.Empty<DataClass.TileData[]>();
             TrapData = Array.Empty<DataClass.TrapData>();
+            MazeOrigin = Vector3.zero;
         }
 
         public override void OnAfterDeserialize()
