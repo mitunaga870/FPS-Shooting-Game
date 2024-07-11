@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using CreatePhase.UI;
 using Enums;
-using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using Traps;
 using UnityEngine;
@@ -19,12 +18,6 @@ namespace CreatePhase
      */
     public class MazeCreationController : AMazeController
     {
-        /** 各迷路の行列数等の情報格納するスクリプタブルオブジェクト */
-        [Header("迷路データ")] [SerializeField] public MazeData mazeData;
-
-        /** MazeDataのゲッター */
-        public MazeData MazeData => mazeData;
-
         /** タイルのプレハブ */
         [FormerlySerializedAs("tile")] [SerializeField]
         private CreatePhaseTile createPhaseTile;
@@ -80,7 +73,7 @@ namespace CreatePhase
             CreateMaze();
 
             // リロールボタンの表示
-            reRollButton.Show(mazeData.ReRollWaitTime);
+            reRollButton.Show(ReRollWaitTime);
 
             reRollButton.AddClickEvent(() =>
             {
@@ -103,17 +96,18 @@ namespace CreatePhase
         private void CreateMaze()
         {
             // 原点を設定
-            _mazeOrigin = new Vector3(-(MazeData.MazeColumns - 1) / 2.0f, 0, -(mazeData.MazeRows - 1) / 2.0f);
+            _mazeOrigin = new Vector3(-(MazeColumns - 1) / 2.0f, 0,
+                -(MazeRows - 1) / 2.0f);
             // すべてのタイルを生成し、初期化する
             // 行の初期化
-            Maze = new CreatePhaseTile[mazeData.MazeRows][];
-            createToInvasionData.TileData = new TileData[mazeData.MazeRows][];
-            for (var row = 0; row < mazeData.MazeRows; row++)
+            Maze = new CreatePhaseTile[MazeRows][];
+            createToInvasionData.TileData = new TileData[MazeRows][];
+            for (var row = 0; row < MazeRows; row++)
             {
                 // 列の初期化
-                Maze[row] = new CreatePhaseTile[MazeData.MazeColumns];
-                createToInvasionData.TileData[row] = new TileData[MazeData.MazeColumns];
-                for (var column = 0; column < MazeData.MazeColumns; column++)
+                Maze[row] = new CreatePhaseTile[MazeColumns];
+                createToInvasionData.TileData[row] = new TileData[MazeColumns];
+                for (var column = 0; column < MazeColumns; column++)
                 {
                     // タイルの位置と回転を設定
                     var tilePosition = new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin;
@@ -129,10 +123,10 @@ namespace CreatePhase
 
             // ============== トラップ設置 ================
             // トラップ配列を初期化
-            TrapData = new TrapData[mazeData.TrapCount];
-            createToInvasionData.TrapData = new TrapData[mazeData.TrapCount];
+            TrapData = new TrapData[TrapCount];
+            createToInvasionData.TrapData = new TrapData[TrapCount];
             // トラップの設置数分乱数をもとに場所を決定
-            for (var i = 0; i < mazeData.TrapCount; i++)
+            for (var i = 0; i < TrapCount; i++)
             {
                 ATrap trap = null;
 
@@ -142,8 +136,8 @@ namespace CreatePhase
                 while (trap == null)
                 {
                     // 乱数をもとに場所を決定
-                    var row = Random.Range(0, mazeData.MazeRows);
-                    var column = Random.Range(0, MazeData.MazeColumns);
+                    var row = Random.Range(0, MazeRows);
+                    var column = Random.Range(0, MazeColumns);
 
                     // トラップを設置
                     trap = Maze[row][column].SetTrap();
@@ -155,6 +149,10 @@ namespace CreatePhase
                     if (loopCount++ > 10) break;
                 }
             }
+
+            // スタートとゴールを設置
+            Maze[StartPosition.Row][StartPosition.Col].SetStart();
+            Maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
         }
 
         /**
@@ -163,9 +161,13 @@ namespace CreatePhase
         private void ResetMaze()
         {
             // すべてのタイルをリセットする
-            for (var row = 0; row < mazeData.MazeRows; row++)
+            for (var row = 0;
+                 row < MazeRows;
+                 row++)
             {
-                for (var column = 0; column < MazeData.MazeColumns; column++)
+                for (var column = 0;
+                     column < MazeColumns;
+                     column++)
                 {
                     Maze[row][column].ResetTile();
                 }
@@ -417,9 +419,9 @@ namespace CreatePhase
                          connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row - 1);
             var left = col - 1 >= 0 &&
                        connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row);
-            var right = col + 1 < MazeData.MazeColumns &&
+            var right = col + 1 < MazeColumns &&
                         connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
-            var top = row + 1 < mazeData.MazeRows &&
+            var top = row + 1 < MazeRows &&
                       connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
 
             // 十字
@@ -499,9 +501,13 @@ namespace CreatePhase
         private List<Dictionary<string, int>> GetRoadAddresses()
         {
             var roadAddresses = new List<Dictionary<string, int>>();
-            for (var row = 0; row < mazeData.MazeRows; row++)
+            for (var row = 0;
+                 row < MazeRows;
+                 row++)
             {
-                for (var col = 0; col < MazeData.MazeColumns; col++)
+                for (var col = 0;
+                     col < MazeColumns;
+                     col++)
                 {
                     if (Maze[row][col].GetTileType() == TileTypes.Road)
                     {
@@ -539,9 +545,13 @@ namespace CreatePhase
         public void SetS2SData()
         {
             // 迷路のタイル情報を設定
-            for (var row = 0; row < mazeData.MazeRows; row++)
+            for (var row = 0;
+                 row < MazeRows;
+                 row++)
             {
-                for (var column = 0; column < MazeData.MazeColumns; column++)
+                for (var column = 0;
+                     column < MazeColumns;
+                     column++)
                 {
                     var tile = Maze[row][column];
 
@@ -555,7 +565,9 @@ namespace CreatePhase
             }
 
             // トラップ情報を設定
-            for (var i = 0; i < mazeData.TrapCount; i++)
+            for (var i = 0;
+                 i < TrapCount;
+                 i++)
             {
                 createToInvasionData.TrapData[i] = TrapData[i];
             }

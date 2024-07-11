@@ -7,18 +7,18 @@ namespace ScriptableObjects.S2SDataObjects
      * 作成フェーズから侵攻フェーズへの以降に必要なデータ
      */
     [CreateAssetMenu(fileName = "CreateToInvasionData", menuName = "S2SData/CreateToInvasionData")]
-    public class CreateToInvasionData : AS2SData, ISerializationCallbackReceiver
+    public class CreateToInvasionData : AS2SData
     {
         [NonSerialized] public DataClass.TileData[][] TileData;
         [NonSerialized] public DataClass.TrapData[] TrapData;
 
-        public void OnBeforeSerialize()
+        public override void OnBeforeSerialize()
         {
             TileData = Array.Empty<DataClass.TileData[]>();
             TrapData = Array.Empty<DataClass.TrapData>();
         }
 
-        public void OnAfterDeserialize()
+        public override void OnAfterDeserialize()
         {
         }
 

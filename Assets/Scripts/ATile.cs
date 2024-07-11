@@ -218,6 +218,33 @@ public abstract class ATile : MonoBehaviour
     public void SetColor(Color color)
     {
         var meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer.material.color = color;
+        var materials = meshRenderer.materials;
+
+        foreach (var material in materials)
+        {
+            material.color = color;
+        }
+    }
+
+    /**
+     * スタート地点に設定する
+     */
+    public void SetStart()
+    {
+        TileType = TileTypes.Start;
+
+        // TODO: スタート地点の状態固定と示し方を決める
+        SetColor(Color.blue);
+    }
+
+    /**
+     * ゴール地点に設定する
+     */
+    public void SetGoal()
+    {
+        TileType = TileTypes.Goal;
+
+        // TODO: ゴール地点の状態固定と示し方を決める
+        SetColor(Color.red);
     }
 }

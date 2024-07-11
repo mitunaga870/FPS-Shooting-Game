@@ -3,20 +3,35 @@ using System.Collections.Generic;
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
+using ScriptableObjects;
+using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 
 public abstract class AMazeController : MonoBehaviour
 {
-    /** 迷路のデータ */
+    /** 各迷路の行列数等の情報格納するスクリプタブルオブジェクト */
+    [Header("迷路データ")] [SerializeField] private StageData stageData;
+
+    /** 汎用情報 */
+    [SerializeField] protected GeneralS2SData GeneralS2SData;
+
+    /** 迷路タイル配列 */
     protected ATile[][] Maze { get; set; }
+
 
     /**
      * 全体を同期する
      */
     protected abstract void Sync();
 
-    public int MazeRows => Maze.Length;
-    public int MazeColumns => Maze[0].Length;
+    protected int Level => GeneralS2SData.Level;
+    protected int Stage => GeneralS2SData.Stage;
+    protected int MazeRows => stageData.GetMazeRows(Stage, Level);
+    protected int MazeColumns => stageData.GetMazeColumns(Stage, Level);
+    protected TilePosition StartPosition => stageData.GetStartPosition(Stage, Level);
+    protected TilePosition GoalPosition => stageData.GetGoalPosition(Stage, Level);
+    protected int ReRollWaitTime => stageData.GetReRollWaitTime(Stage, Level);
+    protected int TrapCount => stageData.GetTrapCount(Stage, Level);
 
     /**
      * ベースの迷路配列と指定配列を同期する
@@ -35,16 +50,25 @@ public abstract class AMazeController : MonoBehaviour
     }
 
     /**
-     * 現在の迷路の最短経路を取得する
+     * 現在の迷路のスタートからゴールまでの最短経路を出す
      */
     [CanBeNull]
-    public Path GetShortestPath()
+    public Path GetShortestS2GPath()
+    {
+        if (StartPosition == null || GoalPosition == null)
+            throw new ArgumentNullException();
+
+        return GetShortestPath(StartPosition, GoalPosition);
+    }
+
+    /**
+     * 現在の迷路での指定地点間の最短経路を出す
+     * ないときはnull
+     */
+    [CanBeNull]
+    public Path GetShortestPath(TilePosition start, TilePosition destination)
     {
         Sync();
-
-        // とりあえずゴール指定
-        var start = new TilePosition(0, 0);
-        var goal = new TilePosition(MazeRows - 1, MazeColumns - 1);
 
         // 検索中のパスを保持するリスト
         var pathList = new List<Path>();
@@ -71,7 +95,7 @@ public abstract class AMazeController : MonoBehaviour
                 // ゴールにたどりついた者があればそれを返す
                 foreach (var newPath in paths)
                 {
-                    if (newPath.GetLast().Equals(goal))
+                    if (newPath.GetLast().Equals(destination))
                     {
                         return newPath;
                     }

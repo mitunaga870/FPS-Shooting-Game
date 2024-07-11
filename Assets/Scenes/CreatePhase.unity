@@ -440,7 +440,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59d1cf1d610b8284b810a75a312a7d70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mazeData: {fileID: 11400000, guid: a76e0ed324fb0cf4ea3980131a4f296f, type: 2}
+  stageData: {fileID: 11400000, guid: a76e0ed324fb0cf4ea3980131a4f296f, type: 2}
+  GeneralS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
   createPhaseTile: {fileID: -2511744610846245713, guid: 26a8b4975ac1871409a5e906e043cdeb, type: 3}
   reRollButton: {fileID: 777972593}
   createToInvasionData: {fileID: 11400000, guid: 66aec002291057341bcb6f1da637634b, type: 2}
@@ -1825,7 +1826,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2025fe8d6399ff47819f55b35d4f77c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mazeCreationController: {fileID: 321828198}
+  _stageData: {fileID: 11400000, guid: a76e0ed324fb0cf4ea3980131a4f296f, type: 2}
+  _generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
 --- !u!1 &8209146148767214383
 GameObject:
   m_ObjectHideFlags: 0

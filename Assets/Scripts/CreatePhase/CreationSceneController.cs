@@ -17,7 +17,7 @@ namespace CreatePhase
         [SerializeField] private MazeCreationController mazeCreationController;
 
         /** ステージ情報 */
-        [SerializeField] private MazeData stageData;
+        [SerializeField] private StageData stageData;
 
         /**
          * 侵攻フェーズに移動する
@@ -25,7 +25,7 @@ namespace CreatePhase
         public void GoToInvasionPhase()
         {
             // 迷路がつながってるか確認
-            var shortestPath = mazeCreationController.GetShortestPath();
+            var shortestPath = mazeCreationController.GetShortestS2GPath();
             if (shortestPath == null)
             {
                 Debug.Log("迷路がつながってないよ");
@@ -38,9 +38,9 @@ namespace CreatePhase
 
             // 迷路情報が正しいか確認
             if (!(
-                    stageData.MazeColumns == createToInvasionData.GetMazeColumn() &&
-                    stageData.MazeRows == createToInvasionData.GetMazeRow() &&
-                    stageData.TrapCount == createToInvasionData.GetTrapCount()
+                    stageData.OneOneMazeColumns == createToInvasionData.GetMazeColumn() &&
+                    stageData.OneOneMazeRows == createToInvasionData.GetMazeRow() &&
+                    stageData.OneOneTrapCount == createToInvasionData.GetTrapCount()
                 ))
             {
                 return;

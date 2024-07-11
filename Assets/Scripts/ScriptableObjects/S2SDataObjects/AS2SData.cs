@@ -11,8 +11,11 @@ namespace ScriptableObjects.S2SDataObjects
      * 基本的にはScriptableObjectを継承し、標準のToStringメソッドをオーバーライドする
      */
     // ReSharper disable once InconsistentNaming
-    public abstract class AS2SData : ScriptableObject
+    public abstract class AS2SData : ScriptableObject, ISerializationCallbackReceiver
     {
         public abstract override string ToString();
+        public abstract void OnBeforeSerialize();
+
+        public abstract void OnAfterDeserialize();
     }
 }

@@ -10,6 +10,11 @@ namespace InvasionPhase
         [FormerlySerializedAs("tilePrefab")] [SerializeField]
         private InvasionPhaseTile createPhaseTilePrefab;
 
+        /**
+         * 迷路の配列
+         */
+        private InvasionPhaseTile[][] _maze;
+
         private Vector3 _mazeOrigin;
 
 
@@ -22,11 +27,11 @@ namespace InvasionPhase
             _mazeOrigin = new Vector3(-(mazeColumns - 1) / 2.0f, 0, -(mazeRows - 1) / 2.0f);
             // すべてのタイルを生成し、初期化する
             // 行の初期化
-            Maze = new ATile[mazeRows][];
+            _maze = new InvasionPhaseTile[mazeRows][];
             for (var row = 0; row < mazeRows; row++)
             {
                 // 列の初期化
-                Maze[row] = new ATile[mazeColumns];
+                _maze[row] = new InvasionPhaseTile[mazeColumns];
                 for (var column = 0; column < mazeColumns; column++)
                 {
                     var tileData = tiles[row][column];
@@ -39,14 +44,24 @@ namespace InvasionPhase
                     newTile.Initialize(row, column, tileData.TileType, tileData.RoadAdjust);
 
                     // タイルを迷路に追加する
-                    Maze[row][column] = newTile;
+                    _maze[row][column] = newTile;
                 }
             }
         }
 
         protected override void Sync()
         {
-            throw new System.NotImplementedException();
+            var syncTiles = new ATile[_maze.Length][];
+            for (var i = 0; i < MazeRows; i++)
+            {
+                syncTiles[i] = new ATile[_maze[i].Length];
+                for (var j = 0; j < MazeColumns; j++)
+                {
+                    syncTiles[i][j] = _maze[i][j];
+                }
+            }
+
+            SyncMazeData(syncTiles);
         }
     }
 }
