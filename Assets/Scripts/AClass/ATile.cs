@@ -232,8 +232,6 @@ namespace AClass
      */
         public void SetStart()
         {
-            TileType = TileTypes.Start;
-
             // TODO: スタート地点の状態固定と示し方を決める
             SetColor(Color.blue);
         }
@@ -243,8 +241,6 @@ namespace AClass
      */
         public void SetGoal()
         {
-            TileType = TileTypes.Goal;
-
             // TODO: ゴール地点の状態固定と示し方を決める
             SetColor(Color.red);
         }

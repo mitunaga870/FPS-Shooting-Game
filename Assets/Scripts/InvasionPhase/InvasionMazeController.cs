@@ -26,6 +26,7 @@ namespace InvasionPhase
 
             // 原点を設定
             _mazeOrigin = new Vector3(-(mazeColumns - 1) / 2.0f, 0, -(mazeRows - 1) / 2.0f);
+
             // すべてのタイルを生成し、初期化する
             // 行の初期化
             _maze = new InvasionPhaseTile[mazeRows][];
@@ -48,6 +49,10 @@ namespace InvasionPhase
                     _maze[row][column] = newTile;
                 }
             }
+
+            // スタート・ゴールのタイルを設定
+            _maze[StartPosition.Row][StartPosition.Col].SetStart();
+            _maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
         }
 
         protected override void Sync()
