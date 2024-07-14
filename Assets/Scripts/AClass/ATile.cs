@@ -1,5 +1,6 @@
 using Enums;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace AClass
 {
@@ -27,6 +28,15 @@ namespace AClass
 
         /** 十字路のモデル */
         [SerializeField] protected Mesh crossroadsModel;
+
+        /** L字壁のモデル */
+        [SerializeField] protected Mesh halfOnceModel;
+
+        /** 太いやつの端っこ */
+        [SerializeField] protected Mesh halfRoadModel;
+
+        /** 太いやつの真ん中 */
+        [SerializeField] protected Mesh noWallModel;
 
         /** 現在のタイルタイプ */
         private TileTypes _tileType;
@@ -140,6 +150,47 @@ namespace AClass
                     break;
                 case RoadAdjust.Cross:
                     meshFilter.mesh = crossroadsModel;
+                    break;
+                // ========== 太い道路 ==========
+                // ========== 太い道路の真ん中 ==========
+                case RoadAdjust.NoWall:
+                case RoadAdjust.BottomLeftInner:
+                case RoadAdjust.BottomRightInner:
+                case RoadAdjust.TopLeftInner:
+                case RoadAdjust.TopRightInner:
+                    meshFilter.mesh = noWallModel;
+                    break;
+                // ========== 太い道路の端っこ ==========
+                case RoadAdjust.LeftRightTopHalfRoad:
+                    meshFilter.mesh = halfRoadModel;
+                    rotation = Quaternion.Euler(-90, -90, 0);
+                    break;
+                case RoadAdjust.TopBottomRightHalfRoad:
+                    meshFilter.mesh = halfRoadModel;
+                    break;
+                case RoadAdjust.LeftRightBottomHalfRoad:
+                    meshFilter.mesh = halfRoadModel;
+                    rotation = Quaternion.Euler(-90, 90, 0);
+                    break;
+                case RoadAdjust.TopBottomLeftHalfRoad:
+                    meshFilter.mesh = halfRoadModel;
+                    rotation = Quaternion.Euler(-90, 180, 0);
+                    break;
+                // ========== L字壁 ==========
+                case RoadAdjust.TopRightHalfOnce:
+                    meshFilter.mesh = halfOnceModel;
+                    break;
+                case RoadAdjust.BottomRightHalfOnce:
+                    meshFilter.mesh = halfOnceModel;
+                    rotation = Quaternion.Euler(-90, 90, 0);
+                    break;
+                case RoadAdjust.BottomLeftHalfOnce:
+                    meshFilter.mesh = halfOnceModel;
+                    rotation = Quaternion.Euler(-90, 180, 0);
+                    break;
+                case RoadAdjust.TopLeftHalfOnce:
+                    meshFilter.mesh = halfOnceModel;
+                    rotation = Quaternion.Euler(-90, -90, 0);
                     break;
             }
 

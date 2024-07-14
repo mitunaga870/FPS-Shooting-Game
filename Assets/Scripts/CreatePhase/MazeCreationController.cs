@@ -4,7 +4,6 @@ using AClass;
 using CreatePhase.UI;
 using Enums;
 using ScriptableObjects.S2SDataObjects;
-using Traps;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -424,9 +423,78 @@ namespace CreatePhase
                         connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
             var top = row + 1 < MazeRows &&
                       connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
+            // 斜めのタイルがつながっているか
+            var topLeft = row + 1 < MazeRows && col - 1 >= 0 &&
+                          connectedTileAddress.Exists(address =>
+                              address["col"] == col - 1 && address["row"] == row + 1);
+            var topRight = row + 1 < MazeRows && col + 1 < MazeColumns &&
+                           connectedTileAddress.Exists(
+                               address => address["col"] == col + 1 && address["row"] == row + 1);
+            var bottomLeft = row - 1 >= 0 && col - 1 >= 0 &&
+                             connectedTileAddress.Exists(address =>
+                                 address["col"] == col - 1 && address["row"] == row - 1);
+            var bottomRight = row - 1 >= 0 && col + 1 < MazeColumns &&
+                              connectedTileAddress.Exists(address =>
+                                  address["col"] == col + 1 && address["row"] == row - 1);
 
+            // 壁なし
+            if (top && left && right && bottom && topLeft && topRight && bottomLeft && bottomRight)
+            {
+                return RoadAdjust.NoWall;
+            }
+            // 太い道路のL字内側
+            else if (top && left && right && bottom && topRight && bottomLeft && bottomRight)
+            {
+                return RoadAdjust.TopLeftInner;
+            }
+            else if (top && left && right && bottom && topLeft && topRight && bottomRight)
+            {
+                return RoadAdjust.BottomLeftInner;
+            }
+            else if (top && left && right && bottom && topLeft && bottomRight && bottomLeft)
+            {
+                return RoadAdjust.TopRightInner;
+            }
+            else if (top && left && right && bottom && topLeft && bottomLeft && topRight)
+            {
+                return RoadAdjust.BottomRightInner;
+            }
+            // 太い道路の直線片側
+            else if (left && right && bottom && bottomLeft && bottomRight)
+            {
+                return RoadAdjust.TopBottomLeftHalfRoad;
+            }
+            else if (left && right && top && topLeft && topRight)
+            {
+                return RoadAdjust.TopBottomRightHalfRoad;
+            }
+            else if (top && bottom && left && topLeft && bottomLeft)
+            {
+                return RoadAdjust.LeftRightTopHalfRoad;
+            }
+            else if (top && bottom && right && topRight && bottomRight)
+            {
+                return RoadAdjust.LeftRightBottomHalfRoad;
+            }
+            // 太い道路のL字外側
+            else if (top && left && topLeft)
+            {
+                return RoadAdjust.TopLeftHalfOnce;
+            }
+            else if (top && right && topRight)
+            {
+                return RoadAdjust.TopRightHalfOnce;
+            }
+            else if (bottom && left && bottomLeft)
+            {
+                return RoadAdjust.BottomLeftHalfOnce;
+            }
+            else if (right && bottom && bottomRight)
+            {
+                return RoadAdjust.BottomRightHalfOnce;
+            }
             // 十字
-            if (top && left && right && bottom)
+            else if (top && left && right && bottom)
             {
                 return RoadAdjust.Cross;
             }

@@ -28,21 +28,21 @@
         NoWall,
 
         // 直線
-        FatTopBottomLeft,
-        FatTopBottomRight,
-        FatLeftRightTop,
-        FatLeftRightBottom,
+        TopBottomLeftHalfRoad,
+        TopBottomRightHalfRoad,
+        LeftRightTopHalfRoad,
+        LeftRightBottomHalfRoad,
 
         // L字外側
-        FatTopLeftOuter,
-        FatBottomLeftOuter,
-        FatTopRightOuter,
-        FatBottomRightOuter,
+        TopLeftHalfOnce,
+        BottomLeftHalfOnce,
+        TopRightHalfOnce,
+        BottomRightHalfOnce,
 
         // L字内側
-        FatTopLeftInner,
-        FatBottomLeftInner,
-        FatTopRightInner,
-        FatBottomRightInner,
+        TopLeftInner,
+        BottomLeftInner,
+        TopRightInner,
+        BottomRightInner,
     }
 }
