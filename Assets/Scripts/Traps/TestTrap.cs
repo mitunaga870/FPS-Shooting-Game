@@ -1,3 +1,4 @@
+using AClass;
 using UnityEngine;
 
 namespace Traps
