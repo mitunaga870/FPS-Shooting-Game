@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Tile
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: 4a992a005d8f096469c3e2eb98f75bf8, type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: defaultModel
+    value: 
+    objectReference: {fileID: -3084497227037556731, guid: ab0a6f60044f8d14192971310666449f, type: 3}
+  - target: {fileID: 0}
+    propertyPath: noneModel
+    value: 
+    objectReference: {fileID: -5776783431495031102, guid: 9fd84ac705ca4cb4a96a26a9413fc5f0, type: 3}
+  - target: {fileID: 0}
+    propertyPath: deadEndModel
+    value: 
+    objectReference: {fileID: -8215893812795707571, guid: 309f198e7bafee2459d634e1f5b7bf7e, type: 3}
+  - target: {fileID: 0}
+    propertyPath: straightModel
+    value: 
+    objectReference: {fileID: -2405365958620393163, guid: 075776c8ba67a7b42b66b053e74f73a3, type: 3}
+  - target: {fileID: 0}
+    propertyPath: cornerModel
+    value: 
+    objectReference: {fileID: 4932170253921981256, guid: 0be1faee2b7ffd8479cdff2de7072011, type: 3}
+  - target: {fileID: 0}
+    propertyPath: tJunctionModel
+    value: 
+    objectReference: {fileID: 6750382564028958556, guid: 68136e2c800b0664189b53e07fec4ee2, type: 3}
+  - target: {fileID: 0}
+    propertyPath: crossroadsModel
+    value: 
+    objectReference: {fileID: -7532876345782023577, guid: f97e0ca8eb6a9044b8c25f71ba8cb863, type: 3}
+  - target: {fileID: 0}
+    propertyPath: isPreview
+    value: 0
+    objectReference: {fileID: 0}
+  m_ExcludedProperties: []

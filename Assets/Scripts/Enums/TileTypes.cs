@@ -7,6 +7,8 @@
     {
         Nothing,
         Road,
-        Trap
+        Trap,
+        Start,
+        Goal
     }
 }

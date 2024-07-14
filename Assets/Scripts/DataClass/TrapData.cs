@@ -1,3 +1,4 @@
+using AClass;
 using Traps;
 
 namespace DataClass

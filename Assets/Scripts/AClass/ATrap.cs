@@ -1,7 +1,7 @@
 using ScriptableObjects;
 using UnityEngine;
 
-namespace Traps
+namespace AClass
 {
     public abstract class ATrap : MonoBehaviour
     {
