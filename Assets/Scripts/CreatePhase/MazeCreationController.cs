@@ -4,6 +4,7 @@ using System.Linq;
 using AClass;
 using CreatePhase.UI;
 using Enums;
+using JetBrains.Annotations;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -70,8 +71,11 @@ namespace CreatePhase
             _previewAddresses = new List<Dictionary<string, int>>();
             _lastEditVertical = false;
 
+            // セーブデータ読み込み
+            var tileData = SaveController.LoadTileData();
+
             // 迷路の生成
-            CreateMaze();
+            CreateMaze(tileData);
 
             // リロールボタンの表示
             reRollButton.Show(ReRollWaitTime);
@@ -81,7 +85,7 @@ namespace CreatePhase
                 // 迷路を消す
                 ResetMaze();
                 // 迷路の再生成
-                CreateMaze();
+                CreateMaze(tileData);
                 // リロールボタンを消す
                 reRollButton.Hide();
             });
@@ -94,7 +98,7 @@ namespace CreatePhase
      * 迷路の生成
      * すべてのタイルを生成し、初期化する
      */
-        private void CreateMaze()
+        private void CreateMaze([CanBeNull] TileData[][] tileData)
         {
             // 原点を設定
             _mazeOrigin = new Vector3(-(MazeColumns - 1) / 2.0f, 0,
@@ -113,9 +117,24 @@ namespace CreatePhase
                     // タイルの位置と回転を設定
                     var tilePosition = new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin;
                     var tileRotation = Quaternion.Euler(-90, 0, 0);
-                    // タイルを生成し、初期化する
-                    var newTile = Instantiate(createPhaseTile, tilePosition, tileRotation);
-                    newTile.Initialize(this, row, column);
+
+                    CreatePhaseTile newTile;
+
+                    // セーブデータがある場合はセーブデータを使用
+                    if (tileData == null)
+                    {
+                        // タイルを生成し、初期化する
+                        newTile = Instantiate(createPhaseTile, tilePosition, tileRotation);
+                        newTile.Initialize(this, row, column);
+                    }
+                    else
+                    {
+                        var data = tileData[row][column];
+
+                        // タイルを生成し、初期化する
+                        newTile = Instantiate(createPhaseTile, tilePosition, tileRotation);
+                        newTile.Initialize(this, row, column, data.TileType, data.RoadAdjust);
+                    }
 
                     // タイルを迷路に追加する
                     Maze[row][column] = newTile;
@@ -257,8 +276,6 @@ namespace CreatePhase
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-            Debug.Log(newRoadAddresses.Count);
 
             // 道を設置
             foreach (var address in newRoadAddresses)

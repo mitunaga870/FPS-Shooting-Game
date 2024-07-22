@@ -1,3 +1,4 @@
+using System;
 using AClass;
 using Enums;
 using lib;
@@ -121,11 +122,30 @@ namespace CreatePhase
      */
         public void Initialize(MazeCreationController mazeCreationController, int row, int column)
         {
-            if (this._mazeCreationController != null) return;
+            if (this._mazeCreationController != null) throw new Exception("Already initialized.");
 
             this._mazeCreationController = mazeCreationController;
             this.Row = row;
             this.Column = column;
+        }
+
+        public void Initialize(
+            MazeCreationController mazeCreationController,
+            int row,
+            int column,
+            TileTypes tileType,
+            RoadAdjust roadAdjust
+        )
+        {
+            Initialize(mazeCreationController, row, column);
+
+            // タイルの種類を設定
+            switch (tileType)
+            {
+                case TileTypes.Road:
+                    SetRoad(roadAdjust);
+                    break;
+            }
         }
 
 

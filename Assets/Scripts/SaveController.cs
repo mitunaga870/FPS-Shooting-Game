@@ -1,7 +1,9 @@
 using DataClass;
+using Enums;
+using JetBrains.Annotations;
 using UnityEngine;
 
-public static class SaveControler
+public static class SaveController
 {
     // =======　保存処理　=======
     public static void SaveTileData(TileData[][] tileData)
@@ -17,15 +19,29 @@ public static class SaveControler
                 saveText += $"{tile},";
             }
 
+            // 最後のカンマを削除
+            saveText = saveText.Substring(0, saveText.Length - 1);
+
             saveText += "\n";
         }
+
+        // 最後の空行を削除
+        saveText = saveText.Substring(0, saveText.Length - 1);
 
         PlayerPrefs.SetString("TileData", saveText);
     }
 
+    public static void SavePhase(Phase phase)
+    {
+        PlayerPrefs.SetInt("Phase", (int)phase);
+    }
+
     // =======　読み込み処理　=======
+    [CanBeNull]
     public static TileData[][] LoadTileData()
     {
+        if (!PlayerPrefs.HasKey("TileData")) return null;
+
         var saveText = PlayerPrefs.GetString("TileData");
 
         // Load tileData like CSV
@@ -44,5 +60,18 @@ public static class SaveControler
         }
 
         return tileData;
+    }
+
+    public static Phase LoadPhase()
+    {
+        return (Phase)PlayerPrefs.GetInt("Phase", 0);
+    }
+
+    /**
+     * セーブデータを削除する
+     */
+    public static void DelSave()
+    {
+        PlayerPrefs.DeleteAll();
     }
 }

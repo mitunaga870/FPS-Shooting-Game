@@ -1,4 +1,5 @@
 using Enums;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace DataClass
@@ -21,6 +22,12 @@ namespace DataClass
         public TileData(string tileData)
         {
             var data = tileData.Split("%%");
+
+            foreach (var s in data)
+            {
+                Debug.Log($"{tileData}: {s}");
+            }
+
             Row = int.Parse(data[0]);
             Column = int.Parse(data[1]);
             TileType = (TileTypes)int.Parse(data[2]);
@@ -29,7 +36,7 @@ namespace DataClass
 
         public override string ToString()
         {
-            return $"{Row}%%{Column}%%{TileType}%%{RoadAdjust}";
+            return $"{Row}%%{Column}%%{(int)TileType}%%{(int)RoadAdjust}";
         }
     }
 }

@@ -1,3 +1,4 @@
+using Enums;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -24,7 +25,10 @@ namespace CreatePhase
          */
         private void OnApplicationQuit()
         {
-            SaveControler.SaveTileData(mazeCreationController.GetTileData());
+            Debug.Log("Saving...");
+            // セーブデータを保存
+            SaveController.SavePhase(Phase.Create);
+            SaveController.SaveTileData(mazeCreationController.GetTileData());
         }
 
         /**
