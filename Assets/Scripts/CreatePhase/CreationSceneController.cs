@@ -1,3 +1,4 @@
+using System;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -18,6 +19,14 @@ namespace CreatePhase
 
         /** ステージ情報 */
         [SerializeField] private StageData stageData;
+
+        /**
+         * やめるときの保存処理
+         */
+        private void OnApplicationQuit()
+        {
+            SaveController.SaveTileData(mazeCreationController.GetTileData());
+        }
 
         /**
          * 侵攻フェーズに移動する

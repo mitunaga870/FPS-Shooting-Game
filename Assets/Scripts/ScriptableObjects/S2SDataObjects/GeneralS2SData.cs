@@ -19,8 +19,8 @@ namespace ScriptableObjects.S2SDataObjects
 
         public override void OnBeforeSerialize()
         {
-            Stage = 1;
-            Level = 1;
+            Stage = PlayerPrefs.GetInt("Stage", 1);
+            Level = PlayerPrefs.GetInt("Level", 1);
         }
 
         public override void OnAfterDeserialize()

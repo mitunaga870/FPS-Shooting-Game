@@ -591,5 +591,21 @@ namespace CreatePhase
 
             SyncMazeData(maze);
         }
+
+        public TileData[][] GetTileData()
+        {
+            var result = new TileData[Maze.Length][];
+
+            for (var i = 0; i < Maze.Length; i++)
+            {
+                result[i] = new TileData[Maze[i].Length];
+                for (var j = 0; j < Maze[i].Length; j++)
+                {
+                    result[i][j] = new TileData(i, j, Maze[i][j].GetTileType(), Maze[i][j].RoadAdjust);
+                }
+            }
+
+            return result;
+        }
     }
 }

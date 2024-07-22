@@ -17,5 +17,19 @@ namespace DataClass
             TileType = tileType;
             RoadAdjust = roadAdjust;
         }
+
+        public TileData(string tileData)
+        {
+            var data = tileData.Split("%%");
+            Row = int.Parse(data[0]);
+            Column = int.Parse(data[1]);
+            TileType = (TileTypes)int.Parse(data[2]);
+            RoadAdjust = (RoadAdjust)int.Parse(data[3]);
+        }
+
+        public override string ToString()
+        {
+            return $"{Row}%%{Column}%%{TileType}%%{RoadAdjust}";
+        }
     }
 }
