@@ -4,7 +4,6 @@ using AClass;
 using CreatePhase.UI;
 using Enums;
 using ScriptableObjects.S2SDataObjects;
-using Traps;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -410,91 +409,6 @@ namespace CreatePhase
 
         // ==================== プライベート関数 ====================
 
-        /**
-     * タイルのつながり肩を取得
-     */
-        private RoadAdjust GetRoadAdjust(int col, int row, List<Dictionary<string, int>> connectedTileAddress)
-        {
-            // 上下左右のタイルがつながっているか
-            var bottom = row - 1 >= 0 &&
-                         connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row - 1);
-            var left = col - 1 >= 0 &&
-                       connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row);
-            var right = col + 1 < MazeColumns &&
-                        connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
-            var top = row + 1 < MazeRows &&
-                      connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
-
-            // 十字
-            if (top && left && right && bottom)
-            {
-                return RoadAdjust.Cross;
-            }
-            // T字
-            else if (top && left && right)
-            {
-                return RoadAdjust.TopRightLeft;
-            }
-            else if (top && left && bottom)
-            {
-                return RoadAdjust.LeftTopBottom;
-            }
-            else if (top && right && bottom)
-            {
-                return RoadAdjust.RightBottomTop;
-            }
-            else if (left && right && bottom)
-            {
-                return RoadAdjust.BottomLeftRight;
-            }
-            // L字
-            else if (top && left)
-            {
-                return RoadAdjust.TopLeft;
-            }
-            else if (top && right)
-            {
-                return RoadAdjust.TopRight;
-            }
-            else if (left && bottom)
-            {
-                return RoadAdjust.BottomLeft;
-            }
-            else if (right && bottom)
-            {
-                return RoadAdjust.RightBottom;
-            }
-            // 直線
-            else if (top && bottom)
-            {
-                return RoadAdjust.TopBottom;
-            }
-            else if (left && right)
-            {
-                return RoadAdjust.LeftRight;
-            }
-            // 行き止まり
-            else if (top)
-            {
-                return RoadAdjust.TopDeadEnd;
-            }
-            else if (left)
-            {
-                return RoadAdjust.LeftDeadEnd;
-            }
-            else if (right)
-            {
-                return RoadAdjust.RightDeadEnd;
-            }
-            else if (bottom)
-            {
-                return RoadAdjust.BottomDeadEnd;
-            }
-            else
-            {
-                return RoadAdjust.None;
-            }
-        }
 
         /**
      * 道のアドレスを取得
