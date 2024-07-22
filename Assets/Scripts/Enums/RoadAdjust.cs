@@ -21,7 +21,7 @@
         RightBottomTop,
         BottomLeftRight,
         Cross,
-        None,
+        NoAdjust,
 
         // 太い道路
         // 4方向

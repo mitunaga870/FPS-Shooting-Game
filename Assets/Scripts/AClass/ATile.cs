@@ -10,9 +10,7 @@ namespace AClass
         [SerializeField] protected Mesh defaultModel;
 
         /** どこにもつながっていないモデル */
-#pragma warning disable CS0414 // フィールドは割り当てられていますがその値は使用されていません
         [SerializeField] protected Mesh noneModel;
-#pragma warning restore CS0414 // フィールドは割り当てられていますがその値は使用されていません
 
         /** 行き止まりのモデル */
         [SerializeField] protected Mesh deadEndModel;
@@ -37,6 +35,24 @@ namespace AClass
 
         /** 太いやつの真ん中 */
         [SerializeField] protected Mesh noWallModel;
+
+        /** 三角 */
+        [SerializeField] protected Mesh tripleCurve;
+
+        /** ２角　*/
+        [SerializeField] protected Mesh doubleCurve;
+
+        /** １角　*/
+        [SerializeField] protected Mesh singleCurve;
+
+        /** 角と壁 下に壁持ってきたときに右に角 */
+        [SerializeField] protected Mesh rightCornerAndBottomWall;
+
+        /** 角と壁 下に壁持ってきたときに左に角 */
+        [SerializeField] protected Mesh leftCornerAndBottomWall;
+
+        /** 斜め角 */
+        [SerializeField] protected Mesh diagonalCorner;
 
         /** 現在のタイルタイプ */
         private TileTypes _tileType;
@@ -153,47 +169,112 @@ namespace AClass
                     break;
                 // ========== 太い道路 ==========
                 // ========== 太い道路の真ん中 ==========
-                case RoadAdjust.NoWall:
-                // TODO: 一個のドットのモデルがない
                 case RoadAdjust.BottomLeftDot:
+                    meshFilter.mesh = singleCurve;
+                    rotation = Quaternion.Euler(-90, 180, 0);
+                    break;
                 case RoadAdjust.BottomRightDot:
-                case RoadAdjust.TopLeftDot:
-                case RoadAdjust.TopRightDot:
-                // TODO: 二個のドットのモデルがない
-                case RoadAdjust.TopDoubleDot:
-                case RoadAdjust.BottomDoubleDot:
-                case RoadAdjust.LeftDoubleDot:
-                case RoadAdjust.RightDoubleDot:
-                // TODO: 斜めドットのモデルがない
-                case RoadAdjust.TopLeftAndBottomRightDot:
-                case RoadAdjust.TopRightAndBottomLeftDot:
-                    meshFilter.mesh = noWallModel;
-                    break;
-                // ========== 太い道路の端っこ ==========
-                // TODO: 壁＋１こドットのモデルがない
-                case RoadAdjust.BottomWall:
-                case RoadAdjust.BottomWallWithRightDot:
-                case RoadAdjust.BottomWallWithLeftDot:
-                    meshFilter.mesh = halfRoadModel;
-                    rotation = Quaternion.Euler(-90, 0, 0);
-                    break;
-                case RoadAdjust.LeftWall:
-                case RoadAdjust.LeftWallWithBottomDot:
-                case RoadAdjust.LeftWallWithTopDot:
-                    meshFilter.mesh = halfRoadModel;
+                    meshFilter.mesh = singleCurve;
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
-                case RoadAdjust.TopWall:
+                case RoadAdjust.TopLeftDot:
+                    meshFilter.mesh = singleCurve;
+                    rotation = Quaternion.Euler(-90, -90, 0);
+                    break;
+                case RoadAdjust.TopRightDot:
+                    meshFilter.mesh = singleCurve;
+                    break;
+                // ２角
+                case RoadAdjust.TopDoubleDot:
+                    meshFilter.mesh = doubleCurve;
+                    rotation = Quaternion.Euler(-90, 90, 0);
+                    break;
+                case RoadAdjust.BottomDoubleDot:
+                    meshFilter.mesh = doubleCurve;
+                    rotation = Quaternion.Euler(-90, -90, 0);
+                    break;
+                case RoadAdjust.LeftDoubleDot:
+                    meshFilter.mesh = doubleCurve;
+                    break;
+                case RoadAdjust.RightDoubleDot:
+                    meshFilter.mesh = doubleCurve;
+                    rotation = Quaternion.Euler(-90, -180, 0);
+                    break;
+                // TODO: 斜めドットのモデルがない
+                case RoadAdjust.TopLeftAndBottomRightDot:
+                    meshFilter.mesh = diagonalCorner;
+                    rotation = Quaternion.Euler(-90, 90, 0);
+                    break;
+                case RoadAdjust.TopRightAndBottomLeftDot:
+                    meshFilter.mesh = diagonalCorner;
+                    break;
+                // 三角
+                case RoadAdjust.ExpectBottomLeftDot:
+                    meshFilter.mesh = tripleCurve;
+                    rotation = Quaternion.Euler(-90, -90, 0);
+                    break;
+                case RoadAdjust.ExpectBottomRightDot:
+                    meshFilter.mesh = tripleCurve;
+                    rotation = Quaternion.Euler(-90, 180, 0);
+                    break;
+                case RoadAdjust.ExpectTopLeftDot:
+                    meshFilter.mesh = tripleCurve;
+                    break;
+                case RoadAdjust.ExpectTopRightDot:
+                    meshFilter.mesh = tripleCurve;
+                    rotation = Quaternion.Euler(-90, 90, 0);
+                    break;
+                case RoadAdjust.NoWall:
+                    meshFilter.mesh = noWallModel;
+                    break;
+                // 壁と角　下に壁持ってきたときに右に角
+                case RoadAdjust.BottomWallWithRightDot:
+                    meshFilter.mesh = rightCornerAndBottomWall;
+                    break;
+                case RoadAdjust.LeftWallWithBottomDot:
+                    meshFilter.mesh = rightCornerAndBottomWall;
+                    rotation = Quaternion.Euler(-90, 90, 0);
+                    break;
                 case RoadAdjust.TopWallWithLeftDot:
-                case RoadAdjust.TopWallWithRightDot:
-                    meshFilter.mesh = halfRoadModel;
+                    meshFilter.mesh = rightCornerAndBottomWall;
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.RightWallWithTopDot:
-                case RoadAdjust.RightWall:
+                    meshFilter.mesh = rightCornerAndBottomWall;
+                    rotation = Quaternion.Euler(-90, -90, 0);
+                    break;
+                // 壁と角　下に壁持ってきたときに左に角
+                case RoadAdjust.BottomWallWithLeftDot:
+                    meshFilter.mesh = leftCornerAndBottomWall;
+                    break;
+                case RoadAdjust.LeftWallWithTopDot:
+                    meshFilter.mesh = leftCornerAndBottomWall;
+                    rotation = Quaternion.Euler(-90, 90, 0);
+                    break;
+                case RoadAdjust.TopWallWithRightDot:
+                    meshFilter.mesh = leftCornerAndBottomWall;
+                    rotation = Quaternion.Euler(-90, 180, 0);
+                    break;
                 case RoadAdjust.RightWallWithBottomDot:
+                    meshFilter.mesh = leftCornerAndBottomWall;
+                    rotation = Quaternion.Euler(-90, -90, 0);
+                    break;
+                // ========= 壁だけ ==========
+                case RoadAdjust.LeftWall:
+                    meshFilter.mesh = halfRoadModel;
+                    rotation = Quaternion.Euler(-90, 90, 0);
+                    break;
+                case RoadAdjust.RightWall:
                     meshFilter.mesh = halfRoadModel;
                     rotation = Quaternion.Euler(-90, -90, 0);
+                    break;
+                case RoadAdjust.BottomWall:
+                    meshFilter.mesh = halfRoadModel;
+                    rotation = Quaternion.Euler(-90, 0, 0);
+                    break;
+                case RoadAdjust.TopWall:
+                    meshFilter.mesh = halfRoadModel;
+                    rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 // ========== L字壁 ==========
                 case RoadAdjust.TopRightHalfOnce:
@@ -210,6 +291,10 @@ namespace AClass
                 case RoadAdjust.TopLeftHalfOnce:
                     meshFilter.mesh = halfOnceModel;
                     rotation = Quaternion.Euler(-90, -90, 0);
+                    break;
+                // つながっていない場合
+                case RoadAdjust.NoAdjust:
+                    meshFilter.mesh = noneModel;
                     break;
             }
 

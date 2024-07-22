@@ -246,26 +246,26 @@ namespace AClass
             // 斜め点　２個ない
             else if (left && right && top && bottom && topRight && bottomLeft)
             {
-                return RoadAdjust.TopLeftAndBottomRightDot;
+                return RoadAdjust.TopRightAndBottomLeftDot;
             }
             else if (left && right && top && bottom && topLeft && bottomRight)
             {
-                return RoadAdjust.TopRightAndBottomLeftDot;
+                return RoadAdjust.TopLeftAndBottomRightDot;
             }
             // 3つ点
-            else if (left && right && top && bottom && topRight)
+            else if (left && right && top && bottom && bottomRight)
             {
                 return RoadAdjust.ExpectBottomRightDot;
             }
-            else if (left && right && top && bottom && topLeft)
+            else if (left && right && top && bottom && bottomLeft)
             {
                 return RoadAdjust.ExpectBottomLeftDot;
             }
-            else if (left && right && top && bottom && bottomRight)
+            else if (left && right && top && bottom && topRight)
             {
                 return RoadAdjust.ExpectTopRightDot;
             }
-            else if (left && right && top && bottom && bottomLeft)
+            else if (left && right && top && bottom && topLeft)
             {
                 return RoadAdjust.ExpectTopLeftDot;
             }
@@ -403,7 +403,7 @@ namespace AClass
             }
             else
             {
-                return RoadAdjust.None;
+                return RoadAdjust.NoAdjust;
             }
         }
     }
