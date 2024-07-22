@@ -403,7 +403,7 @@ namespace AClass
             }
             else
             {
-                return RoadAdjust.None;
+                return RoadAdjust.NoAdjust;
             }
         }
     }

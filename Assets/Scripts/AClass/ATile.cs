@@ -212,6 +212,7 @@ namespace AClass
                 // つながっていない場合
                 default:
                     meshFilter.mesh = noneModel;
+                    break;
             }
 
             // つながった道の回転を設定
