@@ -154,27 +154,42 @@ namespace AClass
                 // ========== 太い道路 ==========
                 // ========== 太い道路の真ん中 ==========
                 case RoadAdjust.NoWall:
-                case RoadAdjust.BottomLeftInner:
-                case RoadAdjust.BottomRightInner:
-                case RoadAdjust.TopLeftInner:
-                case RoadAdjust.TopRightInner:
+                case RoadAdjust.BottomLeftDot:
+                case RoadAdjust.BottomRightDot:
+                case RoadAdjust.TopLeftDot:
+                case RoadAdjust.TopRightDot:
+                case RoadAdjust.TopDoubleDot:
+                case RoadAdjust.BottomDoubleDot:
+                case RoadAdjust.LeftDoubleDot:
+                case RoadAdjust.RightDoubleDot:
+                case RoadAdjust.TopLeftAndBottomRightDot:
+                case RoadAdjust.TopRightAndBottomLeftDot:
                     meshFilter.mesh = noWallModel;
                     break;
                 // ========== 太い道路の端っこ ==========
-                case RoadAdjust.LeftRightTopHalfRoad:
+                case RoadAdjust.BottomWall:
+                case RoadAdjust.BottomWallWithRightDot:
+                case RoadAdjust.BottomWallWithLeftDot:
                     meshFilter.mesh = halfRoadModel;
-                    rotation = Quaternion.Euler(-90, -90, 0);
+                    rotation = Quaternion.Euler(-90, 0, 0);
                     break;
-                case RoadAdjust.TopBottomRightHalfRoad:
-                    meshFilter.mesh = halfRoadModel;
-                    break;
-                case RoadAdjust.LeftRightBottomHalfRoad:
+                case RoadAdjust.LeftWall:
+                case RoadAdjust.LeftWallWithBottomDot:
+                case RoadAdjust.LeftWallWithTopDot:
                     meshFilter.mesh = halfRoadModel;
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
-                case RoadAdjust.TopBottomLeftHalfRoad:
+                case RoadAdjust.TopWall:
+                case RoadAdjust.TopWallWithLeftDot:
+                case RoadAdjust.TopWallWithRightDot:
                     meshFilter.mesh = halfRoadModel;
                     rotation = Quaternion.Euler(-90, 180, 0);
+                    break;
+                case RoadAdjust.RightWallWithTopDot:
+                case RoadAdjust.RightWall:
+                case RoadAdjust.RightWallWithBottomDot:
+                    meshFilter.mesh = halfRoadModel;
+                    rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // ========== L字壁 ==========
                 case RoadAdjust.TopRightHalfOnce:

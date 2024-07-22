@@ -28,10 +28,21 @@
         NoWall,
 
         // 直線
-        TopBottomLeftHalfRoad,
-        TopBottomRightHalfRoad,
-        LeftRightTopHalfRoad,
-        LeftRightBottomHalfRoad,
+        TopWall,
+        BottomWall,
+        RightWall,
+        LeftWall,
+
+        // 直線＋ドット
+        BottomWallWithRightDot,
+        BottomWallWithLeftDot,
+        LeftWallWithBottomDot,
+        LeftWallWithTopDot,
+        TopWallWithLeftDot,
+        TopWallWithRightDot,
+        RightWallWithTopDot,
+        RightWallWithBottomDot,
+
 
         // L字外側
         TopLeftHalfOnce,
@@ -40,9 +51,25 @@
         BottomRightHalfOnce,
 
         // L字内側
-        TopLeftInner,
-        BottomLeftInner,
-        TopRightInner,
-        BottomRightInner,
+        TopLeftDot,
+        BottomLeftDot,
+        TopRightDot,
+        BottomRightDot,
+
+        // 太い道路からの細道
+        TopDoubleDot,
+        BottomDoubleDot,
+        RightDoubleDot,
+        LeftDoubleDot,
+
+        // 斜めの点のやつ
+        TopLeftAndBottomRightDot,
+        TopRightAndBottomLeftDot,
+
+        // ３つのどっと
+        ExpectTopRightDot,
+        ExpectTopLeftDot,
+        ExpectBottomRightDot,
+        ExpectBottomLeftDot,
     }
 }
