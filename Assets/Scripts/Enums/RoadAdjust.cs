@@ -21,6 +21,6 @@
         RightBottomTop,
         BottomLeftRight,
         Cross,
-        None, 
+        NoAdjust,
     }
 }

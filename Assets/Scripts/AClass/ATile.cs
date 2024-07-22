@@ -9,9 +9,7 @@ namespace AClass
         [SerializeField] protected Mesh defaultModel;
 
         /** どこにもつながっていないモデル */
-#pragma warning disable CS0414 // フィールドは割り当てられていますがその値は使用されていません
         [SerializeField] protected Mesh noneModel;
-#pragma warning restore CS0414 // フィールドは割り当てられていますがその値は使用されていません
 
         /** 行き止まりのモデル */
         [SerializeField] protected Mesh deadEndModel;
@@ -140,6 +138,10 @@ namespace AClass
                     break;
                 case RoadAdjust.Cross:
                     meshFilter.mesh = crossroadsModel;
+                    break;
+                // つながっていない場合
+                default:
+                    meshFilter.mesh = noneModel;
                     break;
             }
 

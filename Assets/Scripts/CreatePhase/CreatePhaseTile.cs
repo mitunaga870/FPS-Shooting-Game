@@ -11,7 +11,6 @@ namespace CreatePhase
         /** 連続入力防止時間 */
         private const float ContinuousInputPreventionTime = 1f;
 
-
         private MazeCreationController _mazeCreationController;
 
         /** クリックの連続入力を防ぐためのフラグ */

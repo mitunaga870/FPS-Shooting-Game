@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AClass;
@@ -193,9 +194,11 @@ namespace CreatePhase
             IsEditingRoad = true;
             EditingTargetTileType = targetTypes;
 
+            // プレビュー配列初期化
+            _previewAddresses = new List<Dictionary<string, int>>();
+
             // プレビュー中のタイルに追加
-            Maze[startRow][startCol].SetPreview();
-            _previewAddresses.Add(new Dictionary<string, int> { ["col"] = startCol, ["row"] = startRow });
+            PreviewRoadEdit(startCol, startRow);
         }
 
         /**
@@ -220,7 +223,8 @@ namespace CreatePhase
             }
 
             var newRoadAddresses = new List<Dictionary<string, int>>();
-            
+
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (this.EditingTargetTileType)
             {
                 // 道を設置のとき
@@ -255,6 +259,7 @@ namespace CreatePhase
                     throw new ArgumentOutOfRangeException();
             }
 
+            Debug.Log(newRoadAddresses.Count);
 
             // 道を設置
             foreach (var address in newRoadAddresses)
@@ -292,9 +297,11 @@ namespace CreatePhase
             var startCol = (int)_startEditCol;
             var startRow = (int)_startEditRow;
 
+            // 最後に編集した列と行を取得 カウントが0の時は最初なので開始地点を設定
+            var lastCol = _previewAddresses.Count == 0 ? startCol : _previewAddresses[^1]["col"];
+            var lastRow = _previewAddresses.Count == 0 ? startRow : _previewAddresses[^1]["row"];
+
             // 横からつないだか縦からつないだか判定
-            var lastCol = _previewAddresses[^1]["col"];
-            var lastRow = _previewAddresses[^1]["row"];
             if (lastCol == endCol)
             {
                 _lastEditVertical = false;
@@ -497,7 +504,7 @@ namespace CreatePhase
             }
             else
             {
-                return RoadAdjust.None;
+                return RoadAdjust.NoAdjust;
             }
         }
 
