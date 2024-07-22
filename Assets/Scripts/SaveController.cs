@@ -1,7 +1,7 @@
 using DataClass;
 using UnityEngine;
 
-public static class SaveController
+public static class SaveControler
 {
     // =======　保存処理　=======
     public static void SaveTileData(TileData[][] tileData)

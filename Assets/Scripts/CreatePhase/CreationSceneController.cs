@@ -1,4 +1,3 @@
-using System;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -25,7 +24,7 @@ namespace CreatePhase
          */
         private void OnApplicationQuit()
         {
-            SaveController.SaveTileData(mazeCreationController.GetTileData());
+            SaveControler.SaveTileData(mazeCreationController.GetTileData());
         }
 
         /**
