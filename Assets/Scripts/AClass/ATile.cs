@@ -154,19 +154,23 @@ namespace AClass
                 // ========== 太い道路 ==========
                 // ========== 太い道路の真ん中 ==========
                 case RoadAdjust.NoWall:
+                // TODO: 一個のドットのモデルがない
                 case RoadAdjust.BottomLeftDot:
                 case RoadAdjust.BottomRightDot:
                 case RoadAdjust.TopLeftDot:
                 case RoadAdjust.TopRightDot:
+                // TODO: 二個のドットのモデルがない
                 case RoadAdjust.TopDoubleDot:
                 case RoadAdjust.BottomDoubleDot:
                 case RoadAdjust.LeftDoubleDot:
                 case RoadAdjust.RightDoubleDot:
+                // TODO: 斜めドットのモデルがない
                 case RoadAdjust.TopLeftAndBottomRightDot:
                 case RoadAdjust.TopRightAndBottomLeftDot:
                     meshFilter.mesh = noWallModel;
                     break;
                 // ========== 太い道路の端っこ ==========
+                // TODO: 壁＋１こドットのモデルがない
                 case RoadAdjust.BottomWall:
                 case RoadAdjust.BottomWallWithRightDot:
                 case RoadAdjust.BottomWallWithLeftDot:
