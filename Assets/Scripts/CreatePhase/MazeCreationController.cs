@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AClass;
 using CreatePhase.UI;
 using Enums;
 using ScriptableObjects.S2SDataObjects;
-using Traps;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -193,9 +193,11 @@ namespace CreatePhase
             IsEditingRoad = true;
             EditingTargetTileType = targetTypes;
 
+            // プレビュー配列初期化
+            _previewAddresses = new List<Dictionary<string, int>>();
+
             // プレビュー中のタイルに追加
-            Maze[startRow][startCol].SetPreview();
-            _previewAddresses.Add(new Dictionary<string, int> { ["col"] = startCol, ["row"] = startRow });
+            PreviewRoadEdit(startCol, startRow);
         }
 
         /**
@@ -220,36 +222,43 @@ namespace CreatePhase
             }
 
             var newRoadAddresses = new List<Dictionary<string, int>>();
-            // 道を設置のとき
-            if (this.EditingTargetTileType == TileTypes.Road)
-            {
-                // 既存の道にプレビュー中の道を追加
-                foreach (var address in roadAddresses)
-                {
-                    newRoadAddresses.Add(address);
-                }
 
-                foreach (var address in _previewAddresses)
-                {
-                    newRoadAddresses.Add(address);
-                }
-            }
-            // 道を削除のとき
-            else if (this.EditingTargetTileType == TileTypes.Nothing)
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+            switch (this.EditingTargetTileType)
             {
-                // 既存の道からプレビュー中の道を削除
-                foreach (var address in roadAddresses)
+                // 道を設置のとき
+                case TileTypes.Road:
                 {
-                    if (_previewAddresses.Exists(previewAddress =>
-                            previewAddress["col"] == address["col"] && previewAddress["row"] == address["row"]))
+                    // 既存の道にプレビュー中の道を追加
+                    newRoadAddresses.AddRange(roadAddresses);
+
+                    newRoadAddresses.AddRange(_previewAddresses);
+
+                    break;
+                }
+                // 道を削除のとき
+                case TileTypes.Nothing:
+                {
+                    // 既存の道からプレビュー中の道を削除
+                    // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
+                    foreach (var address in roadAddresses)
                     {
-                        continue;
+                        if (_previewAddresses.Exists(previewAddress =>
+                                previewAddress["col"] == address["col"] && previewAddress["row"] == address["row"]))
+                        {
+                            continue;
+                        }
+
+                        newRoadAddresses.Add(address);
                     }
 
-                    newRoadAddresses.Add(address);
+                    break;
                 }
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
+            Debug.Log(newRoadAddresses.Count);
 
             // 道を設置
             foreach (var address in newRoadAddresses)
@@ -287,9 +296,11 @@ namespace CreatePhase
             var startCol = (int)_startEditCol;
             var startRow = (int)_startEditRow;
 
+            // 最後に編集した列と行を取得 カウントが0の時は最初なので開始地点を設定
+            var lastCol = _previewAddresses.Count == 0 ? startCol : _previewAddresses[^1]["col"];
+            var lastRow = _previewAddresses.Count == 0 ? startRow : _previewAddresses[^1]["row"];
+
             // 横からつないだか縦からつないだか判定
-            var lastCol = _previewAddresses[^1]["col"];
-            var lastRow = _previewAddresses[^1]["row"];
             if (lastCol == endCol)
             {
                 _lastEditVertical = false;
@@ -409,92 +420,6 @@ namespace CreatePhase
         }
 
         // ==================== プライベート関数 ====================
-
-        /**
-     * タイルのつながり肩を取得
-     */
-        private RoadAdjust GetRoadAdjust(int col, int row, List<Dictionary<string, int>> connectedTileAddress)
-        {
-            // 上下左右のタイルがつながっているか
-            var bottom = row - 1 >= 0 &&
-                         connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row - 1);
-            var left = col - 1 >= 0 &&
-                       connectedTileAddress.Exists(address => address["col"] == col - 1 && address["row"] == row);
-            var right = col + 1 < MazeColumns &&
-                        connectedTileAddress.Exists(address => address["col"] == col + 1 && address["row"] == row);
-            var top = row + 1 < MazeRows &&
-                      connectedTileAddress.Exists(address => address["col"] == col && address["row"] == row + 1);
-
-            // 十字
-            if (top && left && right && bottom)
-            {
-                return RoadAdjust.Cross;
-            }
-            // T字
-            else if (top && left && right)
-            {
-                return RoadAdjust.TopRightLeft;
-            }
-            else if (top && left && bottom)
-            {
-                return RoadAdjust.LeftTopBottom;
-            }
-            else if (top && right && bottom)
-            {
-                return RoadAdjust.RightBottomTop;
-            }
-            else if (left && right && bottom)
-            {
-                return RoadAdjust.BottomLeftRight;
-            }
-            // L字
-            else if (top && left)
-            {
-                return RoadAdjust.TopLeft;
-            }
-            else if (top && right)
-            {
-                return RoadAdjust.TopRight;
-            }
-            else if (left && bottom)
-            {
-                return RoadAdjust.BottomLeft;
-            }
-            else if (right && bottom)
-            {
-                return RoadAdjust.RightBottom;
-            }
-            // 直線
-            else if (top && bottom)
-            {
-                return RoadAdjust.TopBottom;
-            }
-            else if (left && right)
-            {
-                return RoadAdjust.LeftRight;
-            }
-            // 行き止まり
-            else if (top)
-            {
-                return RoadAdjust.TopDeadEnd;
-            }
-            else if (left)
-            {
-                return RoadAdjust.LeftDeadEnd;
-            }
-            else if (right)
-            {
-                return RoadAdjust.RightDeadEnd;
-            }
-            else if (bottom)
-            {
-                return RoadAdjust.BottomDeadEnd;
-            }
-            else
-            {
-                return RoadAdjust.None;
-            }
-        }
 
         /**
      * 道のアドレスを取得

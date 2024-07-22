@@ -11,7 +11,6 @@ namespace CreatePhase
         /** 連続入力防止時間 */
         private const float ContinuousInputPreventionTime = 1f;
 
-
         private MazeCreationController _mazeCreationController;
 
         /** クリックの連続入力を防ぐためのフラグ */
@@ -92,8 +91,7 @@ namespace CreatePhase
         {
             // UIでブロックされている場合は処理しない
             if (General.IsPointerOverUIObject()) return;
-            // 連続入力を防ぐ
-            if (_continuousMouseEnterFlag) return;
+
             // 道編集中でない場合は処理しない
             if (!_mazeCreationController.IsEditingRoad) return;
 
@@ -105,6 +103,9 @@ namespace CreatePhase
             {
                 _mazeCreationController.PreviewRoadEdit(Column, Row);
             }
+
+            // 連続入力を防ぐ
+            if (_continuousMouseEnterFlag) return;
 
             // 連続入力フラグを立てる
             _continuousMouseEnterFlag = true;
