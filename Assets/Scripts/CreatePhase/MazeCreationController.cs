@@ -220,34 +220,39 @@ namespace CreatePhase
             }
 
             var newRoadAddresses = new List<Dictionary<string, int>>();
-            // 道を設置のとき
-            if (this.EditingTargetTileType == TileTypes.Road)
+            
+            switch (this.EditingTargetTileType)
             {
-                // 既存の道にプレビュー中の道を追加
-                foreach (var address in roadAddresses)
+                // 道を設置のとき
+                case TileTypes.Road:
                 {
-                    newRoadAddresses.Add(address);
-                }
+                    // 既存の道にプレビュー中の道を追加
+                    newRoadAddresses.AddRange(roadAddresses);
 
-                foreach (var address in _previewAddresses)
-                {
-                    newRoadAddresses.Add(address);
+                    newRoadAddresses.AddRange(_previewAddresses);
+
+                    break;
                 }
-            }
-            // 道を削除のとき
-            else if (this.EditingTargetTileType == TileTypes.Nothing)
-            {
-                // 既存の道からプレビュー中の道を削除
-                foreach (var address in roadAddresses)
+                // 道を削除のとき
+                case TileTypes.Nothing:
                 {
-                    if (_previewAddresses.Exists(previewAddress =>
-                            previewAddress["col"] == address["col"] && previewAddress["row"] == address["row"]))
+                    // 既存の道からプレビュー中の道を削除
+                    // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
+                    foreach (var address in roadAddresses)
                     {
-                        continue;
+                        if (_previewAddresses.Exists(previewAddress =>
+                                previewAddress["col"] == address["col"] && previewAddress["row"] == address["row"]))
+                        {
+                            continue;
+                        }
+
+                        newRoadAddresses.Add(address);
                     }
 
-                    newRoadAddresses.Add(address);
+                    break;
                 }
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
 
