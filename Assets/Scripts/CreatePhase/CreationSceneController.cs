@@ -25,10 +25,10 @@ namespace CreatePhase
          */
         private void OnApplicationQuit()
         {
-            Debug.Log("Saving...");
             // セーブデータを保存
             SaveController.SavePhase(Phase.Create);
             SaveController.SaveTileData(mazeCreationController.GetTileData());
+            SaveController.SaveTrapData(mazeCreationController.TrapData);
         }
 
         /**

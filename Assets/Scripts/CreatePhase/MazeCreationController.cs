@@ -60,7 +60,7 @@ namespace CreatePhase
         public bool IsOneStrokeMode { get; private set; }
 
         /** 設置したトラップ情報 */
-        private TrapData[] TrapData { get; set; }
+        public TrapData[] TrapData { get; private set; }
 
         // Start is called before the first frame update
         private void Start()
@@ -73,9 +73,10 @@ namespace CreatePhase
 
             // セーブデータ読み込み
             var tileData = SaveController.LoadTileData();
+            var trapData = SaveController.LoadTrapData();
 
             // 迷路の生成
-            CreateMaze(tileData);
+            CreateMaze(tileData, trapData);
 
             // リロールボタンの表示
             reRollButton.Show(ReRollWaitTime);
@@ -98,7 +99,7 @@ namespace CreatePhase
      * 迷路の生成
      * すべてのタイルを生成し、初期化する
      */
-        private void CreateMaze([CanBeNull] TileData[][] tileData)
+        private void CreateMaze([CanBeNull] TileData[][] tileData, [CanBeNull] TrapData[] trapData = null)
         {
             // 原点を設定
             _mazeOrigin = new Vector3(-(MazeColumns - 1) / 2.0f, 0,
@@ -142,6 +143,34 @@ namespace CreatePhase
             }
 
             // ============== トラップ設置 ================
+            if (trapData != null)
+            {
+                // トラップ情報を設定
+                TrapData = trapData;
+                createToInvasionData.TrapData = trapData;
+
+                // トラップを設置
+                for (var i = 0; i < TrapCount; i++)
+                {
+                    var trap = TrapData[i];
+                    Maze[trap.Row][trap.Column].SetTrap(trapData[i].Trap);
+                }
+            }
+            else
+            {
+                SetRandomTrap();
+            }
+
+            // スタートとゴールを設置
+            Maze[StartPosition.Row][StartPosition.Col].SetStart();
+            Maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
+        }
+
+        /**
+         * ランダムにトラップを設置
+         */
+        public void SetRandomTrap()
+        {
             // トラップ配列を初期化
             TrapData = new TrapData[TrapCount];
             createToInvasionData.TrapData = new TrapData[TrapCount];
@@ -160,7 +189,7 @@ namespace CreatePhase
                     var column = Random.Range(0, MazeColumns);
 
                     // トラップを設置
-                    trap = Maze[row][column].SetTrap();
+                    trap = Maze[row][column].SetRandTrap();
 
                     // トラップ情報を格納
                     TrapData[i] = new TrapData(row, column, trap);
@@ -169,10 +198,6 @@ namespace CreatePhase
                     if (loopCount++ > 10) break;
                 }
             }
-
-            // スタートとゴールを設置
-            Maze[StartPosition.Row][StartPosition.Col].SetStart();
-            Maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
         }
 
         /**
@@ -191,12 +216,6 @@ namespace CreatePhase
                 {
                     Maze[row][column].ResetTile();
                 }
-            }
-
-            // トラップ情報を削除
-            foreach (var trapData in TrapData)
-            {
-                trapData.Dispose();
             }
         }
 
@@ -534,6 +553,9 @@ namespace CreatePhase
             SyncMazeData(maze);
         }
 
+        /**
+         * タイルデータを取得
+         */
         public TileData[][] GetTileData()
         {
             var result = new TileData[Maze.Length][];

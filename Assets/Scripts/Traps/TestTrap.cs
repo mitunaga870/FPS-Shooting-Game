@@ -5,7 +5,7 @@ namespace Traps
 {
     public class TestTrap : ATrap
     {
-        public readonly string TrapName = "TestTrap";
+        public static readonly string TrapName = "TestTrap";
 
         public override void Awake()
         {
@@ -15,6 +15,11 @@ namespace Traps
         public override float GetHeight()
         {
             return trapData.TestTrapHeight;
+        }
+
+        public override string GetTrapName()
+        {
+            return TrapName;
         }
     }
 }

@@ -1,4 +1,5 @@
 using Enums;
+using lib;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -302,45 +303,6 @@ namespace AClass
             transform.rotation = rotation;
         }
 
-        public ATrap SetTrap()
-        {
-            // 既に道・トラップが設定されている場合は処理しない
-            if (TileType == TileTypes.Trap) return null;
-
-            // タイルの種類をトラップに設定
-            TileType = TileTypes.Trap;
-
-            var traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
-            ATrap trap = null;
-
-            // 無限ループ禁止用
-            var loopCount = 0;
-
-            // ランダムなトラップを設定
-            do
-            {
-                // トラップがある場合は削除
-                if (trap != null) Destroy(trap);
-
-                // ランダムなトラップ用インデックスを取得
-                var randomIndex = Random.Range(0, traps.Length);
-
-                // トラップを生成
-                trap = Instantiate(traps[randomIndex], transform.position, Quaternion.identity);
-
-                // トラップの高さを設定
-                var position = trap.transform.position;
-                position = new Vector3(position.x, trap.GetHeight(), position.z);
-                trap.transform.position = position;
-
-                // 設置できるものがない等で無限ループになる場合があるので、10回で終了
-                if (loopCount++ > 10) break;
-
-                // トラップが禁止エリアかどうか
-            } while (ATrap.IsProhibitedArea(Row, Column));
-
-            return trap;
-        }
 
         public void ResetTile()
         {
@@ -398,6 +360,24 @@ namespace AClass
         {
             // TODO: ゴール地点の状態固定と示し方を決める
             SetColor(Color.red);
+        }
+
+        /**
+         * 指定されたトラップを設置する
+         */
+        public void SetTrap(string trapName)
+        {
+            var tilePosition = transform.position;
+
+            // トラップを生成
+            var trap = TrapGenerator.GenerateTrap(trapName);
+
+            // トラップの位置を設定
+            trap.transform.position = new Vector3(
+                tilePosition.x,
+                trap.GetHeight(),
+                tilePosition.z
+            );
         }
     }
 }
