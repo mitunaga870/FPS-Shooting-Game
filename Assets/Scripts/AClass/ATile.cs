@@ -56,7 +56,7 @@ namespace AClass
         [SerializeField] protected Mesh diagonalCorner;
 
         /** 現在のタイルタイプ */
-        private TileTypes _tileType;
+        private TileTypes _tileType = TileTypes.Nothing;
 
         public TileTypes TileType
         {

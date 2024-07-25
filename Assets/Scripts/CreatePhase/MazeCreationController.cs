@@ -137,7 +137,6 @@ namespace CreatePhase
                         newTile.Initialize(this, row, column, data.TileType, data.RoadAdjust);
                     }
 
-                    // タイルを迷路に追加する
                     Maze[row][column] = newTile;
                 }
             }
@@ -471,7 +470,7 @@ namespace CreatePhase
                      col < MazeColumns;
                      col++)
                 {
-                    if (Maze[row][col].GetTileType() == TileTypes.Road)
+                    if (Maze[row][col].TileType == TileTypes.Road)
                     {
                         roadAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
                     }
@@ -520,7 +519,7 @@ namespace CreatePhase
                     createToInvasionData.TileData[row][column] = new TileData(
                         row,
                         column,
-                        tile.GetTileType(),
+                        tile.TileType,
                         tile.RoadAdjust
                     );
                 }
@@ -565,7 +564,7 @@ namespace CreatePhase
                 result[i] = new TileData[Maze[i].Length];
                 for (var j = 0; j < Maze[i].Length; j++)
                 {
-                    result[i][j] = new TileData(i, j, Maze[i][j].GetTileType(), Maze[i][j].RoadAdjust);
+                    result[i][j] = new TileData(i, j, Maze[i][j].TileType, Maze[i][j].RoadAdjust);
                 }
             }
 

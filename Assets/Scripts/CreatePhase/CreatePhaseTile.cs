@@ -29,7 +29,6 @@ namespace CreatePhase
         void Start()
         {
             // 初期状態指定
-            TileType = TileTypes.Nothing;
             _continuousClickFlag = false;
             _continuousMouseEnterFlag = false;
             GetComponent<Outline>().enabled = false;
@@ -143,7 +142,7 @@ namespace CreatePhase
         {
             Initialize(mazeCreationController, row, column);
 
-            // タイルの種類を設定
+            // タイルの種類によって処理を変える
             switch (tileType)
             {
                 case TileTypes.Road:
@@ -179,14 +178,6 @@ namespace CreatePhase
 
             // プレビュー中のタイルの色を元に戻す
             GetComponent<Outline>().enabled = false;
-        }
-
-        /**
-     * タイルタイプ取得
-     */
-        public TileTypes GetTileType()
-        {
-            return TileType;
         }
 
         /**
