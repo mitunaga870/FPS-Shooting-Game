@@ -1,3 +1,4 @@
+using Enums;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -18,6 +19,17 @@ namespace CreatePhase
 
         /** ステージ情報 */
         [SerializeField] private StageData stageData;
+
+        /**
+         * やめるときの保存処理
+         */
+        private void OnApplicationQuit()
+        {
+            // セーブデータを保存
+            SaveController.SavePhase(Phase.Create);
+            SaveController.SaveTileData(mazeCreationController.GetTileData());
+            SaveController.SaveTrapData(mazeCreationController.TrapData);
+        }
 
         /**
          * 侵攻フェーズに移動する

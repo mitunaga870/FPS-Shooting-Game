@@ -1,5 +1,6 @@
 using AClass;
 using Traps;
+using UnityEngine;
 
 namespace DataClass
 {
@@ -7,18 +8,27 @@ namespace DataClass
     {
         public readonly int Column;
         public readonly int Row;
-        public readonly ATrap Trap;
+        public readonly string Trap;
 
         public TrapData(int row, int column, ATrap trap)
         {
             Row = row;
             Column = column;
-            Trap = trap;
+            Trap = trap.GetTrapName();
         }
 
-        public void Dispose()
+        public TrapData(string trapData)
         {
-            Trap.Destroy();
+            var data = trapData.Split("%%");
+
+            Row = int.Parse(data[0]);
+            Column = int.Parse(data[1]);
+            Trap = data[2];
+        }
+
+        public override string ToString()
+        {
+            return $"{Row}%%{Column}%%{Trap}";
         }
     }
 }

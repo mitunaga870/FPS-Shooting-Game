@@ -1,8 +1,10 @@
+using System;
 using AClass;
 using Enums;
 using lib;
 using Traps;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace CreatePhase
 {
@@ -27,7 +29,6 @@ namespace CreatePhase
         void Start()
         {
             // 初期状態指定
-            TileType = TileTypes.Nothing;
             _continuousClickFlag = false;
             _continuousMouseEnterFlag = false;
             GetComponent<Outline>().enabled = false;
@@ -53,7 +54,8 @@ namespace CreatePhase
                 _continuousClickFlag = true;
                 // 0.5秒後に連続入力フラグを下ろす
                 StartCoroutine(
-                    General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
+                    General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false)
+                );
             }
             else if (!_mazeCreationController.IsEditingRoad && Input.GetMouseButton(1))
             {
@@ -62,7 +64,8 @@ namespace CreatePhase
                 _continuousClickFlag = true;
                 // 0.5秒後に連続入力フラグを下ろす
                 StartCoroutine(
-                    General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false));
+                    General.DelayCoroutine(ContinuousInputPreventionTime, () => _continuousClickFlag = false)
+                );
             }
             // 道編集中の同ボタンは終了
             else if (_mazeCreationController.IsEditingRoad &&
@@ -83,6 +86,7 @@ namespace CreatePhase
                 _mazeCreationController.CancelRoadEdit();
             }
         }
+
 
         /**
      * プレビュー用
@@ -121,11 +125,30 @@ namespace CreatePhase
      */
         public void Initialize(MazeCreationController mazeCreationController, int row, int column)
         {
-            if (this._mazeCreationController != null) return;
+            if (this._mazeCreationController != null) throw new Exception("Already initialized.");
 
             this._mazeCreationController = mazeCreationController;
             this.Row = row;
             this.Column = column;
+        }
+
+        public void Initialize(
+            MazeCreationController mazeCreationController,
+            int row,
+            int column,
+            TileTypes tileType,
+            RoadAdjust roadAdjust
+        )
+        {
+            Initialize(mazeCreationController, row, column);
+
+            // タイルの種類によって処理を変える
+            switch (tileType)
+            {
+                case TileTypes.Road:
+                    SetRoad(roadAdjust);
+                    break;
+            }
         }
 
 
@@ -158,11 +181,46 @@ namespace CreatePhase
         }
 
         /**
-     * タイルタイプ取得
-     */
-        public TileTypes GetTileType()
+         * ランダムなトラップを設定する
+         */
+        public ATrap SetRandTrap()
         {
-            return TileType;
+            // 既に道・トラップが設定されている場合は処理しない
+            if (TileType == TileTypes.Trap) return null;
+
+            // タイルの種類をトラップに設定
+            TileType = TileTypes.Trap;
+
+            var traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
+            ATrap trap = null;
+
+            // 無限ループ禁止用
+            var loopCount = 0;
+
+            // ランダムなトラップを設定
+            do
+            {
+                // トラップがある場合は削除
+                if (trap != null) Destroy(trap);
+
+                // ランダムなトラップ用インデックスを取得
+                var randomIndex = Random.Range(0, traps.Length);
+
+                // トラップを生成
+                trap = Instantiate(traps[randomIndex], transform.position, Quaternion.identity);
+
+                // トラップの高さを設定
+                var position = trap.transform.position;
+                position = new Vector3(position.x, trap.GetHeight(), position.z);
+                trap.transform.position = position;
+
+                // 設置できるものがない等で無限ループになる場合があるので、10回で終了
+                if (loopCount++ > 10) break;
+
+                // トラップが禁止エリアかどうか
+            } while (ATrap.IsProhibitedArea(Row, Column));
+
+            return trap;
         }
     }
 }

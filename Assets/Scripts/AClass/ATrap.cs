@@ -27,6 +27,11 @@ namespace AClass
             return false;
         }
 
+        /**
+         * トラップデータ用文字列の取得
+         */
+        public abstract string GetTrapName();
+
         public void Destroy()
         {
             Destroy(gameObject);
