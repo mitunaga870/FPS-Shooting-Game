@@ -1,3 +1,4 @@
+using System;
 using AClass;
 using Enums;
 using lib;
@@ -14,13 +15,16 @@ namespace InvasionPhase
             Column = column;
 
             // タイルのステータスによって処理を変える
-            if (tileType == TileTypes.Nothing)
+            switch (tileType)
             {
-                SetNone();
-            }
-            else
-            {
-                SetRoad(roadAdjust);
+                case TileTypes.Nothing:
+                    SetNone();
+                    break;
+                case TileTypes.Road:
+                    SetRoad(roadAdjust);
+                    break;
+                default:
+                    throw new Exception("未対応のタイルタイプです");
             }
         }
     }
