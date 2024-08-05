@@ -12,11 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1bce23ec332114c871e292e78c4f15, type: 3}
   m_Name: StageData
   m_EditorClassIdentifier: 
-  OneOneReRollWaitTime: 10
-  OneOneMazeRows: 20
-  OneOneMazeColumns: 20
-  OneOneTrapCount: 10
-  OneOneStartRow: 0
-  OneOneStartColumn: 0
-  OneOneGoalRow: 10
-  OneOneGoalColumn: 5
+  stageDataList:
+  - mazeRow: 10
+    mazeColumn: 16
+    trapCount: 10
+    reRollWaitTime: 15
+    start:
+      Col: 1
+      Row: 1
+    goal:
+      Col: 1
+      Row: 1
+    invasionData:
+      spawnDataList:
+      - spawnTime: 17
+        spawnCount: 0
+      - spawnTime: 27
+        spawnCount: 0
+      - spawnTime: 27
+        spawnCount: 0
