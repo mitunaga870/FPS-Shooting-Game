@@ -45,7 +45,6 @@ namespace CreatePhase
             }
 
             // ========= シーン間のデータ共有オブジェクト関連 =========
-            // 迷路情報を取得
             mazeCreationController.SetS2SData();
 
             // 迷路情報が正しいか確認
