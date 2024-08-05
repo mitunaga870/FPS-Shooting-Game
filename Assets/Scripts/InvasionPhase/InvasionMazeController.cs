@@ -50,6 +50,12 @@ namespace InvasionPhase
                 }
             }
 
+            // トラップを設定
+            foreach (var trap in trapData)
+            {
+                _maze[trap.Row][trap.Column].SetTrap(trap.Trap);
+            }
+
             // スタート・ゴールのタイルを設定
             _maze[StartPosition.Row][StartPosition.Col].SetStart();
             _maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
