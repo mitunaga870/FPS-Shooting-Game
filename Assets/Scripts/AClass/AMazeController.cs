@@ -13,7 +13,8 @@ namespace AClass
     public abstract class AMazeController : MonoBehaviour
     {
         /** 各迷路の行列数等の情報格納するスクリプタブルオブジェクト */
-        [Header("迷路データ")] [SerializeField] private StageData stageData;
+        [FormerlySerializedAs("stageData")] [Header("迷路データ")] [SerializeField]
+        private StageObject stageObject;
 
         /** 汎用情報 */
         [FormerlySerializedAs("GeneralS2SData")] [SerializeField]
@@ -30,12 +31,12 @@ namespace AClass
 
         public int Level => generalS2SData.Level;
         public int Stage => generalS2SData.Stage;
-        public int MazeRows => stageData.GetMazeRows(Stage, Level);
-        public int MazeColumns => stageData.GetMazeColumns(Stage, Level);
-        public TilePosition StartPosition => stageData.GetStartPosition(Stage, Level);
-        public TilePosition GoalPosition => stageData.GetGoalPosition(Stage, Level);
-        public int ReRollWaitTime => stageData.GetReRollWaitTime(Stage, Level);
-        public int TrapCount => stageData.GetTrapCount(Stage, Level);
+        public int MazeRows => stageObject.GetMazeRows(0);
+        public int MazeColumns => stageObject.GetMazeColumns(0);
+        public TilePosition StartPosition => stageObject.GetStartPosition(0);
+        public TilePosition GoalPosition => stageObject.GetGoalPosition(0);
+        public int ReRollWaitTime => stageObject.GetReRollWaitTime(0);
+        public int TrapCount => stageObject.GetTrapCount(0);
 
         /**
      * ベースの迷路配列と指定配列を同期する

@@ -4,7 +4,7 @@ namespace ScriptableObjects
 {
     // ReSharper disable InconsistentNaming
     [CreateAssetMenu]
-    public class TrapData : ScriptableObject
+    public class TrapObject : ScriptableObject
     {
         [Tooltip("テストトラップの攻撃力")] public float TestTrapAtk;
 

@@ -1,12 +1,14 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace DataClass
 {
+    [Serializable]
     public class TilePosition
     {
-        public readonly int Col;
-        public readonly int Row;
+        public int Col;
+        public int Row;
 
         public TilePosition(int row, int col)
         {

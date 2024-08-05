@@ -9,12 +9,12 @@ namespace Traps
 
         public override void Awake()
         {
-            Debug.Log("Damage: " + trapData.TestTrapAtk);
+            Debug.Log("Damage: " + trapObject.TestTrapAtk);
         }
 
         public override float GetHeight()
         {
-            return trapData.TestTrapHeight;
+            return trapObject.TestTrapHeight;
         }
 
         public override string GetTrapName()
