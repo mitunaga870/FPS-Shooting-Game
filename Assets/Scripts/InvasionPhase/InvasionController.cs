@@ -1,5 +1,7 @@
+using System;
 using DataClass;
 using Enemies;
+using Enums;
 using JetBrains.Annotations;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -17,6 +19,21 @@ namespace InvasionPhase
         /** 敵のプレファブ */
         [SerializeField] private TestEnemy _testEnemy;
 
+        /** ゲームの状態 */
+        private Enums.GameState _gameState = GameState.BeforeStart;
+
+        /** ゲーム時間 */
+        public int GameTime { get; private set; } = 0;
+
+        private void FixedUpdate()
+        {
+            // 再生中ならゲーム時間を進める
+            if (_gameState == GameState.Playing)
+            {
+                GameTime++;
+            }
+        }
+
         // Start is called before the first frame update
         public void Start()
         {
@@ -29,6 +46,15 @@ namespace InvasionPhase
                 Quaternion.identity
             );
             enemy.Initialize(10, 10, mazeController.StartPosition, mazeController);
+        }
+
+        /**
+         * ゲーム開始メソッド
+         */
+        public void StartGame()
+        {
+            // ゲームの状態をプレイ中に変更
+            _gameState = GameState.Playing;
         }
     }
 }
