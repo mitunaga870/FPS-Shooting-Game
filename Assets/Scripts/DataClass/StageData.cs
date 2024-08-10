@@ -29,6 +29,11 @@ namespace DataClass
         public int reRollWaitTime;
 
         /**
+         * ステージの時間
+         */
+        public int stageTime;
+
+        /**
          * スタートの列
          */
         public TilePosition start = new TilePosition(0, 0);
@@ -41,7 +46,7 @@ namespace DataClass
         /**
          * 侵攻データ
          */
-        public InvasionData invasionData;
+        public InvasionData invasionData = new InvasionData();
 
         public StageData()
         {
@@ -56,6 +61,18 @@ namespace DataClass
                 goal.Col > mazeColumn)
             {
                 throw new System.ArgumentException("GoalRow or GoalColumn is out of range");
+            }
+
+            // ステージとゴールが同じ位置のときはエラーを吐く
+            if (start.Row == goal.Row && start.Col == goal.Col)
+            {
+                throw new System.ArgumentException("Start and Goal is same position");
+            }
+
+            // 侵攻データを確認
+            if (invasionData != null && invasionData.GetLastSpawnTime() > stageTime)
+            {
+                throw new System.ArgumentException("InvasionData is invalid");
             }
         }
     }
