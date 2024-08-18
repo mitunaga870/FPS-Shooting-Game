@@ -1,10 +1,7 @@
-using System;
-using DataClass;
-using Enemies;
 using Enums;
-using JetBrains.Annotations;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace InvasionPhase
 {
@@ -17,19 +14,19 @@ namespace InvasionPhase
         [SerializeField] private InvasionMazeController mazeController;
 
         /** 侵攻の制御を行うコントローラー */
-        [SerializeField] private InvasionEnemyController _invasionEnemyController;
-
-        /** 敵のプレファブ */
-        [SerializeField] private TestEnemy _testEnemy;
+        [FormerlySerializedAs("_invasionEnemyController")] [SerializeField]
+        private InvasionEnemyController invasionEnemyController;
 
         /** ゲームの状態 */
+        // ReSharper disable once MemberCanBePrivate.Global
         public GameState GameState { get; private set; } = GameState.BeforeStart;
 
         /** 高速時の倍速率 */
+        // ReSharper disable once InconsistentNaming
         private const int FAST_SPEED = 2;
 
         /** ゲーム時間 */
-        public int GameTime { get; private set; } = 0;
+        public int GameTime { get; private set; }
 
         private void FixedUpdate()
         {
@@ -47,22 +44,48 @@ namespace InvasionPhase
         // Start is called before the first frame update
         public void Start()
         {
-            mazeController.Create(createToInvasionData.TileData, createToInvasionData.TrapData);
+            // セーブデータ読み込み
+            var tileData = SaveController.LoadTileData();
+            var trapData = SaveController.LoadTrapData();
+
+            if (tileData == null || trapData == null)
+            {
+                // シーン間のデータ共有オブジェクトからデータを取得
+                mazeController.Create(createToInvasionData.TileData, createToInvasionData.TrapData);
+            }
+            else
+            {
+                // セーブデータからデータを取得
+                mazeController.Create(tileData, trapData);
+            }
 
             // 侵攻開始
             StartGame();
         }
 
         /**
+         * やめるときの保存処理
+         */
+        private void OnApplicationQuit()
+        {
+            // セーブデータを保存
+            SaveController.SavePhase(Phase.Invade);
+            // シーン遷移で読み込んだデータをそのまま保存
+            SaveController.SaveTileData(createToInvasionData.TileData);
+            SaveController.SaveTrapData(createToInvasionData.TrapData);
+        }
+
+
+        /**
          * ゲーム開始メソッド
          */
-        public void StartGame()
+        private void StartGame()
         {
             // ゲームの状態をプレイ中に変更
             GameState = GameState.Playing;
 
             // 各コントローラー
-            _invasionEnemyController.StartGame();
+            invasionEnemyController.StartGame();
         }
 
         public void PauseGame()

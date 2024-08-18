@@ -201,7 +201,6 @@ namespace AClass
                     meshFilter.mesh = doubleCurve;
                     rotation = Quaternion.Euler(-90, -180, 0);
                     break;
-                // TODO: 斜めドットのモデルがない
                 case RoadAdjust.TopLeftAndBottomRightDot:
                     meshFilter.mesh = diagonalCorner;
                     rotation = Quaternion.Euler(-90, 90, 0);

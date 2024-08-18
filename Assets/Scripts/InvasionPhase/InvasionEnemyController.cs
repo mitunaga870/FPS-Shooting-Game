@@ -1,4 +1,3 @@
-using System;
 using DataClass;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
@@ -10,7 +9,9 @@ namespace InvasionPhase
     public class InvasionEnemyController : MonoBehaviour
     {
         [FormerlySerializedAs("_generalS2SData")] [SerializeField]
+#pragma warning disable CS0414 // フィールドは割り当てられていますがその値は使用されていません
         private GeneralS2SData generalS2SData;
+#pragma warning restore CS0414 // フィールドは割り当てられていますがその値は使用されていません
 
         [FormerlySerializedAs("_stageObject")] [SerializeField]
         private StageObject stageObject;
@@ -24,55 +25,51 @@ namespace InvasionPhase
         /**
          * 残りの敵数
          */
-        private int remainingEnemyCount;
+        private int _remainingEnemyCount;
 
         /**
          * 現在のステージデータ
          */
-        private StageData currentStageData;
+        private StageData _currentStageData;
 
         /**
          * 読み込み済み時間
          */
-        private int prevTime = 0;
+        private int _prevTime;
 
         /**
          * 起動済みフラグ
          */
-        private bool isAwaked = false;
+        private bool _isAwoke;
 
         public void Start()
         {
-            // 現在のステージ番号を取得
-            var stage = generalS2SData.Stage;
-            var level = generalS2SData.Level;
-
             // ステージデータを取得
-            currentStageData = stageObject.GetStageData(0);
+            _currentStageData = stageObject.GetStageData(0);
 
             // 残りの敵数を設定
-            remainingEnemyCount = currentStageData.invasionData.GetEnemyCount();
+            _remainingEnemyCount = _currentStageData.invasionData.GetEnemyCount();
         }
 
         public void Update()
         {
             // 未開始時は何もしない
-            if (!isAwaked) return;
+            if (!_isAwoke) return;
 
             // ゲーム自国の追加
             var time = invasionController.GameTime;
 
             // 時間が進んでいない場合は何もしない
-            if (time <= prevTime) return;
+            if (time <= _prevTime) return;
 
             // 時間差分を取得
-            var diff = time - prevTime;
+            var diff = time - _prevTime;
 
             // 時間差分分だけスポーンデータをかくにん
             for (var i = 0; i < diff;)
             {
                 // 侵攻データを取得
-                var invasionData = currentStageData.invasionData;
+                var invasionData = _currentStageData.invasionData;
                 // 生成データを取得
                 var spawnData = invasionData.GetSpawnData(time - i);
 
@@ -87,7 +84,7 @@ namespace InvasionPhase
             }
 
             // 読み込み済み時間を更新
-            prevTime = time;
+            _prevTime = time;
         }
 
         /**
@@ -111,17 +108,17 @@ namespace InvasionPhase
         public void StartGame()
         {
             // フラグをあげる
-            isAwaked = true;
+            _isAwoke = true;
         }
 
         public void EnemyDestroyed()
         {
             // 残りの敵数を減らす
-            remainingEnemyCount--;
+            _remainingEnemyCount--;
 
 
             // 残りの敵数が0になったらゲーム終了
-            if (remainingEnemyCount == 0)
+            if (_remainingEnemyCount == 0)
             {
                 invasionController.ClearGame();
             }
