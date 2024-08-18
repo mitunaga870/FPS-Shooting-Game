@@ -34,7 +34,7 @@ namespace InvasionPhase
         /**
          * 読み込み済み時間
          */
-        private int loadedTime = 0;
+        private int prevTime = 0;
 
         /**
          * 起動済みフラグ
@@ -63,22 +63,31 @@ namespace InvasionPhase
             var time = invasionController.GameTime;
 
             // 時間が進んでいない場合は何もしない
-            if (time <= loadedTime) return;
+            if (time <= prevTime) return;
 
-            // 時間を更新
-            loadedTime = time;
+            // 時間差分を取得
+            var diff = time - prevTime;
 
-            // 侵攻データを取得
-            var invasionData = currentStageData.invasionData;
-            // 生成データを取得
-            var spawnData = invasionData.GetSpawnData(time);
-
-            // 敵を沸かせる
-            if (spawnData != null)
+            // 時間差分分だけスポーンデータをかくにん
+            for (var i = 0; i < diff;)
             {
-                Debug.Log("spawn enemy");
-                SpawnEnemy(spawnData);
+                // 侵攻データを取得
+                var invasionData = currentStageData.invasionData;
+                // 生成データを取得
+                var spawnData = invasionData.GetSpawnData(time - i);
+
+                // 敵を沸かせる
+                if (spawnData != null)
+                {
+                    Debug.Log("spawn enemy");
+                    SpawnEnemy(spawnData);
+                }
+
+                i++;
             }
+
+            // 読み込み済み時間を更新
+            prevTime = time;
         }
 
         /**

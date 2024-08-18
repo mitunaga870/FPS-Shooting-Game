@@ -23,7 +23,10 @@ namespace InvasionPhase
         [SerializeField] private TestEnemy _testEnemy;
 
         /** ゲームの状態 */
-        public Enums.GameState GameState { get; private set; } = GameState.BeforeStart;
+        public GameState GameState { get; private set; } = GameState.BeforeStart;
+
+        /** 高速時の倍速率 */
+        private const int FAST_SPEED = 2;
 
         /** ゲーム時間 */
         public int GameTime { get; private set; } = 0;
@@ -34,6 +37,10 @@ namespace InvasionPhase
             if (GameState == GameState.Playing)
             {
                 GameTime++;
+            }
+            else if (GameState == GameState.FastPlaying)
+            {
+                GameTime += FAST_SPEED;
             }
         }
 
@@ -71,6 +78,11 @@ namespace InvasionPhase
         public void ClearGame()
         {
             GameState = GameState.Clear;
+        }
+
+        public void FastPlay()
+        {
+            GameState = GameState.FastPlaying;
         }
     }
 }

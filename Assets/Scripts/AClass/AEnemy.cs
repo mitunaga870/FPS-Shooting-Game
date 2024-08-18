@@ -48,6 +48,8 @@ namespace AClass
 
         private InvasionEnemyController _enemyController;
 
+        private int prevTime = 0;
+
         /**
          * マイフレームの処理
          */
@@ -56,11 +58,13 @@ namespace AClass
             // 初期化されていない場合は何もしない
             if (!Initialized) return;
 
-            // 再生中のみ処理
-            if (_sceneController.GameState != GameState.Playing) return;
-
             // 初期化エラー確認
             if (CurrentPosition == null) throw new Exception("初期化処理に失敗しています");
+
+            // 時刻を取得
+            var time = _sceneController.GameTime;
+            // 時刻差を取得
+            var timeDiff = time - prevTime;
 
             var mazeOrigin = c2IData.MazeOrigin;
 
@@ -82,7 +86,7 @@ namespace AClass
             var nextTileCoordinate = nextTilePosition.ToVector3(mazeOrigin);
 
             // 移動
-            var moveAmount = (nextTileCoordinate - currentTileCoordinate) / 1000 * Speed;
+            var moveAmount = (nextTileCoordinate - currentTileCoordinate) / 1000 * (Speed * timeDiff);
             transform.position += moveAmount;
 
 
@@ -109,6 +113,9 @@ namespace AClass
                 // ゲームオブジェクトを削除
                 Destroy(gameObject);
             }
+
+            // ロード済み時間を更新
+            prevTime = time;
         }
 
         /**

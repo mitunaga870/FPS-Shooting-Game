@@ -4,6 +4,7 @@ namespace Enums
     {
         BeforeStart,
         Playing,
+        FastPlaying,
         Pause,
         Clear,
     }
