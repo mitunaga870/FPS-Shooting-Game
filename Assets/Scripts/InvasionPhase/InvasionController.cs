@@ -48,10 +48,12 @@ namespace InvasionPhase
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();
 
-            if (tileData == null || trapData == null)
+            if (createToInvasionData.IsInvasion)
             {
                 // シーン間のデータ共有オブジェクトからデータを取得
                 mazeController.Create(createToInvasionData.TileData, createToInvasionData.TrapData);
+                // 読み込み後はフラグを戻す
+                createToInvasionData.IsInvasion = false;
             }
             else
             {

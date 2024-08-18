@@ -48,6 +48,7 @@ namespace CreatePhase
 
             // ========= シーン間のデータ共有オブジェクト関連 =========
             mazeCreationController.SetS2SData();
+            createToInvasionData.IsInvasion = true;
 
             // ========= 侵攻フェーズに移動 =========
             SceneManager.LoadScene("InvasionPhase");
