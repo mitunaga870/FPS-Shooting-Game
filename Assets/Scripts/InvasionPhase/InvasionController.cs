@@ -23,7 +23,7 @@ namespace InvasionPhase
         [SerializeField] private TestEnemy _testEnemy;
 
         /** ゲームの状態 */
-        private Enums.GameState _gameState = GameState.BeforeStart;
+        public Enums.GameState GameState { get; private set; } = GameState.BeforeStart;
 
         /** ゲーム時間 */
         public int GameTime { get; private set; } = 0;
@@ -31,7 +31,7 @@ namespace InvasionPhase
         private void FixedUpdate()
         {
             // 再生中ならゲーム時間を進める
-            if (_gameState == GameState.Playing)
+            if (GameState == GameState.Playing)
             {
                 GameTime++;
             }
@@ -52,15 +52,25 @@ namespace InvasionPhase
         public void StartGame()
         {
             // ゲームの状態をプレイ中に変更
-            _gameState = GameState.Playing;
+            GameState = GameState.Playing;
 
             // 各コントローラー
             _invasionEnemyController.StartGame();
         }
 
-        public static void GameEnd()
+        public void PauseGame()
         {
-            Debug.Log("Game Clear!");
+            GameState = GameState.Pause;
+        }
+
+        public void ResumeGame()
+        {
+            GameState = GameState.Playing;
+        }
+
+        public void ClearGame()
+        {
+            GameState = GameState.Clear;
         }
     }
 }

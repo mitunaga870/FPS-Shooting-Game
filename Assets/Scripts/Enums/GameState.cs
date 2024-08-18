@@ -4,8 +4,7 @@ namespace Enums
     {
         BeforeStart,
         Playing,
-        Paused,
-        GameOver,
-        Ended
+        Pause,
+        Clear,
     }
 }

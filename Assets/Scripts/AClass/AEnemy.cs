@@ -1,5 +1,6 @@
 using System;
 using DataClass;
+using Enums;
 using InvasionPhase;
 using JetBrains.Annotations;
 using ScriptableObjects.S2SDataObjects;
@@ -36,6 +37,9 @@ namespace AClass
         /** 作成フェーズから侵略フェーズへのデータ */
         [SerializeField] private CreateToInvasionData c2IData;
 
+        /** Sceneコントローラー */
+        private InvasionController _sceneController;
+
         /** 迷路コントローラー */
         private InvasionMazeController _mazeController;
 
@@ -51,6 +55,9 @@ namespace AClass
         {
             // 初期化されていない場合は何もしない
             if (!Initialized) return;
+
+            // 再生中のみ処理
+            if (_sceneController.GameState != GameState.Playing) return;
 
             // 初期化エラー確認
             if (CurrentPosition == null) throw new Exception("初期化処理に失敗しています");
@@ -110,7 +117,8 @@ namespace AClass
          * @param speed 移動速度 mTile/frame
          * @param startPosition 初期位置
          */
-        public void Initialize(int hp, int speed, TilePosition startPosition, InvasionMazeController mazeController,
+        public void Initialize(int hp, int speed, TilePosition startPosition, InvasionController sceneController,
+            InvasionMazeController mazeController,
             InvasionEnemyController enemyController)
         {
             // 初期化済みはエラー
@@ -125,6 +133,7 @@ namespace AClass
             CurrentPosition = startPosition;
             HP = hp;
             Speed = speed;
+            _sceneController = sceneController;
             _mazeController = mazeController;
             _enemyController = enemyController;
 

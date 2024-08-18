@@ -91,7 +91,8 @@ namespace InvasionPhase
                 // 敵を生成
                 var enemy = Instantiate(spawnData.enemy);
                 // 敵のスピードを設定
-                enemy.Initialize(10, 10, invasionMazeController.StartPosition, invasionMazeController, this);
+                enemy.Initialize(10, 10, invasionMazeController.StartPosition, invasionController,
+                    invasionMazeController, this);
             }
         }
 
@@ -113,7 +114,7 @@ namespace InvasionPhase
             // 残りの敵数が0になったらゲーム終了
             if (remainingEnemyCount == 0)
             {
-                InvasionController.GameEnd();
+                invasionController.ClearGame();
             }
         }
     }
