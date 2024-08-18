@@ -42,6 +42,8 @@ namespace AClass
         /** 現在の経路のインデックス */
         private int? CurrentPathIndex => Path?.Index(CurrentPosition);
 
+        private InvasionEnemyController _enemyController;
+
         /**
          * マイフレームの処理
          */
@@ -108,23 +110,31 @@ namespace AClass
          * @param speed 移動速度 mTile/frame
          * @param startPosition 初期位置
          */
-        public void Initialize(int hp, int speed, TilePosition startPosition, InvasionMazeController mazeController)
+        public void Initialize(int hp, int speed, TilePosition startPosition, InvasionMazeController mazeController,
+            InvasionEnemyController enemyController)
         {
             // 初期化済みはエラー
             if (Initialized) throw new Exception("This emeny is already initialized.");
 
-            Debug.Log(mazeController.MazeOrigin);
-            
+            // 座標に変換
+            var position = startPosition.ToVector3(mazeController.MazeOrigin);
             // 初期ポイントに移動
-            transform.position = startPosition.ToVector3(startPosition.ToVector3(mazeController.MazeOrigin));
-            
+            transform.position = position;
+
             // 初期情報登録
             CurrentPosition = startPosition;
             HP = hp;
             Speed = speed;
             _mazeController = mazeController;
+            _enemyController = enemyController;
 
             Initialized = true;
+        }
+
+        private void OnDestroy()
+        {
+            // 敵の削除処理
+            _enemyController.EnemyDestroyed();
         }
     }
 }

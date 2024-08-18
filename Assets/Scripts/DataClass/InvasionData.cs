@@ -9,9 +9,10 @@ namespace DataClass
     public class InvasionData
     {
         [SerializeField] List<SpawnData> spawnDataList = new List<SpawnData>();
-        
+
         /**
          * 指定時刻の侵攻データを取得する
+         * 取得したデータはリストから削除される
          */
         [CanBeNull]
         public SpawnData GetSpawnData(int time)
@@ -20,7 +21,9 @@ namespace DataClass
             {
                 if (spawnData.spawnTime == time)
                 {
-                    return spawnData;
+                    var result = new SpawnData(spawnData);
+
+                    return result;
                 }
             }
 
@@ -48,6 +51,20 @@ namespace DataClass
             }
 
             return lastTime;
+        }
+
+        /**
+         * 敵の総数を取得する
+         */
+        public int GetEnemyCount()
+        {
+            var count = 0;
+            foreach (var spawnData in spawnDataList)
+            {
+                count += spawnData.spawnCount;
+            }
+
+            return count;
         }
     }
 }

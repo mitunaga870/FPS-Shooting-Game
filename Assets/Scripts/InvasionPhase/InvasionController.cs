@@ -41,7 +41,7 @@ namespace InvasionPhase
         public void Start()
         {
             mazeController.Create(createToInvasionData.TileData, createToInvasionData.TrapData);
-            
+
             // 侵攻開始
             StartGame();
         }
@@ -53,9 +53,14 @@ namespace InvasionPhase
         {
             // ゲームの状態をプレイ中に変更
             _gameState = GameState.Playing;
-            
+
             // 各コントローラー
             _invasionEnemyController.StartGame();
+        }
+
+        public static void GameEnd()
+        {
+            Debug.Log("Game Clear!");
         }
     }
 }

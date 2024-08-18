@@ -3,23 +3,38 @@ using DataClass;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace InvasionPhase
 {
     public class InvasionEnemyController : MonoBehaviour
     {
-        [SerializeField] private GeneralS2SData _generalS2SData;
+        [FormerlySerializedAs("_generalS2SData")] [SerializeField]
+        private GeneralS2SData generalS2SData;
 
-        [SerializeField] private StageObject _stageObject;
+        [FormerlySerializedAs("_stageObject")] [SerializeField]
+        private StageObject stageObject;
 
-        [SerializeField] private InvasionController _invasionController;
-        
-        [SerializeField] private InvasionMazeController _invasionMazeController;
+        [FormerlySerializedAs("_invasionController")] [SerializeField]
+        private InvasionController invasionController;
+
+        [FormerlySerializedAs("_invasionMazeController")] [SerializeField]
+        private InvasionMazeController invasionMazeController;
+
+        /**
+         * 残りの敵数
+         */
+        private int remainingEnemyCount;
 
         /**
          * 現在のステージデータ
          */
         private StageData currentStageData;
+
+        /**
+         * 読み込み済み時間
+         */
+        private int loadedTime = 0;
 
         /**
          * 起動済みフラグ
@@ -29,20 +44,29 @@ namespace InvasionPhase
         public void Start()
         {
             // 現在のステージ番号を取得
-            var stage = _generalS2SData.Stage;
-            var level = _generalS2SData.Level;
+            var stage = generalS2SData.Stage;
+            var level = generalS2SData.Level;
 
             // ステージデータを取得
-            currentStageData = _stageObject.GetStageData(0);
+            currentStageData = stageObject.GetStageData(0);
+
+            // 残りの敵数を設定
+            remainingEnemyCount = currentStageData.invasionData.GetEnemyCount();
         }
 
         public void Update()
         {
             // 未開始時は何もしない
             if (!isAwaked) return;
-            
+
             // ゲーム自国の追加
-            var time = _invasionController.GameTime;
+            var time = invasionController.GameTime;
+
+            // 時間が進んでいない場合は何もしない
+            if (time <= loadedTime) return;
+
+            // 時間を更新
+            loadedTime = time;
 
             // 侵攻データを取得
             var invasionData = currentStageData.invasionData;
@@ -50,7 +74,11 @@ namespace InvasionPhase
             var spawnData = invasionData.GetSpawnData(time);
 
             // 敵を沸かせる
-            if (spawnData != null) SpawnEnemy(spawnData);
+            if (spawnData != null)
+            {
+                Debug.Log("spawn enemy");
+                SpawnEnemy(spawnData);
+            }
         }
 
         /**
@@ -58,10 +86,13 @@ namespace InvasionPhase
          */
         private void SpawnEnemy(SpawnData spawnData)
         {
-            // 敵を生成
-            var enemy = Instantiate(spawnData.enemy);
-            // 敵のスピードを設定
-            enemy.Initialize(10, 10, _invasionMazeController.StartPosition, _invasionMazeController);
+            for (var i = 0; i < spawnData.spawnCount; i++)
+            {
+                // 敵を生成
+                var enemy = Instantiate(spawnData.enemy);
+                // 敵のスピードを設定
+                enemy.Initialize(10, 10, invasionMazeController.StartPosition, invasionMazeController, this);
+            }
         }
 
         /**
@@ -71,6 +102,19 @@ namespace InvasionPhase
         {
             // フラグをあげる
             isAwaked = true;
+        }
+
+        public void EnemyDestroyed()
+        {
+            // 残りの敵数を減らす
+            remainingEnemyCount--;
+
+
+            // 残りの敵数が0になったらゲーム終了
+            if (remainingEnemyCount == 0)
+            {
+                InvasionController.GameEnd();
+            }
         }
     }
 }
