@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace DataClass
@@ -8,6 +9,23 @@ namespace DataClass
     public class InvasionData
     {
         [SerializeField] List<SpawnData> spawnDataList = new List<SpawnData>();
+        
+        /**
+         * 指定時刻の侵攻データを取得する
+         */
+        [CanBeNull]
+        public SpawnData GetSpawnData(int time)
+        {
+            foreach (var spawnData in spawnDataList)
+            {
+                if (spawnData.spawnTime == time)
+                {
+                    return spawnData;
+                }
+            }
+
+            return null;
+        }
 
         /**
          * 最後の侵攻時間を取得する

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DataClass;
 using UnityEngine;
@@ -64,6 +65,10 @@ namespace ScriptableObjects
             return GetStageData(stageNum).goal;
         }
 
+        public List<StageData> GetStageDataList()
+        {
+            return stageDataList;
+        }
         public StageData GetStageData(int i)
         {
             return stageDataList[i];

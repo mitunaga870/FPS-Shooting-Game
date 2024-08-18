@@ -45,7 +45,7 @@ namespace AClass
         /**
          * マイフレームの処理
          */
-        private void Update()
+        private void FixedUpdate()
         {
             // 初期化されていない場合は何もしない
             if (!Initialized) return;
@@ -110,6 +110,15 @@ namespace AClass
          */
         public void Initialize(int hp, int speed, TilePosition startPosition, InvasionMazeController mazeController)
         {
+            // 初期化済みはエラー
+            if (Initialized) throw new Exception("This emeny is already initialized.");
+
+            Debug.Log(mazeController.MazeOrigin);
+            
+            // 初期ポイントに移動
+            transform.position = startPosition.ToVector3(startPosition.ToVector3(mazeController.MazeOrigin));
+            
+            // 初期情報登録
             CurrentPosition = startPosition;
             HP = hp;
             Speed = speed;

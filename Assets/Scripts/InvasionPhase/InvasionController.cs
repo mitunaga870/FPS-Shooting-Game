@@ -16,6 +16,9 @@ namespace InvasionPhase
         /** 迷路作成等を行うコントローラ */
         [SerializeField] private InvasionMazeController mazeController;
 
+        /** 侵攻の制御を行うコントローラー */
+        [SerializeField] private InvasionEnemyController _invasionEnemyController;
+
         /** 敵のプレファブ */
         [SerializeField] private TestEnemy _testEnemy;
 
@@ -38,14 +41,9 @@ namespace InvasionPhase
         public void Start()
         {
             mazeController.Create(createToInvasionData.TileData, createToInvasionData.TrapData);
-
+            
             // 侵攻開始
-            var enemy = Instantiate(
-                _testEnemy,
-                mazeController.StartPosition.ToVector3(createToInvasionData.MazeOrigin),
-                Quaternion.identity
-            );
-            enemy.Initialize(10, 10, mazeController.StartPosition, mazeController);
+            StartGame();
         }
 
         /**
@@ -55,6 +53,9 @@ namespace InvasionPhase
         {
             // ゲームの状態をプレイ中に変更
             _gameState = GameState.Playing;
+            
+            // 各コントローラー
+            _invasionEnemyController.StartGame();
         }
     }
 }

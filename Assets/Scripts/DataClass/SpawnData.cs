@@ -1,4 +1,5 @@
 using System;
+using AClass;
 
 namespace DataClass
 {
@@ -7,5 +8,6 @@ namespace DataClass
     {
         public int spawnTime;
         public int spawnCount;
+        public AEnemy enemy;
     }
 }

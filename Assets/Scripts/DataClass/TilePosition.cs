@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
 namespace DataClass
@@ -44,7 +45,7 @@ namespace DataClass
         public Vector3 ToVector3(Vector3 origin)
         {
             var relativePosition = new Vector3(Col, 0, Row);
-            return origin + relativePosition;
+            return relativePosition * Environment.TileSize + origin;
         }
     }
 }

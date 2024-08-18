@@ -24,7 +24,7 @@ namespace InvasionPhase
                     SetRoad(roadAdjust);
                     break;
                 default:
-                    throw new Exception("未対応のタイルタイプです");
+                    throw new Exception("未対応のタイルタイプです" + tileType);
             }
         }
     }
