@@ -73,8 +73,8 @@ namespace InvasionPhase
             // セーブデータを保存
             SaveController.SavePhase(Phase.Invade);
             // シーン遷移で読み込んだデータをそのまま保存
-            SaveController.SaveTileData(createToInvasionData.TileData);
-            SaveController.SaveTrapData(createToInvasionData.TrapData);
+            SaveController.SaveTileData(mazeController.TileData);
+            SaveController.SaveTrapData(mazeController.TrapData);
         }
 
 

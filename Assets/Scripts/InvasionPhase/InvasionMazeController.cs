@@ -17,6 +17,8 @@ namespace InvasionPhase
         private InvasionPhaseTile[][] _maze;
 
         public Vector3 MazeOrigin { private set; get; }
+        public TileData[][] TileData { get; private set; }
+        public TrapData[] TrapData { get; private set; }
 
 
         public void Create(TileData[][] tiles, TrapData[] trapData)
@@ -59,6 +61,10 @@ namespace InvasionPhase
             // スタート・ゴールのタイルを設定
             _maze[StartPosition.Row][StartPosition.Col].SetStart();
             _maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
+
+            // データを保存
+            TileData = tiles;
+            TrapData = trapData;
         }
 
         protected override void Sync()

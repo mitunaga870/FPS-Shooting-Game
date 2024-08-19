@@ -48,7 +48,7 @@ namespace AClass
 
         private InvasionEnemyController _enemyController;
 
-        private int prevTime = 0;
+        private int _prevTime;
 
         /**
          * マイフレームの処理
@@ -64,9 +64,9 @@ namespace AClass
             // 時刻を取得
             var time = _sceneController.GameTime;
             // 時刻差を取得
-            var timeDiff = time - prevTime;
+            var timeDiff = time - _prevTime;
 
-            var mazeOrigin = c2IData.MazeOrigin;
+            var mazeOrigin = _mazeController.MazeOrigin;
 
             // 目的地がない場合はゴールに指定
             Destination ??= _mazeController.GoalPosition;
@@ -85,13 +85,18 @@ namespace AClass
             var nextTilePosition = Path.Get(pathIndex + 1);
             var nextTileCoordinate = nextTilePosition.ToVector3(mazeOrigin);
 
+            var localTransform = transform;
+
             // 移動
             var moveAmount = (nextTileCoordinate - currentTileCoordinate) / 1000 * (Speed * timeDiff);
-            transform.position += moveAmount;
+            var position = localTransform.position;
+            position += moveAmount;
+            localTransform.position = position;
 
-
+            // 次のタイルとの距離
+            var distance = Vector3.Distance(position, nextTileCoordinate);
             // 次のタイルに到達した場合
-            if (Vector3.Distance(transform.position, nextTileCoordinate) < 0.01f)
+            if (distance < 0.1f)
             {
                 // 現在地を更新
                 CurrentPosition = nextTilePosition;
@@ -115,7 +120,7 @@ namespace AClass
             }
 
             // ロード済み時間を更新
-            prevTime = time;
+            _prevTime = time;
         }
 
         /**

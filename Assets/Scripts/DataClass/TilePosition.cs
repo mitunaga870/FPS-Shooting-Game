@@ -47,5 +47,10 @@ namespace DataClass
             var relativePosition = new Vector3(Col, 0, Row);
             return relativePosition * Environment.TileSize + origin;
         }
+
+        public override string ToString()
+        {
+            return $"Row: {Row}, Col: {Col}";
+        }
     }
 }
