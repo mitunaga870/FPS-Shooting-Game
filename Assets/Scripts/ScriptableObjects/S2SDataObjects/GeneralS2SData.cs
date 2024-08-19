@@ -11,6 +11,7 @@ namespace ScriptableObjects.S2SDataObjects
     {
         [NonSerialized] public int Stage = 1;
         [NonSerialized] public int Level = 1;
+        public static int PlayerHp { get; set; }
 
         public override string ToString()
         {
@@ -21,6 +22,8 @@ namespace ScriptableObjects.S2SDataObjects
         {
             Stage = PlayerPrefs.GetInt("Stage", 1);
             Level = PlayerPrefs.GetInt("Level", 1);
+
+            PlayerHp = PlayerPrefs.GetInt("PlayerHp", 10);
         }
 
         public override void OnAfterDeserialize()

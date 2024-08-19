@@ -7,5 +7,6 @@ namespace Enums
         FastPlaying,
         Pause,
         Clear,
+        GameOver
     }
 }

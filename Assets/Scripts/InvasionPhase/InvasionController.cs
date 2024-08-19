@@ -28,6 +28,9 @@ namespace InvasionPhase
         /** ゲーム時間 */
         public int GameTime { get; private set; }
 
+        /** プレイヤーHP */
+        public int PlayerHp { get; private set; }
+
         private void FixedUpdate()
         {
             // 再生中ならゲーム時間を進める
@@ -60,6 +63,9 @@ namespace InvasionPhase
                 // セーブデータからデータを取得
                 mazeController.Create(tileData, trapData);
             }
+
+            // プレイヤーデータ読み込み
+            PlayerHp = GeneralS2SData.PlayerHp;
 
             // 侵攻開始
             StartGame();
@@ -102,6 +108,9 @@ namespace InvasionPhase
 
         public void ClearGame()
         {
+            // ゲームオーバー時はクリアしない
+            if (GameState == GameState.GameOver) return;
+
             Debug.Log("Game Clear!");
             GameState = GameState.Clear;
         }
@@ -109,6 +118,16 @@ namespace InvasionPhase
         public void FastPlay()
         {
             GameState = GameState.FastPlaying;
+        }
+
+        public void EnterEnemy(int damage)
+        {
+            PlayerHp -= damage;
+            if (PlayerHp <= 0)
+            {
+                Debug.Log("Game Over!");
+                GameState = GameState.GameOver;
+            }
         }
     }
 }

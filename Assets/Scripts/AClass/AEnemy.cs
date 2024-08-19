@@ -50,6 +50,8 @@ namespace AClass
 
         private int _prevTime;
 
+        private int atk = 1;
+
         /**
          * マイフレームの処理
          */
@@ -116,7 +118,7 @@ namespace AClass
             // ゴールに到達した場合
             if (CurrentPosition.Equals(_mazeController.GoalPosition))
             {
-                // TODO: 敵の到達処理
+                _sceneController.EnterEnemy(atk);
 
                 // ゲームオブジェクトを削除
                 Destroy(gameObject);
