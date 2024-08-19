@@ -13,7 +13,7 @@ namespace AClass
         /**
          * トラップの発火
          */
-        public abstract void Awake();
+        public abstract void AwakeTrap();
 
         /**
          * トラップの高さ取得

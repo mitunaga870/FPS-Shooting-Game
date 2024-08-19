@@ -74,9 +74,15 @@ namespace AClass
         protected int Row;
         protected int Column;
 
+        /** 設置されているトラップ */
+        private ATrap _trap = null;
+
+        /** トラップの所持フラグ */
+        private bool hasTrap = false;
+
         /**
-     * タイルのステータスの変更
-     */
+         * タイルのステータスの変更
+         */
         private void OnTileTypeChanged()
         {
             // タイルのステータスが変わった時の処理
@@ -377,6 +383,17 @@ namespace AClass
                 trap.GetHeight(),
                 tilePosition.z
             );
+
+            _trap = trap;
+            hasTrap = true;
+        }
+
+        /**
+         * トラップを起動する
+         */
+        public void AwakeTrap()
+        {
+            if (hasTrap) _trap.AwakeTrap();
         }
     }
 }

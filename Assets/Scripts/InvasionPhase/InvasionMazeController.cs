@@ -81,5 +81,12 @@ namespace InvasionPhase
 
             SyncMazeData(syncTiles);
         }
+
+        public void AwakeTrap(TilePosition position)
+        {
+            var tile = _maze[position.Row][position.Col];
+
+            tile.AwakeTrap();
+        }
     }
 }
