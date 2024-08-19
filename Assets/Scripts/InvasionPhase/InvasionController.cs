@@ -102,6 +102,7 @@ namespace InvasionPhase
 
         public void ClearGame()
         {
+            Debug.Log("Game Clear!");
             GameState = GameState.Clear;
         }
 

@@ -76,7 +76,6 @@ namespace InvasionPhase
                 // 敵を沸かせる
                 if (spawnData != null)
                 {
-                    Debug.Log("spawn enemy");
                     SpawnEnemy(spawnData);
                 }
 
