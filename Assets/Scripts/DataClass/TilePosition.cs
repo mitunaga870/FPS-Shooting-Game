@@ -1,12 +1,15 @@
+using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
 namespace DataClass
 {
+    [Serializable]
     public class TilePosition
     {
-        public readonly int Col;
-        public readonly int Row;
+        public int Col;
+        public int Row;
 
         public TilePosition(int row, int col)
         {
@@ -42,7 +45,12 @@ namespace DataClass
         public Vector3 ToVector3(Vector3 origin)
         {
             var relativePosition = new Vector3(Col, 0, Row);
-            return origin + relativePosition;
+            return relativePosition * Environment.TileSize + origin;
+        }
+
+        public override string ToString()
+        {
+            return $"Row: {Row}, Col: {Col}";
         }
     }
 }

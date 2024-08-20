@@ -9,6 +9,7 @@ namespace ScriptableObjects.S2SDataObjects
     [CreateAssetMenu(fileName = "CreateToInvasionData", menuName = "S2SData/CreateToInvasionData")]
     public class CreateToInvasionData : AS2SData
     {
+        [NonSerialized] public bool IsInvasion;
         [NonSerialized] public DataClass.TileData[][] TileData;
         [NonSerialized] public DataClass.TrapData[] TrapData;
         [NonSerialized] public Vector3 MazeOrigin;
@@ -18,6 +19,7 @@ namespace ScriptableObjects.S2SDataObjects
             TileData = Array.Empty<DataClass.TileData[]>();
             TrapData = Array.Empty<DataClass.TrapData>();
             MazeOrigin = Vector3.zero;
+            IsInvasion = false;
         }
 
         public override void OnAfterDeserialize()

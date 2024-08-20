@@ -178,24 +178,24 @@ namespace CreatePhase
             {
                 ATrap trap = null;
 
+                // 乱数をもとに場所を決定
+                var row = Random.Range(0, MazeRows);
+                var column = Random.Range(0, MazeColumns);
+
                 var loopCount = 0;
 
                 // nullの場合は設置できてないので再度設置
                 while (trap == null)
                 {
-                    // 乱数をもとに場所を決定
-                    var row = Random.Range(0, MazeRows);
-                    var column = Random.Range(0, MazeColumns);
-
                     // トラップを設置
                     trap = Maze[row][column].SetRandTrap();
 
-                    // トラップ情報を格納
-                    TrapData[i] = new TrapData(row, column, trap);
-
                     // 設置できるものがない等で無限ループになる場合があるので、10回で終了
-                    if (loopCount++ > 10) break;
+                    if (loopCount++ > 10) throw new Exception("Trap setting failed");
                 }
+
+                // トラップ情報を格納
+                TrapData[i] = new TrapData(row, column, trap);
             }
         }
 
