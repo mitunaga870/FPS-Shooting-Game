@@ -1,8 +1,6 @@
-using System;
 using AClass;
 using Enums;
 using lib;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace InvasionPhase
@@ -16,16 +14,13 @@ namespace InvasionPhase
             Column = column;
 
             // タイルのステータスによって処理を変える
-            switch (tileType)
+            if (tileType == TileTypes.Nothing)
             {
-                case TileTypes.Nothing:
-                    SetNone();
-                    break;
-                case TileTypes.Road:
-                    SetRoad(roadAdjust);
-                    break;
-                default:
-                    throw new Exception("未対応のタイルタイプです" + tileType);
+                SetNone();
+            }
+            else
+            {
+                SetRoad(roadAdjust);
             }
         }
     }

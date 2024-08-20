@@ -16,9 +16,7 @@ namespace InvasionPhase
          */
         private InvasionPhaseTile[][] _maze;
 
-        public Vector3 MazeOrigin { private set; get; }
-        public TileData[][] TileData { get; private set; }
-        public TrapData[] TrapData { get; private set; }
+        private Vector3 _mazeOrigin;
 
 
         public void Create(TileData[][] tiles, TrapData[] trapData)
@@ -27,7 +25,7 @@ namespace InvasionPhase
             var mazeColumns = tiles[0].Length;
 
             // 原点を設定
-            MazeOrigin = new Vector3(-(mazeColumns - 1) / 2.0f, 0, -(mazeRows - 1) / 2.0f);
+            _mazeOrigin = new Vector3(-(mazeColumns - 1) / 2.0f, 0, -(mazeRows - 1) / 2.0f);
 
             // すべてのタイルを生成し、初期化する
             // 行の初期化
@@ -41,7 +39,7 @@ namespace InvasionPhase
                     var tileData = tiles[row][column];
 
                     // タイルの位置と回転を設定
-                    var tilePosition = new Vector3(column, 0, row) * Environment.TileSize + MazeOrigin;
+                    var tilePosition = new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin;
                     var tileRotation = Quaternion.Euler(-90, 0, 0);
                     // タイルを生成し、初期化する
                     var newTile = Instantiate(createPhaseTilePrefab, tilePosition, tileRotation);
@@ -52,19 +50,9 @@ namespace InvasionPhase
                 }
             }
 
-            // トラップを設定
-            foreach (var trap in trapData)
-            {
-                _maze[trap.Row][trap.Column].SetTrap(trap.Trap);
-            }
-
             // スタート・ゴールのタイルを設定
             _maze[StartPosition.Row][StartPosition.Col].SetStart();
             _maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
-
-            // データを保存
-            TileData = tiles;
-            TrapData = trapData;
         }
 
         protected override void Sync()
@@ -80,13 +68,6 @@ namespace InvasionPhase
             }
 
             SyncMazeData(syncTiles);
-        }
-
-        public void AwakeTrap(TilePosition position)
-        {
-            var tile = _maze[position.Row][position.Col];
-
-            tile.AwakeTrap();
         }
     }
 }

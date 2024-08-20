@@ -25,8 +25,7 @@ public class MainCamera : MonoBehaviour
     private float _mouseZLimit;
 
     /** ステージデータ */
-    [FormerlySerializedAs("_stageData")] [SerializeField]
-    private StageObject stageObject;
+    [SerializeField] private StageData _stageData;
 
     /** 一般情報 */
     [SerializeField] private GeneralS2SData _generalS2SData;
@@ -34,8 +33,8 @@ public class MainCamera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _mouseXLimit = stageObject.GetMazeColumns(0) * 0.5f;
-        _mouseZLimit = stageObject.GetMazeRows(0) * 0.5f;
+        _mouseXLimit = _stageData.GetMazeColumns(_generalS2SData.Stage, _generalS2SData.Level) * 0.5f;
+        _mouseZLimit = _stageData.GetMazeRows(_generalS2SData.Stage, _generalS2SData.Level) * 0.5f;
     }
 
     // Update is called once per frame

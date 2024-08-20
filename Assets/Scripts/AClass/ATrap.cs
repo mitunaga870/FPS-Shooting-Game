@@ -1,19 +1,17 @@
 using ScriptableObjects;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace AClass
 {
     public abstract class ATrap : MonoBehaviour
     {
         /** トラップ用のデータ用スクリプタブルオブジェクト */
-        [FormerlySerializedAs("trapData")] [SerializeField]
-        protected TrapObject trapObject;
+        [SerializeField] protected TrapData trapData;
 
         /**
          * トラップの発火
          */
-        public abstract void AwakeTrap();
+        public abstract void Awake();
 
         /**
          * トラップの高さ取得

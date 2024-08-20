@@ -2,6 +2,7 @@ using System;
 using AClass;
 using Enums;
 using lib;
+using Traps;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -22,9 +23,7 @@ namespace CreatePhase
 
         /** プレビュー中フラグ */
         public bool isPreview;
-        
-        /** トラップが設定されているか */
-        private bool _hasTrap = false;
+
 
         // Start is called before the first frame update
         void Start()
@@ -187,8 +186,10 @@ namespace CreatePhase
         public ATrap SetRandTrap()
         {
             // 既に道・トラップが設定されている場合は処理しない
-            if (_hasTrap) return null;
-            _hasTrap = true;
+            if (TileType == TileTypes.Trap) return null;
+
+            // タイルの種類をトラップに設定
+            TileType = TileTypes.Trap;
 
             var traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
             ATrap trap = null;
