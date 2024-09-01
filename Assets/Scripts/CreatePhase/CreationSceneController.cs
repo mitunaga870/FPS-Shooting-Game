@@ -3,6 +3,7 @@ using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace CreatePhase
 {
@@ -18,7 +19,8 @@ namespace CreatePhase
         [SerializeField] private MazeCreationController mazeCreationController;
 
         /** ステージ情報 */
-        [SerializeField] private StageData stageData;
+        [FormerlySerializedAs("stageData")] [SerializeField]
+        private StageObject stageObject;
 
         /**
          * やめるときの保存処理
@@ -45,18 +47,8 @@ namespace CreatePhase
             }
 
             // ========= シーン間のデータ共有オブジェクト関連 =========
-            // 迷路情報を取得
             mazeCreationController.SetS2SData();
-
-            // 迷路情報が正しいか確認
-            if (!(
-                    stageData.OneOneMazeColumns == createToInvasionData.GetMazeColumn() &&
-                    stageData.OneOneMazeRows == createToInvasionData.GetMazeRow() &&
-                    stageData.OneOneTrapCount == createToInvasionData.GetTrapCount()
-                ))
-            {
-                return;
-            }
+            createToInvasionData.IsInvasion = true;
 
             // ========= 侵攻フェーズに移動 =========
             SceneManager.LoadScene("InvasionPhase");

@@ -7,14 +7,16 @@ namespace Traps
     {
         public static readonly string TrapName = "TestTrap";
 
-        public override void Awake()
+        public override void AwakeTrap()
         {
-            Debug.Log("Damage: " + trapData.TestTrapAtk);
+            Debug.Log("TestTrapが発火しました");
+            // とりあえず色を変える
+            GetComponent<Renderer>().material.color = Color.red;
         }
 
         public override float GetHeight()
         {
-            return trapData.TestTrapHeight;
+            return trapObject.TestTrapHeight;
         }
 
         public override string GetTrapName()

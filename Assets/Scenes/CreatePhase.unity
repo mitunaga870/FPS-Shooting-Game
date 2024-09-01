@@ -440,7 +440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59d1cf1d610b8284b810a75a312a7d70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stageData: {fileID: 11400000, guid: a76e0ed324fb0cf4ea3980131a4f296f, type: 2}
+  stageObject: {fileID: 11400000, guid: a76e0ed324fb0cf4ea3980131a4f296f, type: 2}
   generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
   createPhaseTile: {fileID: -2511744610846245713, guid: 26a8b4975ac1871409a5e906e043cdeb, type: 3}
   reRollButton: {fileID: 777972593}
@@ -1595,7 +1595,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   createToInvasionData: {fileID: 11400000, guid: 66aec002291057341bcb6f1da637634b, type: 2}
   mazeCreationController: {fileID: 321828198}
-  stageData: {fileID: 11400000, guid: a76e0ed324fb0cf4ea3980131a4f296f, type: 2}
+  stageObject: {fileID: 11400000, guid: a76e0ed324fb0cf4ea3980131a4f296f, type: 2}
 --- !u!1001 &3311939115802902856
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1820,6 +1820,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 348158063}
     m_Modifications:
+    - target: {fileID: 855779912925727252, guid: 5eb2c5b7896cfe749bc9817363a4475a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 855779912925727252, guid: 5eb2c5b7896cfe749bc9817363a4475a, type: 3}
       propertyPath: creationSceneController
       value: 
