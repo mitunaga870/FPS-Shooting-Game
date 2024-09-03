@@ -9,7 +9,7 @@ namespace Turrets
             throw new System.NotImplementedException();
         }
 
-        public override void Awake()
+        public override void AwakeTurret()
         {
             throw new System.NotImplementedException();
         }
