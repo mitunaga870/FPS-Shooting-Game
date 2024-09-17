@@ -1,4 +1,8 @@
+using System.Threading.Tasks;
+using AClass;
+using DataClass;
 using Enums;
+using lib;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -25,6 +29,13 @@ namespace InvasionPhase
         // ReSharper disable once InconsistentNaming
         private const int FAST_SPEED = 2;
 
+        /** セレクト状態の減速率（1/nの値になってないとバグるかも）*/
+        // ReSharper disable once InconsistentNaming
+        private const float SELECTING_SPEED = 0.5f;
+
+        /** 減速時の時刻スタック（１を超えたら０にして時刻を進める） */
+        private float delayTimeStack = 0;
+
         /** ゲーム時間 */
         public int GameTime { get; private set; }
 
@@ -34,6 +45,27 @@ namespace InvasionPhase
         private void FixedUpdate()
         {
             // 再生中ならゲーム時間を進める
+            switch(GameState)
+            {
+                case GameState.Playing:
+                    // 通常再生
+                    GameTime++;
+                    break;
+                case GameState.FastPlaying:
+                    // 高速再生
+                    GameTime += FAST_SPEED;
+                    break;
+                case GameState.Selecting:
+                    // 選択状態
+                    delayTimeStack += SELECTING_SPEED;
+                    if (delayTimeStack >= 1)
+                    {
+                        GameTime++;
+                        delayTimeStack = 0;
+                    }
+                    break;
+                    
+            }
             if (GameState == GameState.Playing)
             {
                 GameTime++;
@@ -128,6 +160,11 @@ namespace InvasionPhase
                 Debug.Log("Game Over!");
                 GameState = GameState.GameOver;
             }
+        }
+
+        public async void SetSkillMode(ASkill _skill)
+        {
+            this.GameState = GameState.Selecting;
         }
     }
 }

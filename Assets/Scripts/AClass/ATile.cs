@@ -369,14 +369,15 @@ namespace AClass
 
         /**
          * 指定されたトラップを設置する
+         * 設置出来たらtrueを返す
          */
-        public void SetTrap(string trapName)
+        public bool SetTrap(string trapName)
         {
             var tilePosition = transform.position;
 
             // トラップを生成
             var trap = TrapGenerator.GenerateTrap(trapName);
-
+            
             // トラップの位置を設定
             trap.transform.position = new Vector3(
                 tilePosition.x,
@@ -386,6 +387,8 @@ namespace AClass
 
             _trap = trap;
             hasTrap = true;
+
+            return true;
         }
 
         /**

@@ -27,6 +27,9 @@ namespace CreatePhase
         /** リロールボタン */
         [SerializeField] private ReRollButton reRollButton;
 
+        /** デッキシステムつなぎこみ */
+        [SerializeField] private DeckController deck;
+
         /** シーン間のデータ共有用オブジェクト */
         [SerializeField] private CreateToInvasionData createToInvasionData;
 
@@ -61,6 +64,9 @@ namespace CreatePhase
 
         /** 設置したトラップ情報 */
         public TrapData[] TrapData { get; private set; }
+
+        /** トラップ設置中フラグ */
+        [FormerlySerializedAs("IsSettingTrap")] public bool IsSettingTurret;
 
         // Start is called before the first frame update
         private void Start()
@@ -173,35 +179,40 @@ namespace CreatePhase
             // トラップ配列を初期化
             TrapData = new TrapData[TrapCount];
             createToInvasionData.TrapData = new TrapData[TrapCount];
-            // トラップの設置数分乱数をもとに場所を決定
-            for (var i = 0; i < TrapCount; i++)
-            {
-                ATrap trap = null;
+            
+            // トラップを取得
+            var traps = deck.DrowTraps(TrapCount);
+            var i = 0;
 
+            // トラップの設置数分乱数をもとに場所を決定
+            foreach (var trap in traps)
+            {
                 // 乱数をもとに場所を決定
                 var row = Random.Range(0, MazeRows);
                 var column = Random.Range(0, MazeColumns);
 
                 var loopCount = 0;
-
                 // nullの場合は設置できてないので再度設置
-                while (trap == null)
+                while (true)
                 {
                     // トラップを設置
-                    trap = Maze[row][column].SetRandTrap();
-
+                    var setTrupResult = Maze[row][column].SetTrap(trap.GetTrapName());
+                    
+                    // 設置できてたらbreak
+                    if(setTrupResult) break;
+                
                     // 設置できるものがない等で無限ループになる場合があるので、10回で終了
                     if (loopCount++ > 10) throw new Exception("Trap setting failed");
                 }
-
+                
                 // トラップ情報を格納
-                TrapData[i] = new TrapData(row, column, trap);
+                TrapData[i++] = new TrapData(row, column, trap);
             }
         }
 
         /**
-     * 迷路をリセットする
-     */
+         * 迷路をリセットする
+         */
         private void ResetMaze()
         {
             // すべてのタイルをリセットする

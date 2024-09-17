@@ -2,6 +2,7 @@ using DataClass;
 using Enums;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.TerrainUtils;
 
 public static class SaveController
 {
@@ -86,14 +87,6 @@ public static class SaveController
         return (Phase)PlayerPrefs.GetInt("Phase", 0);
     }
 
-    /**
-     * セーブデータを削除する
-     */
-    public static void DelSave()
-    {
-        PlayerPrefs.DeleteAll();
-    }
-
     public static TrapData[] LoadTrapData()
     {
         if (!PlayerPrefs.HasKey("TrapData")) return null;
@@ -110,5 +103,19 @@ public static class SaveController
         }
 
         return trapData;
+    }
+    
+    /**
+     * セーブデータを削除する
+     */
+    public static void DelSave()
+    {
+        PlayerPrefs.DeleteAll();
+    }
+
+    public static (TrapData[] Traps, TurretData[] Turrets, SkillData[] Skills)? LoadDeckData()
+    {
+        // TODO: 保存フォーマットを決めたらロード処理を書く（とりあえずnullを返す）
+        return null;
     }
 }
