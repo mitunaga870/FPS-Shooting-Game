@@ -66,7 +66,8 @@ namespace CreatePhase
         public TrapData[] TrapData { get; private set; }
 
         /** トラップ設置中フラグ */
-        [FormerlySerializedAs("IsSettingTrap")] public bool IsSettingTurret;
+        [FormerlySerializedAs("IsSettingTrap")]
+        public bool IsSettingTurret;
 
         // Start is called before the first frame update
         private void Start()
@@ -154,8 +155,11 @@ namespace CreatePhase
                 TrapData = trapData;
                 createToInvasionData.TrapData = trapData;
 
+                // トラップ数を設定
+                TrapCount = trapData.Length;
+
                 // トラップを設置
-                for (var i = 0; i < TrapCount; i++)
+                for (var i = 0; i < TrapData.Length; i++)
                 {
                     var trap = TrapData[i];
                     Maze[trap.Row][trap.Column].SetTrap(trapData[i].Trap);
@@ -176,13 +180,16 @@ namespace CreatePhase
          */
         public void SetRandomTrap()
         {
-            // トラップ配列を初期化
-            TrapData = new TrapData[TrapCount];
-            createToInvasionData.TrapData = new TrapData[TrapCount];
-            
             // トラップを取得
             var traps = deck.DrowTraps(TrapCount);
             var i = 0;
+
+            // 取得できたトラップ数はトラップ数と異なる場合があるので書き換え
+            TrapCount = traps.Count;
+
+            // トラップ配列を初期化
+            TrapData = new TrapData[TrapCount];
+            createToInvasionData.TrapData = new TrapData[TrapCount];
 
             // トラップの設置数分乱数をもとに場所を決定
             foreach (var trap in traps)
@@ -197,14 +204,14 @@ namespace CreatePhase
                 {
                     // トラップを設置
                     var setTrupResult = Maze[row][column].SetTrap(trap.GetTrapName());
-                    
+
                     // 設置できてたらbreak
-                    if(setTrupResult) break;
-                
+                    if (setTrupResult) break;
+
                     // 設置できるものがない等で無限ループになる場合があるので、10回で終了
                     if (loopCount++ > 10) throw new Exception("Trap setting failed");
                 }
-                
+
                 // トラップ情報を格納
                 TrapData[i++] = new TrapData(row, column, trap);
             }
