@@ -90,8 +90,6 @@ public class DeckController : MonoBehaviour
                 // ランダムな1枚を取り出して手札に加える
                 var rand = Random.Range(0, _deckTraps.Count);
 
-                Debug.Log(rand);
-
                 _handTraps.Add(_deckTraps[rand]);
 
                 // 引いたものを結果に加える

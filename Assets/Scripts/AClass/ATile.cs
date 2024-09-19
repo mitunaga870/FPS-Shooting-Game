@@ -311,6 +311,12 @@ namespace AClass
 
         public void ResetTile()
         {
+            if (hasTrap)
+            {
+                Destroy(_trap.gameObject);
+                hasTrap = false;
+            }
+
             Destroy(gameObject);
         }
 
@@ -377,7 +383,7 @@ namespace AClass
 
             // トラップを生成
             var trap = TrapGenerator.GenerateTrap(trapName);
-            
+
             // トラップの位置を設定
             trap.transform.position = new Vector3(
                 tilePosition.x,
