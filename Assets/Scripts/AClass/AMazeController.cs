@@ -36,7 +36,14 @@ namespace AClass
         public TilePosition StartPosition => stageObject.GetStartPosition(0);
         public TilePosition GoalPosition => stageObject.GetGoalPosition(0);
         public int ReRollWaitTime => stageObject.GetReRollWaitTime(0);
-        public int TrapCount => stageObject.GetTrapCount(0);
+
+        public int TrapCount
+        {
+            get { return _placedTrapCount == -1 ? stageObject.GetTrapCount(0) : _placedTrapCount; }
+            set => _placedTrapCount = value;
+        }
+
+        private int _placedTrapCount = -1;
 
         /**
      * ベースの迷路配列と指定配列を同期する

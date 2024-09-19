@@ -311,6 +311,12 @@ namespace AClass
 
         public void ResetTile()
         {
+            if (hasTrap)
+            {
+                Destroy(_trap.gameObject);
+                hasTrap = false;
+            }
+
             Destroy(gameObject);
         }
 
@@ -369,8 +375,9 @@ namespace AClass
 
         /**
          * 指定されたトラップを設置する
+         * 設置出来たらtrueを返す
          */
-        public void SetTrap(string trapName)
+        public bool SetTrap(string trapName)
         {
             var tilePosition = transform.position;
 
@@ -386,6 +393,8 @@ namespace AClass
 
             _trap = trap;
             hasTrap = true;
+
+            return true;
         }
 
         /**

@@ -26,6 +26,7 @@ namespace DataClass
             Trap = data[2];
         }
 
+
         public override string ToString()
         {
             return $"{Row}%%{Column}%%{Trap}";
