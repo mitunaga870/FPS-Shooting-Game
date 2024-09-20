@@ -113,6 +113,8 @@ namespace InvasionPhase
 
             Debug.Log("Game Clear!");
             GameState = GameState.Clear;
+
+            // 報酬付与
         }
 
         public void FastPlay()
