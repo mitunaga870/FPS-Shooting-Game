@@ -3,6 +3,7 @@ using Enums;
 using JetBrains.Annotations;
 using ScriptableObjects;
 using UnityEngine;
+using UnityEngine.TerrainUtils;
 
 public static class SaveController
 {
@@ -127,5 +128,11 @@ public static class SaveController
     public static void DelSave()
     {
         PlayerPrefs.DeleteAll();
+    }
+    
+    public static (TrapData[] Traps, TurretData[] Turrets, SkillData[] Skills)? LoadDeckData()
+    {
+        // TODO: 保存フォーマットを決めたらロード処理を書く（とりあえずnullを返す）
+        return null;
     }
 }
