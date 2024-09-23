@@ -37,7 +37,16 @@ namespace AClass
         public TilePosition StartPosition => StageData.start;
         public TilePosition GoalPosition => StageData.goal;
         public int ReRollWaitTime => StageData.reRollWaitTime;
-        public int TrapCount => StageData.trapCount;
+
+        public int TrapCount
+        {
+            get => _placedTrapCount == -1 
+                    ? StageData.trapCount 
+                    : _placedTrapCount;
+            set => _placedTrapCount = value;
+        }
+        
+        private int _placedTrapCount = -1;
         
         void Awake()
         {
