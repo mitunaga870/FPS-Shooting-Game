@@ -96,9 +96,9 @@ namespace CreatePhase
         }
 
         /**
-     * 迷路の生成
-     * すべてのタイルを生成し、初期化する
-     */
+         * 迷路の生成
+         * すべてのタイルを生成し、初期化する
+         */
         private void CreateMaze([CanBeNull] TileData[][] tileData, [CanBeNull] TrapData[] trapData = null)
         {
             // 原点を設定
