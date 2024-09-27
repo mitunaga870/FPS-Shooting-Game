@@ -53,7 +53,7 @@ public static class SaveController
 
         PlayerPrefs.SetString("TrapData", saveText);
     }
-    
+
     public static void SaveStageData(StageData stageData)
     {
         PlayerPrefs.SetString("StageName", stageData.stageName);
@@ -112,7 +112,7 @@ public static class SaveController
     }
 
     [CanBeNull]
-    public static StageData GetStageData(StageObject stageObject)
+    public static StageData LoadStageData(StageObject stageObject)
     {
         // セーブデータがない場合はnullを返す
         var stageName = PlayerPrefs.GetString("StageName", null);
@@ -129,7 +129,7 @@ public static class SaveController
     {
         PlayerPrefs.DeleteAll();
     }
-    
+
     public static (TrapData[] Traps, TurretData[] Turrets, SkillData[] Skills)? LoadDeckData()
     {
         // TODO: 保存フォーマットを決めたらロード処理を書く（とりあえずnullを返す）

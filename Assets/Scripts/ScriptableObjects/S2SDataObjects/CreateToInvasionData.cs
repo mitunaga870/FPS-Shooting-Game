@@ -1,4 +1,5 @@
 using System;
+using DataClass;
 using UnityEngine;
 
 namespace ScriptableObjects.S2SDataObjects
@@ -13,6 +14,7 @@ namespace ScriptableObjects.S2SDataObjects
         [NonSerialized] public DataClass.TileData[][] TileData;
         [NonSerialized] public DataClass.TrapData[] TrapData;
         [NonSerialized] public Vector3 MazeOrigin;
+        [NonSerialized] public StageData StageData;
 
         public override void OnBeforeSerialize()
         {
@@ -20,6 +22,7 @@ namespace ScriptableObjects.S2SDataObjects
             TrapData = Array.Empty<DataClass.TrapData>();
             MazeOrigin = Vector3.zero;
             IsInvasion = false;
+            StageData = null;
         }
 
         public override void OnAfterDeserialize()

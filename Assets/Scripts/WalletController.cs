@@ -8,10 +8,21 @@ public class WalletController : MonoBehaviour
 {
     [SerializeField] private DefaultValueObject defaultValueObject;
 
-    private int wallet;
+    public int Wallet { get; private set; }
 
     public void Start()
     {
-        wallet = defaultValueObject.defaultWallet;
+        Wallet = defaultValueObject.defaultWallet;
+    }
+
+    /**
+     * ウォレットにお金を追加
+     */
+    public void AddWallet(int amount)
+    {
+        // 負の数は追加しない
+        if (amount < 0) return;
+
+        Wallet += amount;
     }
 }

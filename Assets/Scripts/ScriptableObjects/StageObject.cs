@@ -17,8 +17,8 @@ namespace ScriptableObjects
         [SerializeField] private LevelData normalLevelData;
         [SerializeField] private LevelData eliteLevelData;
         [SerializeField] private LevelData bossLevelData;
-        
-        
+
+
         /**
          * ノーマルステージデータを取得
          * 引数がない場合はランダムで取得
@@ -30,11 +30,11 @@ namespace ScriptableObjects
                 // ステージナンバーが未指定の時はランダムで取得
                 stageNum = UnityEngine.Random.Range(0, normalLevelData.StageDataList.Count);
             }
-            
+
             // ステージタイプをノーマルに変更
             var result = new StageData(normalLevelData.StageDataList[stageNum]);
             result.StageType = Enums.StageType.Normal;
-            
+
             return result;
         }
 
@@ -49,11 +49,11 @@ namespace ScriptableObjects
                 // ステージナンバーが未指定の時はランダムで取得
                 stageNum = UnityEngine.Random.Range(0, eliteLevelData.StageDataList.Count);
             }
-            
+
             // ステージタイプをエリートに変更
             var result = eliteLevelData.StageDataList[stageNum];
             result.StageType = Enums.StageType.Elite;
-            
+
             return result;
         }
 
@@ -68,11 +68,11 @@ namespace ScriptableObjects
                 // ステージナンバーが未指定の時はランダムで取得
                 stageNum = UnityEngine.Random.Range(0, bossLevelData.StageDataList.Count);
             }
-            
+
             // ステージタイプをボスに変更
             var result = bossLevelData.StageDataList[stageNum];
             result.StageType = Enums.StageType.Boss;
-            
+
             return result;
         }
 
@@ -86,10 +86,25 @@ namespace ScriptableObjects
             allStageData.AddRange(normalLevelData.StageDataList);
             allStageData.AddRange(eliteLevelData.StageDataList);
             allStageData.AddRange(bossLevelData.StageDataList);
-            
-           var result = allStageData.Find(stageData => stageData.stageName == stageName);
-           
-           return result;
+
+            var result = allStageData.Find(stageData => stageData.stageName == stageName);
+
+            return result;
+        }
+
+        public RewardData getNormalReward()
+        {
+            return normalLevelData.RewardDataList[UnityEngine.Random.Range(0, normalLevelData.RewardDataList.Count)];
+        }
+
+        public RewardData getEliteReward()
+        {
+            return eliteLevelData.RewardDataList[UnityEngine.Random.Range(0, eliteLevelData.RewardDataList.Count)];
+        }
+
+        public RewardData getBossReward()
+        {
+            return bossLevelData.RewardDataList[UnityEngine.Random.Range(0, bossLevelData.RewardDataList.Count)];
         }
     }
 }

@@ -13,8 +13,7 @@ namespace AClass
     public abstract class AMazeController : MonoBehaviour
     {
         /** 各迷路の行列数等の情報格納するスクリプタブルオブジェクト */
-        [Header("迷路データ")] [SerializeField]
-        private  StageObject stageObject;
+        [Header("迷路データ")] [SerializeField] private StageObject stageObject;
 
         /** 汎用情報 */
         [FormerlySerializedAs("GeneralS2SData")] [SerializeField]
@@ -40,19 +39,19 @@ namespace AClass
 
         public int TrapCount
         {
-            get => _placedTrapCount == -1 
-                    ? StageData.trapCount 
-                    : _placedTrapCount;
+            get => _placedTrapCount == -1
+                ? StageData.trapCount
+                : _placedTrapCount;
             set => _placedTrapCount = value;
         }
-        
+
         private int _placedTrapCount = -1;
-        
+
         void Awake()
         {
             // セーブデータからステージデータをとる
-            StageData = 
-                SaveController.GetStageData(stageObject) 
+            StageData =
+                SaveController.LoadStageData(stageObject)
                 ?? stageObject.getNormalStageData();
         }
 
