@@ -25,4 +25,24 @@ public class WalletController : MonoBehaviour
 
         Wallet += amount;
     }
+
+    /**
+     * ウォレットからお金を引く
+     */
+    public void SubtractWallet(int amount)
+    {
+        // 負の数は引かない
+        if (amount < 0) return;
+
+        // ウォレットにお金が足りない場合は0にする
+        Wallet = Math.Max(0, Wallet - amount);
+    }
+
+    /**
+     * 購入確認処理
+     */
+    public bool CanBuy(int price)
+    {
+        return price >= 0;
+    }
 }
