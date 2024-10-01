@@ -1,4 +1,5 @@
 ﻿using Unity.VisualScripting;
+using UnityEngine;
 
 namespace ScriptableObjects
 {

@@ -24,6 +24,8 @@ public class DeckController : MonoBehaviour
     private List<ASkill> _handSkills = new List<ASkill>();
     private List<ATurret> _handTurrets = new List<ATurret>();
 
+    public int TrapDeckCount => _deckTraps.Count;
+
 
     private void Awake()
     {
