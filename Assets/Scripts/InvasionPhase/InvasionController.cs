@@ -113,6 +113,7 @@ namespace InvasionPhase
             // シーン遷移で読み込んだデータをそのまま保存
             SaveController.SaveTileData(mazeController.TileData);
             SaveController.SaveTrapData(mazeController.TrapData);
+            SaveController.SaveStageData(mazeController.StageData);
         }
 
 
@@ -145,6 +146,8 @@ namespace InvasionPhase
 
             Debug.Log("Game Clear!");
             GameState = GameState.Clear;
+
+            // 報酬付与
         }
 
         public void FastPlay()

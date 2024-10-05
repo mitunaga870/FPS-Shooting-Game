@@ -13,8 +13,8 @@ namespace AClass
     public abstract class AMazeController : MonoBehaviour
     {
         /** 各迷路の行列数等の情報格納するスクリプタブルオブジェクト */
-        [FormerlySerializedAs("stageData")] [Header("迷路データ")] [SerializeField]
-        private StageObject stageObject;
+        [Header("迷路データ")] [SerializeField]
+        private  StageObject stageObject;
 
         /** 汎用情報 */
         [FormerlySerializedAs("GeneralS2SData")] [SerializeField]
@@ -23,31 +23,42 @@ namespace AClass
         /** 迷路タイル配列 */
         protected ATile[][] Maze { get; set; }
 
-
         /**
-     * 全体を同期する
-     */
+         * 全体を同期する
+         */
         protected abstract void Sync();
 
+        // TODO: 進捗と選択状況からステージデータをとる。いったんノーマルを取っておく
+        [NonSerialized] public StageData StageData;
         public int Level => generalS2SData.Level;
         public int Stage => generalS2SData.Stage;
-        public int MazeRows => stageObject.GetMazeRows(0);
-        public int MazeColumns => stageObject.GetMazeColumns(0);
-        public TilePosition StartPosition => stageObject.GetStartPosition(0);
-        public TilePosition GoalPosition => stageObject.GetGoalPosition(0);
-        public int ReRollWaitTime => stageObject.GetReRollWaitTime(0);
+        public int MazeRows => StageData.mazeRow;
+        public int MazeColumns => StageData.mazeColumn;
+        public TilePosition StartPosition => StageData.start;
+        public TilePosition GoalPosition => StageData.goal;
+        public int ReRollWaitTime => StageData.reRollWaitTime;
 
         public int TrapCount
         {
-            get { return _placedTrapCount == -1 ? stageObject.GetTrapCount(0) : _placedTrapCount; }
+            get => _placedTrapCount == -1 
+                    ? StageData.trapCount 
+                    : _placedTrapCount;
             set => _placedTrapCount = value;
         }
-
+        
         private int _placedTrapCount = -1;
+        
+        void Awake()
+        {
+            // セーブデータからステージデータをとる
+            StageData = 
+                SaveController.GetStageData(stageObject) 
+                ?? stageObject.getNormalStageData();
+        }
 
         /**
-     * ベースの迷路配列と指定配列を同期する
-     */
+         * ベースの迷路配列と指定配列を同期する
+         */
         protected void SyncMazeData(ATile[][] maze)
         {
             Maze = new ATile[maze.Length][];
@@ -74,9 +85,9 @@ namespace AClass
         }
 
         /**
-     * 現在の迷路での指定地点間の最短経路を出す
-     * ないときはnull
-     */
+         * 現在の迷路での指定地点間の最短経路を出す
+         * ないときはnull
+         */
         [CanBeNull]
         public Path GetShortestPath(TilePosition start, TilePosition destination)
         {

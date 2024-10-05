@@ -1,4 +1,6 @@
+using AClass;
 using CreatePhase;
+using DataClass;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -24,18 +26,19 @@ public class MainCamera : MonoBehaviour
     /** マウスの縦制限 */
     private float _mouseZLimit;
 
-    /** ステージデータ */
-    [FormerlySerializedAs("_stageData")] [SerializeField]
-    private StageObject stageObject;
+    /** 迷路情報 */
+    [SerializeField] private AMazeController _mazeController;
 
     /** 一般情報 */
     [SerializeField] private GeneralS2SData _generalS2SData;
+    
+    private StageData _stageData => _mazeController.StageData;
 
     // Start is called before the first frame update
     void Start()
     {
-        _mouseXLimit = stageObject.GetMazeColumns(0) * 0.5f;
-        _mouseZLimit = stageObject.GetMazeRows(0) * 0.5f;
+        _mouseXLimit = _stageData.mazeColumn * 0.5f;
+        _mouseZLimit = _stageData.mazeRow * 0.5f;
     }
 
     // Update is called once per frame

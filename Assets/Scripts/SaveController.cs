@@ -1,6 +1,7 @@
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
+using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.TerrainUtils;
 
@@ -51,6 +52,11 @@ public static class SaveController
         saveText = saveText.Substring(0, saveText.Length - 1);
 
         PlayerPrefs.SetString("TrapData", saveText);
+    }
+    
+    public static void SaveStageData(StageData stageData)
+    {
+        PlayerPrefs.SetString("StageName", stageData.stageName);
     }
 
     // =======　読み込み処理　=======
@@ -104,7 +110,18 @@ public static class SaveController
 
         return trapData;
     }
-    
+
+    [CanBeNull]
+    public static StageData GetStageData(StageObject stageObject)
+    {
+        // セーブデータがない場合はnullを返す
+        var stageName = PlayerPrefs.GetString("StageName", null);
+        if (stageName == "") return null;
+
+        var result = stageObject.GetFromStageName(stageName);
+        return result;
+    }
+
     /**
      * セーブデータを削除する
      */
@@ -112,7 +129,7 @@ public static class SaveController
     {
         PlayerPrefs.DeleteAll();
     }
-
+    
     public static (TrapData[] Traps, TurretData[] Turrets, SkillData[] Skills)? LoadDeckData()
     {
         // TODO: 保存フォーマットを決めたらロード処理を書く（とりあえずnullを返す）

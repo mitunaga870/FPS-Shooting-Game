@@ -777,12 +777,8 @@ MonoBehaviour:
   - {fileID: -549976925186524320, guid: 5d9caeed219cd314d87f1df094afd075, type: 3}
   - {fileID: -549976925186524320, guid: 5d9caeed219cd314d87f1df094afd075, type: 3}
   - {fileID: -549976925186524320, guid: 5d9caeed219cd314d87f1df094afd075, type: 3}
-  - {fileID: -549976925186524320, guid: 5d9caeed219cd314d87f1df094afd075, type: 3}
-  - {fileID: -549976925186524320, guid: 5d9caeed219cd314d87f1df094afd075, type: 3}
-  - {fileID: -549976925186524320, guid: 5d9caeed219cd314d87f1df094afd075, type: 3}
   defaultSkills: []
-  defaultTurrets:
-  - {fileID: 6233832138599324131, guid: 0281779c11152dd4aa702fee6ae87692, type: 3}
+  defaultTurrets: []
 --- !u!1 &637451205
 GameObject:
   m_ObjectHideFlags: 0
@@ -967,8 +963,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26d6e4fa171fd8949b521a25477b62d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turretPrefab: {fileID: 6233832138599324131, guid: 0281779c11152dd4aa702fee6ae87692, type: 3}
-  mazeCreationController: {fileID: 321828198}
+  turretPrefab: {fileID: 0}
+  mazeCreationController: {fileID: 0}
 --- !u!114 &688432146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1768,6 +1764,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 1400435780392463179, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
+      propertyPath: _mazeController
+      value: 
+      objectReference: {fileID: 321828198}
     - target: {fileID: 8712117627589467015, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
