@@ -20,7 +20,6 @@ namespace InvasionPhase
         public TileData[][] TileData { get; private set; }
         public TrapData[] TrapData { get; private set; }
 
-
         public void Create(TileData[][] tiles, TrapData[] trapData)
         {
             var mazeRows = tiles.Length;

@@ -24,6 +24,8 @@ public class DeckController : MonoBehaviour
     private List<ASkill> _handSkills = new List<ASkill>();
     private List<ATurret> _handTurrets = new List<ATurret>();
 
+    public int TrapDeckCount => _deckTraps.Count;
+
 
     private void Awake()
     {
@@ -120,5 +122,53 @@ public class DeckController : MonoBehaviour
     {
         _discardTraps.AddRange(_handTraps);
         _handTraps.Clear();
+    }
+
+    /**
+     * 山札にトラップを追加
+     */
+    public void AddTrap(ATrap trap)
+    {
+        _deckTraps.Add(trap);
+    }
+
+    /**
+     * 山札にトラップを追加
+     */
+    public void AddTrapRange(List<ATrap> selectedTrap)
+    {
+        _deckTraps.AddRange(selectedTrap);
+    }
+
+    /**
+     * 山札にタレットを追加
+     */
+    public void AddTurret(ATurret turret)
+    {
+        _deckTurrets.Add(turret);
+    }
+
+    /**
+     * 山札にタレットを追加
+     */
+    public void AddTurretRange(List<ATurret> selectedTurret)
+    {
+        _deckTurrets.AddRange(selectedTurret);
+    }
+
+    /**
+     * 山札にスキルを追加
+     */
+    public void AddSkill(ASkill skill)
+    {
+        _deckSkills.Add(skill);
+    }
+
+    /**
+     * 山札にスキルを追加
+     */
+    public void AddSkillRange(List<ASkill> selectedSkill)
+    {
+        _deckSkills.AddRange(selectedSkill);
     }
 }
