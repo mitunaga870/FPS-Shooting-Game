@@ -93,6 +93,9 @@ namespace InvasionPhase
         // Start is called before the first frame update
         public void Start()
         {
+            // メイズコントローラーの初期化時に制作時のでーたを読み込めてないので、ここで読み込む
+            mazeController.StageData = createToInvasionData.StageData;
+
             // セーブデータ読み込み
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();
