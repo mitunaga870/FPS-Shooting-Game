@@ -29,6 +29,7 @@ namespace CreatePhase
         {
             // セーブデータを保存
             SaveController.SavePhase(Phase.Create);
+            SaveController.SaveStageData(mazeCreationController.StageData);
             SaveController.SaveTileData(mazeCreationController.GetTileData());
             SaveController.SaveTrapData(mazeCreationController.TrapData);
         }
@@ -42,6 +43,7 @@ namespace CreatePhase
             var shortestPath = mazeCreationController.GetShortestS2GPath();
             if (shortestPath == null)
             {
+                // TODO: 迷路が不通のダイアログを出す。
                 Debug.Log("迷路がつながってないよ");
                 return;
             }
@@ -49,6 +51,7 @@ namespace CreatePhase
             // ========= シーン間のデータ共有オブジェクト関連 =========
             mazeCreationController.SetS2SData();
             createToInvasionData.IsInvasion = true;
+            createToInvasionData.StageData = mazeCreationController.StageData;
 
             // ========= 侵攻フェーズに移動 =========
             SceneManager.LoadScene("InvasionPhase");

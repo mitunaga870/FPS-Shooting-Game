@@ -45,7 +45,7 @@ namespace InvasionPhase
         public void Start()
         {
             // ステージデータを取得
-            _currentStageData = stageObject.GetStageData(0);
+            _currentStageData = invasionMazeController.StageData;
 
             // 残りの敵数を設定
             _remainingEnemyCount = _currentStageData.invasionData.GetEnemyCount();

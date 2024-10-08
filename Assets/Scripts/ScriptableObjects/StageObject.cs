@@ -1,77 +1,110 @@
 using System;
 using System.Collections.Generic;
 using DataClass;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace ScriptableObjects
 {
+    /**
+     * ステージデータのScriptableObject
+     * ステージデータを保持するラッパーオブジェクト
+     */
     // ReSharper disable InconsistentNaming
     [CreateAssetMenu]
     public class StageObject : ScriptableObject
     {
-        [SerializeField] List<StageData> stageDataList = new List<StageData>();
+        [SerializeField] private LevelData normalLevelData;
+        [SerializeField] private LevelData eliteLevelData;
+        [SerializeField] private LevelData bossLevelData;
+
 
         /**
-         * リロール待機時間を取得する
+         * ノーマルステージデータを取得
+         * 引数がない場合はランダムで取得
          */
-        public int GetReRollWaitTime(int stageNum)
+        public StageData getNormalStageData(int stageNum = -1)
         {
-            // 指定ステージ、レベルのリロール待機時間を取得
-            return GetStageData(stageNum).reRollWaitTime;
-        }
+            if (stageNum == -1)
+            {
+                // ステージナンバーが未指定の時はランダムで取得
+                stageNum = UnityEngine.Random.Range(0, normalLevelData.StageDataList.Count);
+            }
 
-        /**
-         * 迷路の行数を取得する
-         */
-        public int GetMazeRows(int stageNum)
-        {
-            // 指定ステージ、レベルの迷路の行数を取得
-            return GetStageData(stageNum).mazeRow;
-        }
+            // ステージタイプをノーマルに変更
+            var result = new StageData(normalLevelData.StageDataList[stageNum]);
+            result.StageType = Enums.StageType.Normal;
 
-        /**
-         * 迷路の列数を取得する
-         */
-        public int GetMazeColumns(int stageNum)
-        {
-            // 指定ステージ、レベルの迷路の列数を取得
-            return GetStageData(stageNum).mazeColumn;
+            return result;
         }
 
         /**
-         * トラップの設置数を取得する
+         * エリートステージデータを取得
+         * 引数がない場合はランダムで取得
          */
-        public int GetTrapCount(int stageNum)
+        public StageData getEliteStageData(int stageNum = -1)
         {
-            // 指定ステージ、レベルのトラップの設置数を取得
-            return GetStageData(stageNum).trapCount;
+            if (stageNum == -1)
+            {
+                // ステージナンバーが未指定の時はランダムで取得
+                stageNum = UnityEngine.Random.Range(0, eliteLevelData.StageDataList.Count);
+            }
+
+            // ステージタイプをエリートに変更
+            var result = eliteLevelData.StageDataList[stageNum];
+            result.StageType = Enums.StageType.Elite;
+
+            return result;
         }
 
         /**
-         * スタート位置を取得する
+         * ボスステージデータを取得
+         * 引数がない場合はランダムで取得
          */
-        public TilePosition GetStartPosition(int stageNum)
+        public StageData getBossStageData(int stageNum = -1)
         {
-            // 指定ステージ、レベルのスタート位置を取得
-            return GetStageData(stageNum).start;
+            if (stageNum == -1)
+            {
+                // ステージナンバーが未指定の時はランダムで取得
+                stageNum = UnityEngine.Random.Range(0, bossLevelData.StageDataList.Count);
+            }
+
+            // ステージタイプをボスに変更
+            var result = bossLevelData.StageDataList[stageNum];
+            result.StageType = Enums.StageType.Boss;
+
+            return result;
         }
 
         /**
-         * ゴール位置を取得する
+         * ステージ名からステージデータを取得
          */
-        public TilePosition GetGoalPosition(int stageNum)
+        [CanBeNull]
+        public StageData GetFromStageName(string stageName)
         {
-            // 指定ステージ、レベルのゴール位置を取得
-            return GetStageData(stageNum).goal;
+            var allStageData = new List<StageData>();
+            allStageData.AddRange(normalLevelData.StageDataList);
+            allStageData.AddRange(eliteLevelData.StageDataList);
+            allStageData.AddRange(bossLevelData.StageDataList);
+
+            var result = allStageData.Find(stageData => stageData.stageName == stageName);
+
+            return result;
         }
 
-        public List<StageData> GetStageDataList()
+        public RewardData getNormalReward()
         {
-            return stageDataList;
+            return normalLevelData.RewardDataList[UnityEngine.Random.Range(0, normalLevelData.RewardDataList.Count)];
         }
-        public StageData GetStageData(int i)
+
+        public RewardData getEliteReward()
         {
-            return stageDataList[i];
+            return eliteLevelData.RewardDataList[UnityEngine.Random.Range(0, eliteLevelData.RewardDataList.Count)];
+        }
+
+        public RewardData getBossReward()
+        {
+            return bossLevelData.RewardDataList[UnityEngine.Random.Range(0, bossLevelData.RewardDataList.Count)];
         }
     }
 }

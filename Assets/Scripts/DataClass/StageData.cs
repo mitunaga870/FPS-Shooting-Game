@@ -1,7 +1,6 @@
-using System;
-using UnityEngine;
-using UnityEngine.Serialization;
-using Debug = System.Diagnostics.Debug;
+﻿using System;
+using Enums;
+using ScriptableObjects;
 
 namespace DataClass
 {
@@ -46,6 +45,59 @@ namespace DataClass
         /**
          * 侵攻データ
          */
-        public InvasionData invasionData = new InvasionData();
+        public InvasionData invasionData;
+
+        /**
+         * ステージデータの識別名
+         * セーブロードでの情報取得に利用
+         */
+        public string stageName;
+
+        /**
+         * ノーマル・エリート・ボスのどれか
+         */
+        public StageType StageType
+        {
+            set
+            {
+                // ステージタイプが未定義の場合のみ変更可能
+                if (_stageType != StageType.Undefined)
+                    throw new Exception("ステージタイプは変更できません");
+
+                _stageType = value;
+            }
+            get => _stageType;
+        }
+
+        [NonSerialized] private StageType _stageType = StageType.Undefined;
+
+        public StageData(StageData stageData)
+        {
+            mazeRow = stageData.mazeRow;
+            mazeColumn = stageData.mazeColumn;
+            trapCount = stageData.trapCount;
+            reRollWaitTime = stageData.reRollWaitTime;
+            stageTime = stageData.stageTime;
+            start = stageData.start;
+            goal = stageData.goal;
+            invasionData = stageData.invasionData;
+            StageType = stageData.StageType;
+            stageName = stageData.stageName;
+        }
+
+        public RewardData GetReward(StageObject stageObject)
+        {
+            switch (_stageType)
+            {
+                case StageType.Normal:
+                    return stageObject.getNormalReward();
+                case StageType.Elite:
+                    return stageObject.getEliteReward();
+                case StageType.Boss:
+                    return stageObject.getBossReward();
+                default:
+                    throw new Exception("ステージタイプが未定義です");
+            }
+        }
     }
 }

@@ -27,6 +27,9 @@ namespace CreatePhase
         /** リロールボタン */
         [SerializeField] private ReRollButton reRollButton;
 
+        /** デッキシステムつなぎこみ */
+        [SerializeField] private DeckController deck;
+
         /** シーン間のデータ共有用オブジェクト */
         [SerializeField] private CreateToInvasionData createToInvasionData;
 
@@ -62,6 +65,10 @@ namespace CreatePhase
         /** 設置したトラップ情報 */
         public TrapData[] TrapData { get; private set; }
 
+        /** トラップ設置中フラグ */
+        [FormerlySerializedAs("IsSettingTrap")]
+        public bool IsSettingTurret;
+
         // Start is called before the first frame update
         private void Start()
         {
@@ -96,9 +103,9 @@ namespace CreatePhase
         }
 
         /**
-     * 迷路の生成
-     * すべてのタイルを生成し、初期化する
-     */
+         * 迷路の生成
+         * すべてのタイルを生成し、初期化する
+         */
         private void CreateMaze([CanBeNull] TileData[][] tileData, [CanBeNull] TrapData[] trapData = null)
         {
             // 原点を設定
@@ -148,8 +155,11 @@ namespace CreatePhase
                 TrapData = trapData;
                 createToInvasionData.TrapData = trapData;
 
+                // トラップ数を設定
+                TrapCount = trapData.Length;
+
                 // トラップを設置
-                for (var i = 0; i < TrapCount; i++)
+                for (var i = 0; i < TrapData.Length; i++)
                 {
                     var trap = TrapData[i];
                     Maze[trap.Row][trap.Column].SetTrap(trapData[i].Trap);
@@ -170,38 +180,46 @@ namespace CreatePhase
          */
         public void SetRandomTrap()
         {
+            // トラップを取得
+            var traps = deck.DrowTraps(TrapCount);
+            var i = 0;
+
+            // 取得できたトラップ数はトラップ数と異なる場合があるので書き換え
+            TrapCount = traps.Count;
+
             // トラップ配列を初期化
             TrapData = new TrapData[TrapCount];
             createToInvasionData.TrapData = new TrapData[TrapCount];
-            // トラップの設置数分乱数をもとに場所を決定
-            for (var i = 0; i < TrapCount; i++)
-            {
-                ATrap trap = null;
 
+            // トラップの設置数分乱数をもとに場所を決定
+            foreach (var trap in traps)
+            {
                 // 乱数をもとに場所を決定
                 var row = Random.Range(0, MazeRows);
                 var column = Random.Range(0, MazeColumns);
 
                 var loopCount = 0;
-
                 // nullの場合は設置できてないので再度設置
-                while (trap == null)
+                while (true)
                 {
                     // トラップを設置
-                    trap = Maze[row][column].SetRandTrap();
+                    var setTrupResult = Maze[row][column].SetTrap(trap.GetTrapName());
+
+                    // 設置できてたらbreak
+                    if (setTrupResult) break;
 
                     // 設置できるものがない等で無限ループになる場合があるので、10回で終了
                     if (loopCount++ > 10) throw new Exception("Trap setting failed");
                 }
 
                 // トラップ情報を格納
-                TrapData[i] = new TrapData(row, column, trap);
+                TrapData[i++] = new TrapData(row, column, trap);
             }
         }
 
         /**
-     * 迷路をリセットする
-     */
+         * 迷路をリセットする
+         */
         private void ResetMaze()
         {
             // すべてのタイルをリセットする

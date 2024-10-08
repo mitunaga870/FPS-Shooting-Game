@@ -1,7 +1,9 @@
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
+using ScriptableObjects;
 using UnityEngine;
+using UnityEngine.TerrainUtils;
 
 public static class SaveController
 {
@@ -52,6 +54,11 @@ public static class SaveController
         PlayerPrefs.SetString("TrapData", saveText);
     }
 
+    public static void SaveStageData(StageData stageData)
+    {
+        PlayerPrefs.SetString("StageName", stageData.stageName);
+    }
+
     // =======　読み込み処理　=======
     [CanBeNull]
     public static TileData[][] LoadTileData()
@@ -86,14 +93,6 @@ public static class SaveController
         return (Phase)PlayerPrefs.GetInt("Phase", 0);
     }
 
-    /**
-     * セーブデータを削除する
-     */
-    public static void DelSave()
-    {
-        PlayerPrefs.DeleteAll();
-    }
-
     public static TrapData[] LoadTrapData()
     {
         if (!PlayerPrefs.HasKey("TrapData")) return null;
@@ -110,5 +109,30 @@ public static class SaveController
         }
 
         return trapData;
+    }
+
+    [CanBeNull]
+    public static StageData LoadStageData(StageObject stageObject)
+    {
+        // セーブデータがない場合はnullを返す
+        var stageName = PlayerPrefs.GetString("StageName", null);
+        if (stageName == "") return null;
+
+        var result = stageObject.GetFromStageName(stageName);
+        return result;
+    }
+
+    /**
+     * セーブデータを削除する
+     */
+    public static void DelSave()
+    {
+        PlayerPrefs.DeleteAll();
+    }
+
+    public static (TrapData[] Traps, TurretData[] Turrets, SkillData[] Skills)? LoadDeckData()
+    {
+        // TODO: 保存フォーマットを決めたらロード処理を書く（とりあえずnullを返す）
+        return null;
     }
 }

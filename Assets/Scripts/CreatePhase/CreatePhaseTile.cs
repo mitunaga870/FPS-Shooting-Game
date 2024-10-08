@@ -42,6 +42,8 @@ namespace CreatePhase
      */
         private void OnMouseOver()
         {
+            // トラップ設置中の場合は処理しない
+            if (_mazeCreationController.IsSettingTurret) return;
             // UIでブロックされている場合は処理しない
             if (General.IsPointerOverUIObject()) return;
             // 連続入力を防ぐ
@@ -94,6 +96,8 @@ namespace CreatePhase
      */
         private void OnMouseEnter()
         {
+            // トラップ設置中の場合は処理しない
+            if (_mazeCreationController.IsSettingTurret) return;
             // UIでブロックされている場合は処理しない
             if (General.IsPointerOverUIObject()) return;
 
