@@ -17,7 +17,8 @@ namespace Pallab.TinyTank
 
             mover.SetMovement(moveVertical, moveHorizontal);
             animController.SetMovement(moveVertical, moveHorizontal);
-
+            
+            //ここで操作されてる。
             if (Input.GetKeyDown(KeyCode.Space) && !disableFire)
             {
                 animController.Fire();
