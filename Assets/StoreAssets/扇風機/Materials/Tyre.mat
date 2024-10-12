@@ -73,7 +73,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Bump2ndMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: ab2a2f6a3dec612458c0e46a6a311cf1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Bump2ndScaleMask:
@@ -380,8 +380,8 @@ Material:
     - _BlendOpAlphaFA: 4
     - _BlendOpFA: 4
     - _Bump2ndMap_UVMode: 0
-    - _Bump2ndScale: 1
-    - _BumpScale: -3.3
+    - _Bump2ndScale: -10
+    - _BumpScale: 0.5
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _ColorMask: 15
