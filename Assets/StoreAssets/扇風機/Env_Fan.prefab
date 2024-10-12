@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: daa4bac6d7628894fb6e2652d779dfd4, type: 3}
       propertyPath: m_Name
-      value: Fan 1 (1)
+      value: Env_Fan
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -86,10 +86,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   X: 0
-  Y: 1800
-  Z: 0
+  Y: 0
+  Z: 1800
   ActionKey: U
   time: 4
+  obj: {fileID: 0}
   sampleEnum: 0
 --- !u!1001 &4376239237618256765
 PrefabInstance:
