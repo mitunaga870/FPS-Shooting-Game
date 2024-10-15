@@ -13,10 +13,13 @@ namespace AClass
     public abstract class AMazeController : MonoBehaviour
     {
         /** 各迷路の行列数等の情報格納するスクリプタブルオブジェクト */
-        [Header("迷路データ")] [SerializeField] private StageObject stageObject;
+        [Header("迷路データ")]
+        [SerializeField]
+        private StageObject stageObject;
 
         /** 汎用情報 */
-        [FormerlySerializedAs("GeneralS2SData")] [SerializeField]
+        [FormerlySerializedAs("GeneralS2SData")]
+        [SerializeField]
         protected GeneralS2SData generalS2SData;
 
         /** 迷路タイル配列 */
@@ -28,9 +31,9 @@ namespace AClass
         protected abstract void Sync();
 
         // TODO: 進捗と選択状況からステージデータをとる。いったんノーマルを取っておく
-        [NonSerialized] public StageData StageData;
-        public int Level => generalS2SData.Level;
-        public int Stage => generalS2SData.Stage;
+        [NonSerialized]
+        public StageData StageData;
+
         public int MazeRows => StageData.mazeRow;
         public int MazeColumns => StageData.mazeColumn;
         public TilePosition StartPosition => StageData.start;
@@ -47,7 +50,7 @@ namespace AClass
 
         private int _placedTrapCount = -1;
 
-        void Awake()
+        private void Awake()
         {
             // セーブデータからステージデータをとる
             StageData =
@@ -64,10 +67,7 @@ namespace AClass
             for (var i = 0; i < maze.Length; i++)
             {
                 Maze[i] = new ATile[maze[i].Length];
-                for (var j = 0; j < maze[i].Length; j++)
-                {
-                    Maze[i][j] = maze[i][j];
-                }
+                for (var j = 0; j < maze[i].Length; j++) Maze[i][j] = maze[i][j];
             }
         }
 
@@ -116,12 +116,8 @@ namespace AClass
 
                     // ゴールにたどりついた者があればそれを返す
                     foreach (var newPath in paths)
-                    {
                         if (newPath.GetLast().Equals(destination))
-                        {
                             return newPath;
-                        }
-                    }
 
                     // 次のステップのパスをリストに追加
                     nextPathList.AddRange(paths);
@@ -185,10 +181,7 @@ namespace AClass
             if (index == 0) return null;
 
             var result = new Path[index];
-            for (var i = 0; i < index; i++)
-            {
-                result[i] = path.Add(nextTile[i]);
-            }
+            for (var i = 0; i < index; i++) result[i] = path.Add(nextTile[i]);
 
             return result;
         }
@@ -224,205 +217,111 @@ namespace AClass
 
             // 壁なし
             if (top && left && right && bottom && topLeft && topRight && bottomLeft && bottomRight)
-            {
                 return RoadAdjust.NoWall;
-            }
             // 太い道路のL字内側
             else if (top && left && right && bottom && topRight && bottomLeft && bottomRight)
-            {
                 return RoadAdjust.TopLeftDot;
-            }
             else if (top && left && right && bottom && topLeft && topRight && bottomRight)
-            {
                 return RoadAdjust.BottomLeftDot;
-            }
             else if (top && left && right && bottom && topLeft && bottomRight && bottomLeft)
-            {
                 return RoadAdjust.TopRightDot;
-            }
             else if (top && left && right && bottom && topLeft && bottomLeft && topRight)
-            {
                 return RoadAdjust.BottomRightDot;
-            }
             // 太い道路から細い道路分岐
             else if (left && right && bottom && top && topLeft && topRight)
-            {
                 return RoadAdjust.TopDoubleDot;
-            }
             else if (left && right && bottom && top && bottomLeft && bottomRight)
-            {
                 return RoadAdjust.BottomDoubleDot;
-            }
             else if (left && right && bottom && top && topLeft && bottomLeft)
-            {
                 return RoadAdjust.LeftDoubleDot;
-            }
             else if (left && right && bottom && top && topRight && bottomRight)
-            {
                 return RoadAdjust.RightDoubleDot;
-            }
             // 斜め点　２個ない
             else if (left && right && top && bottom && topRight && bottomLeft)
-            {
                 return RoadAdjust.TopRightAndBottomLeftDot;
-            }
             else if (left && right && top && bottom && topLeft && bottomRight)
-            {
                 return RoadAdjust.TopLeftAndBottomRightDot;
-            }
             // 3つ点
             else if (left && right && top && bottom && bottomRight)
-            {
                 return RoadAdjust.ExpectBottomRightDot;
-            }
             else if (left && right && top && bottom && bottomLeft)
-            {
                 return RoadAdjust.ExpectBottomLeftDot;
-            }
             else if (left && right && top && bottom && topRight)
-            {
                 return RoadAdjust.ExpectTopRightDot;
-            }
             else if (left && right && top && bottom && topLeft)
-            {
                 return RoadAdjust.ExpectTopLeftDot;
-            }
             // 太い道路の直線片側
             else if (left && right && bottom && bottomLeft && bottomRight)
-            {
                 return RoadAdjust.TopWall;
-            }
             else if (left && right && top && topLeft && topRight)
-            {
                 return RoadAdjust.BottomWall;
-            }
             else if (top && bottom && left && topLeft && bottomLeft)
-            {
                 return RoadAdjust.RightWall;
-            }
             else if (top && bottom && right && topRight && bottomRight)
-            {
                 return RoadAdjust.LeftWall;
-            }
             // 太い道路の直線片側＋右角の内側（壁を下として）
             else if (left && right && top && topLeft)
-            {
                 return RoadAdjust.BottomWallWithRightDot;
-            }
             else if (left && right && top && topRight)
-            {
                 return RoadAdjust.BottomWallWithLeftDot;
-            }
             else if (top && right && bottom & topRight)
-            {
                 return RoadAdjust.LeftWallWithBottomDot;
-            }
             else if (top && right && bottom && bottomRight)
-            {
                 return RoadAdjust.LeftWallWithTopDot;
-            }
             else if (right && bottom && left && bottomRight)
-            {
                 return RoadAdjust.TopWallWithLeftDot;
-            }
             else if (right && bottom && left && bottomLeft)
-            {
                 return RoadAdjust.TopWallWithRightDot;
-            }
             else if (bottom && left && top && topLeft)
-            {
                 return RoadAdjust.RightWallWithBottomDot;
-            }
             else if (bottom && left && top && bottomLeft)
-            {
                 return RoadAdjust.RightWallWithTopDot;
-            }
             // 太い道路のL字外側
             else if (top && left && topLeft)
-            {
                 return RoadAdjust.TopLeftHalfOnce;
-            }
             else if (top && right && topRight)
-            {
                 return RoadAdjust.TopRightHalfOnce;
-            }
             else if (bottom && left && bottomLeft)
-            {
                 return RoadAdjust.BottomLeftHalfOnce;
-            }
             else if (right && bottom && bottomRight)
-            {
                 return RoadAdjust.BottomRightHalfOnce;
-            }
             // 十字
             else if (top && left && right && bottom)
-            {
                 return RoadAdjust.Cross;
-            }
             // T字
             else if (top && left && right)
-            {
                 return RoadAdjust.TopRightLeft;
-            }
             else if (top && left && bottom)
-            {
                 return RoadAdjust.LeftTopBottom;
-            }
             else if (top && right && bottom)
-            {
                 return RoadAdjust.RightBottomTop;
-            }
             else if (left && right && bottom)
-            {
                 return RoadAdjust.BottomLeftRight;
-            }
             // L字
             else if (top && left)
-            {
                 return RoadAdjust.TopLeft;
-            }
             else if (top && right)
-            {
                 return RoadAdjust.TopRight;
-            }
             else if (left && bottom)
-            {
                 return RoadAdjust.BottomLeft;
-            }
             else if (right && bottom)
-            {
                 return RoadAdjust.RightBottom;
-            }
             // 直線
             else if (top && bottom)
-            {
                 return RoadAdjust.TopBottom;
-            }
             else if (left && right)
-            {
                 return RoadAdjust.LeftRight;
-            }
             // 行き止まり
             else if (top)
-            {
                 return RoadAdjust.TopDeadEnd;
-            }
             else if (left)
-            {
                 return RoadAdjust.LeftDeadEnd;
-            }
             else if (right)
-            {
                 return RoadAdjust.RightDeadEnd;
-            }
             else if (bottom)
-            {
                 return RoadAdjust.BottomDeadEnd;
-            }
             else
-            {
                 return RoadAdjust.NoAdjust;
-            }
         }
     }
 }

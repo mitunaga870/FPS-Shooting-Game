@@ -9,21 +9,30 @@ namespace ScriptableObjects.S2SDataObjects
     [CreateAssetMenu(fileName = "GeneralS2SData", menuName = "S2SData/GeneralS2SData")]
     public class GeneralS2SData : AS2SData
     {
-        [NonSerialized] public int Stage = 1;
-        [NonSerialized] public int Level = 1;
-        public static int PlayerHp { get; set; }
+        [NonSerialized]
+        public int MapNumber;
+
+        [NonSerialized]
+        public int CurrentMapRow;
+
+        [NonSerialized]
+        public int CurrentMapColumn;
+
+        [NonSerialized]
+        public int PlayerHp;
 
         public override string ToString()
         {
-            return $"Stage: {Stage}, Level: {Level}";
+            return
+                $"MapNumber: {MapNumber}, CurrentMapRow: {CurrentMapRow}, CurrentMapColumn: {CurrentMapColumn}, PlayerHp: {PlayerHp}";
         }
 
         public override void OnBeforeSerialize()
         {
-            Stage = PlayerPrefs.GetInt("Stage", 1);
-            Level = PlayerPrefs.GetInt("Level", 1);
-
             PlayerHp = PlayerPrefs.GetInt("PlayerHp", 10);
+            MapNumber = PlayerPrefs.GetInt("MapNumber", 0);
+            CurrentMapRow = PlayerPrefs.GetInt("CurrentMapRow", 0);
+            CurrentMapColumn = PlayerPrefs.GetInt("CurrentMapColumn", 0);
         }
 
         public override void OnAfterDeserialize()

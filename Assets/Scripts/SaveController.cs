@@ -1,9 +1,9 @@
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
+using Map;
 using ScriptableObjects;
 using UnityEngine;
-using UnityEngine.TerrainUtils;
 
 public static class SaveController
 {
@@ -16,10 +16,7 @@ public static class SaveController
         foreach (var row in tileData)
         {
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var tile in row)
-            {
-                saveText += $"{tile},";
-            }
+            foreach (var tile in row) saveText += $"{tile},";
 
             // 最後のカンマを削除
             saveText = saveText.Substring(0, saveText.Length - 1);
@@ -43,10 +40,7 @@ public static class SaveController
         // Save trapData like CSV
         var saveText = "";
 
-        foreach (var trap in trapData)
-        {
-            saveText += $"{trap},";
-        }
+        foreach (var trap in trapData) saveText += $"{trap},";
 
         // 最後のカンマを削除
         saveText = saveText.Substring(0, saveText.Length - 1);
@@ -79,10 +73,7 @@ public static class SaveController
             var tiles = rows[i].Split(',');
             tileData[i] = new TileData[tiles.Length];
 
-            for (var j = 0; j < tiles.Length; j++)
-            {
-                tileData[i][j] = new TileData(tiles[j]);
-            }
+            for (var j = 0; j < tiles.Length; j++) tileData[i][j] = new TileData(tiles[j]);
         }
 
         return tileData;
@@ -103,10 +94,7 @@ public static class SaveController
         var traps = saveText.Split(',');
         var trapData = new TrapData[traps.Length];
 
-        for (var i = 0; i < traps.Length; i++)
-        {
-            trapData[i] = new TrapData(traps[i]);
-        }
+        for (var i = 0; i < traps.Length; i++) trapData[i] = new TrapData(traps[i]);
 
         return trapData;
     }
@@ -122,6 +110,13 @@ public static class SaveController
         return result;
     }
 
+    [CanBeNull]
+    public static MapWrapper[] LoadMap()
+    {
+        // TODO: 保存フォーマットを決めたらロード処理を書く（とりあえずnullを返す）
+        return null;
+    }
+
     /**
      * セーブデータを削除する
      */
@@ -134,5 +129,10 @@ public static class SaveController
     {
         // TODO: 保存フォーマットを決めたらロード処理を書く（とりあえずnullを返す）
         return null;
+    }
+
+    public static void SaveMap(MapWrapper[] mapWrappers)
+    {
+        // TODO: 保存フォーマットを決めたらセーブ処理を書く
     }
 }

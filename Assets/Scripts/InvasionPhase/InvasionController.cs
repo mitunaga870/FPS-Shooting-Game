@@ -1,8 +1,6 @@
-using System.Threading.Tasks;
 using AClass;
 using DataClass;
 using Enums;
-using lib;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -12,30 +10,9 @@ namespace InvasionPhase
 {
     public class InvasionController : MonoBehaviour
     {
-        /** シーン間のデータ共有オブジェクト */
-        [SerializeField] private CreateToInvasionData createToInvasionData;
-
-        /** 迷路作成等を行うコントローラ */
-        [SerializeField] private InvasionMazeController mazeController;
-
-        /** ステージデータを読み込むためのオブジェクト */
-        [SerializeField] private StageObject stageObject;
-
-        /** 侵攻の制御を行うコントローラー */
-        [FormerlySerializedAs("_invasionEnemyController")] [SerializeField]
-        private InvasionEnemyController invasionEnemyController;
-
-        /** 財布 */
-        [SerializeField] private WalletController walletController;
-
-        /** デッキ */
-        [SerializeField] private DeckController deckController;
-
-        /** ゲームの状態 */
-        // ReSharper disable once MemberCanBePrivate.Global
-        public GameState GameState { get; private set; } = GameState.BeforeStart;
-
-        /** 高速時の倍速率 */
+        /**
+         * 高速時の倍速率
+         */
         // ReSharper disable once InconsistentNaming
         private const int FAST_SPEED = 2;
 
@@ -43,52 +20,71 @@ namespace InvasionPhase
         // ReSharper disable once InconsistentNaming
         private const float SELECTING_SPEED = 0.5f;
 
-        /** 減速時の時刻スタック（１を超えたら０にして時刻を進める） */
-        private float delayTimeStack = 0;
+        /**
+         * シーン間のデータ共有オブジェクト
+         */
+        [SerializeField]
+        private CreateToInvasionData createToInvasionData;
 
-        /** ゲーム時間 */
+        /**
+         * 迷路作成等を行うコントローラ
+         */
+        [SerializeField]
+        private InvasionMazeController mazeController;
+
+        /**
+         * ステージデータを読み込むためのオブジェクト
+         */
+        [SerializeField]
+        private StageObject stageObject;
+
+        /**
+         * 侵攻の制御を行うコントローラー
+         */
+        [FormerlySerializedAs("_invasionEnemyController")]
+        [SerializeField]
+        private InvasionEnemyController invasionEnemyController;
+
+        /**
+         * 財布
+         */
+        [SerializeField]
+        private WalletController walletController;
+
+        [SerializeField]
+        private GeneralS2SData generalS2SData;
+
+        /**
+         * デッキ
+         */
+        [SerializeField]
+        private DeckController deckController;
+
+        /**
+         * 減速時の時刻スタック（１を超えたら０にして時刻を進める）
+         */
+        private float delayTimeStack;
+
+        /**
+         * ゲームの状態
+         */
+        // ReSharper disable once MemberCanBePrivate.Global
+        public GameState GameState { get; private set; } = GameState.BeforeStart;
+
+        /**
+         * ゲーム時間
+         */
         public int GameTime { get; private set; }
 
-        /** プレイヤーHP */
+        /**
+         * プレイヤーHP
+         */
         public int PlayerHp { get; private set; }
 
-        /** ステージデータ */
+        /**
+         * ステージデータ
+         */
         public StageData StageData { get; private set; }
-
-        private void FixedUpdate()
-        {
-            // 再生中ならゲーム時間を進める
-            switch (GameState)
-            {
-                case GameState.Playing:
-                    // 通常再生
-                    GameTime++;
-                    break;
-                case GameState.FastPlaying:
-                    // 高速再生
-                    GameTime += FAST_SPEED;
-                    break;
-                case GameState.Selecting:
-                    // 選択状態
-                    delayTimeStack += SELECTING_SPEED;
-                    if (delayTimeStack >= 1)
-                    {
-                        GameTime++;
-                        delayTimeStack = 0;
-                    }
-
-                    break;
-            }
-
-            if (GameState == GameState.Playing)
-            {
-                GameTime++;
-            }
-            else if (GameState == GameState.FastPlaying)
-            {
-                GameTime += FAST_SPEED;
-            }
-        }
 
         // Start is called before the first frame update
         public void Start()
@@ -118,10 +114,40 @@ namespace InvasionPhase
             }
 
             // プレイヤーデータ読み込み
-            PlayerHp = GeneralS2SData.PlayerHp;
+            PlayerHp = generalS2SData.PlayerHp;
 
             // 侵攻開始
             StartGame();
+        }
+
+        private void FixedUpdate()
+        {
+            // 再生中ならゲーム時間を進める
+            switch (GameState)
+            {
+                case GameState.Playing:
+                    // 通常再生
+                    GameTime++;
+                    break;
+                case GameState.FastPlaying:
+                    // 高速再生
+                    GameTime += FAST_SPEED;
+                    break;
+                case GameState.Selecting:
+                    // 選択状態
+                    delayTimeStack += SELECTING_SPEED;
+                    if (delayTimeStack >= 1)
+                    {
+                        GameTime++;
+                        delayTimeStack = 0;
+                    }
+
+                    break;
+            }
+
+            if (GameState == GameState.Playing)
+                GameTime++;
+            else if (GameState == GameState.FastPlaying) GameTime += FAST_SPEED;
         }
 
         /**
@@ -175,7 +201,7 @@ namespace InvasionPhase
             // お金
             walletController.AddWallet(reward.money);
             // トラップ
-            for (int i = 0; i < reward.randomTrap; i++)
+            for (var i = 0; i < reward.randomTrap; i++)
             {
                 // ランダムなトラップを取得
                 var all = Resources.LoadAll<ATrap>("Prefabs/Traps");
@@ -190,7 +216,7 @@ namespace InvasionPhase
             deckController.AddTrapRange(selectedTrap);
 
             // タレット
-            for (int i = 0; i < reward.randomTurret; i++)
+            for (var i = 0; i < reward.randomTurret; i++)
             {
                 // ランダムなタレットを取得
                 var all = Resources.LoadAll<ATurret>("Prefabs/Turrets");
@@ -204,7 +230,7 @@ namespace InvasionPhase
             var selectedTurret = reward.selectedTurret;
 
             // スキル
-            for (int i = 0; i < reward.randomSkill; i++)
+            for (var i = 0; i < reward.randomSkill; i++)
             {
                 // ランダムなスキルを取得
                 var all = Resources.LoadAll<ASkill>("Prefabs/Skills");
@@ -217,6 +243,8 @@ namespace InvasionPhase
             // 指定スキル
             var selectedSkill = reward.selectedSkill;
             deckController.AddSkillRange(selectedSkill);
+
+            // 
         }
 
         public void FastPlay()
@@ -236,7 +264,7 @@ namespace InvasionPhase
 
         public async void SetSkillMode(ASkill _skill)
         {
-            this.GameState = GameState.Selecting;
+            GameState = GameState.Selecting;
         }
     }
 }
