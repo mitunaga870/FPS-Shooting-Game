@@ -22,6 +22,9 @@ namespace AClass
         [SerializeField]
         protected GeneralS2SData generalS2SData;
 
+        [SerializeField]
+        protected CreateToInvasionData createToInvasionData;
+
         /** 迷路タイル配列 */
         protected ATile[][] Maze { get; set; }
 
@@ -31,8 +34,7 @@ namespace AClass
         protected abstract void Sync();
 
         // TODO: 進捗と選択状況からステージデータをとる。いったんノーマルを取っておく
-        [NonSerialized]
-        public StageData StageData;
+        public StageData StageData { get; private set; }
 
         public int MazeRows => StageData.mazeRow;
         public int MazeColumns => StageData.mazeColumn;
@@ -55,7 +57,10 @@ namespace AClass
             // セーブデータからステージデータをとる
             StageData =
                 SaveController.LoadStageData(stageObject)
+                ?? createToInvasionData.StageData
                 ?? stageObject.getNormalStageData();
+
+            // TODO: セーブデータからステージデータを取るとステージタイプが未設定なので設定する
         }
 
         /**

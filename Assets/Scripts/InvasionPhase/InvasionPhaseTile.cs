@@ -28,5 +28,16 @@ namespace InvasionPhase
                     throw new Exception("未対応のタイルタイプです" + tileType);
             }
         }
+
+        /**
+         * 侵攻phaseようにセットアップしたトラップを設置する
+         */
+        public void SetInvasionTrap(string trapName, InvasionEnemyController enemyController)
+        {
+            SetTrap(trapName);
+
+            // 侵攻phase用に初期化
+            _trap.InvasionInitialize(enemyController);
+        }
     }
 }
