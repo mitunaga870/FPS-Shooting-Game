@@ -51,6 +51,7 @@ public static class SaveController
     public static void SaveStageData(StageData stageData)
     {
         PlayerPrefs.SetString("StageName", stageData.stageName);
+        PlayerPrefs.SetInt("StageType", (int)stageData.StageType);
     }
 
     // =======　読み込み処理　=======
@@ -107,6 +108,11 @@ public static class SaveController
         if (stageName == "") return null;
 
         var result = stageObject.GetFromStageName(stageName);
+        if (result == null) return null;
+
+        // ステージタイプを読み込む
+        result.StageType = (StageType)PlayerPrefs.GetInt("StageType", 0);
+
         return result;
     }
 

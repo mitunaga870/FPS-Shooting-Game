@@ -1,6 +1,8 @@
 using AClass;
 using DataClass;
 using Enums;
+using Map;
+using Map.UI;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -54,6 +56,9 @@ namespace InvasionPhase
         [SerializeField]
         private GeneralS2SData generalS2SData;
 
+        [SerializeField]
+        private MapUIController mapUIController;
+
         /**
          * デッキ
          */
@@ -93,10 +98,11 @@ namespace InvasionPhase
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();
 
+            // ステージデータ読み込み
+            StageData = mazeController.StageData;
+
             if (createToInvasionData.IsInvasion)
             {
-                // ステージデータ読み込み
-                StageData = createToInvasionData.StageData;
                 // シーン間のデータ共有オブジェクトからデータを取得
                 mazeController.Create(createToInvasionData.TileData, createToInvasionData.TrapData);
                 // 読み込み後はフラグを戻す
@@ -104,8 +110,6 @@ namespace InvasionPhase
             }
             else
             {
-                // ステージデータ読み込み
-                StageData = SaveController.LoadStageData(stageObject);
                 // セーブデータからデータを取得
                 mazeController.Create(tileData, trapData);
             }
@@ -241,7 +245,8 @@ namespace InvasionPhase
             var selectedSkill = reward.selectedSkill;
             deckController.AddSkillRange(selectedSkill);
 
-            // 
+            // マップを開く
+            mapUIController.ShowCurrentMap();
         }
 
         public void FastPlay()

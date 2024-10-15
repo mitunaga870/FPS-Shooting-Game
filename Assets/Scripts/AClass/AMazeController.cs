@@ -59,8 +59,6 @@ namespace AClass
                 SaveController.LoadStageData(stageObject)
                 ?? createToInvasionData.StageData
                 ?? stageObject.getNormalStageData();
-
-            // TODO: セーブデータからステージデータを取るとステージタイプが未設定なので設定する
         }
 
         /**
