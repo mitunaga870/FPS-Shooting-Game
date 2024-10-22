@@ -56,8 +56,6 @@ namespace Map.UI.Buttons
 
         public void HandleClickButton()
         {
-            Debug.Log(_mapWrapper.ConvertToArrayAddress(_mapTile.Row, _mapTile.Column));
-
             switch (_currentPhase)
             {
                 case Phase.Create:
@@ -71,8 +69,13 @@ namespace Map.UI.Buttons
         /**
          * 次のマップへの移動を行う
          */
-        public void MoveNextMap()
+        private void MoveNextMap()
         {
+            generalS2SData.CurrentMapRow = _mapTile.Row;
+            generalS2SData.CurrentMapColumn = _mapTile.Column;
+
+            // シーン遷移
+            SceneManager.LoadScene("CreatePhase");
         }
     }
 }
