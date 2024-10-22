@@ -51,7 +51,12 @@ namespace Map.UI.Buttons
                     _currentPhase = Phase.Invade;
 
                     // 隣接しているマップのみクリック可能
-                    if (_mapWrapper.IsNextToCurrentMap(_mapTile.Row, _mapTile.Column))
+                    if (_mapWrapper.IsNextToCurrentMap(
+                            generalS2SData.CurrentMapRow,
+                            generalS2SData.CurrentMapColumn,
+                            _mapTile.Row,
+                            _mapTile.Column
+                        ))
                         gameObject.GetComponent<Button>().interactable = true;
                     break;
             }

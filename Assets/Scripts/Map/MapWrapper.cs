@@ -246,10 +246,31 @@ namespace Map
             return (convertedRow, convertedColumn);
         }
 
-        public bool IsNextToCurrentMap(int mapTileRow, int mapTileColumn)
+        /**
+         * 指定したマスが現在のマップの隣接マスかどうか
+         */
+        public bool IsNextToCurrentMap(
+            int currentCustomRow,
+            int currentCustomColumn,
+            int targetCustomRow,
+            int targetCustomColumn
+        )
         {
-            // TODO: 移動可能判定組み込み
-            return true;
+            // 行列アドレスに変換
+            var (currentArrayRow, currentArrayColumn) = ConvertToArrayAddress(currentCustomRow, currentCustomColumn);
+            var (targetArrayRow, targetArrayColumn) = ConvertToArrayAddress(targetCustomRow, targetCustomColumn);
+
+            // 行列アドレスで右隣ならアクセスできる
+            if (currentArrayRow == targetArrayRow && currentArrayColumn + 1 == targetArrayColumn) return true;
+
+            // カスタムアドレスで右の列＋行列アドレスで隣ならアクセスできる
+            if (
+                currentCustomColumn + 1 == targetCustomColumn &&
+                Math.Abs(currentArrayRow - targetArrayRow) == 1
+            )
+                return true;
+
+            return false;
         }
 
         /**
