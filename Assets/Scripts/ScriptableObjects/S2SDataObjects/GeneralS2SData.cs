@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Map;
 using UnityEngine;
 
 namespace ScriptableObjects.S2SDataObjects
@@ -21,6 +23,10 @@ namespace ScriptableObjects.S2SDataObjects
         [NonSerialized]
         public int PlayerHp;
 
+        [NonSerialized]
+        [AllowNull]
+        public MapWrapper[] Maps;
+
         public override string ToString()
         {
             return
@@ -33,6 +39,7 @@ namespace ScriptableObjects.S2SDataObjects
             MapNumber = PlayerPrefs.GetInt("MapNumber", 0);
             CurrentMapRow = PlayerPrefs.GetInt("CurrentMapRow", 0);
             CurrentMapColumn = PlayerPrefs.GetInt("CurrentMapColumn", 0);
+            Maps = null;
         }
 
         public override void OnAfterDeserialize()

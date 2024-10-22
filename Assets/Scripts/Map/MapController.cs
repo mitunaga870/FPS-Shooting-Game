@@ -37,6 +37,13 @@ namespace Map
 
         private void Awake()
         {
+            if (generalS2SData.Maps != null)
+            {
+                // すでにマップデータがある時はそれを使う
+                _mapWrappers = generalS2SData.Maps;
+                return;
+            }
+
             var saveData = SaveController.LoadMap();
 
             if (saveData != null)
@@ -59,6 +66,8 @@ namespace Map
                 // セーブ
                 SaveController.SaveMap(_mapWrappers);
             }
+
+            generalS2SData.Maps = _mapWrappers;
         }
 
         public MapWrapper GetCurrentMap()

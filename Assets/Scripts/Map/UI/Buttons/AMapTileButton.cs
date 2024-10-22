@@ -15,6 +15,9 @@ namespace Map.UI.Buttons
         [SerializeField]
         private GeneralS2SData generalS2SData;
 
+        [SerializeField]
+        private CreateToInvasionData c2IData;
+
         private MapWrapper _mapWrapper;
         private MapTile _mapTile;
         private bool _isCurrent;
@@ -73,6 +76,8 @@ namespace Map.UI.Buttons
         {
             generalS2SData.CurrentMapRow = _mapTile.Row;
             generalS2SData.CurrentMapColumn = _mapTile.Column;
+
+            c2IData.Reset();
 
             // シーン遷移
             SceneManager.LoadScene("CreatePhase");
