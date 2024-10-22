@@ -64,6 +64,9 @@ public static class SaveController
         // セーブデータを読み込む
         var saveText = PlayerPrefs.GetString("TileData");
 
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("TileData");
+
         // セーブデータをCSV形式で読み込む
         // Load tileData like CSV
         var rows = saveText.Split('\n');
@@ -82,7 +85,10 @@ public static class SaveController
 
     public static Phase LoadPhase()
     {
-        return (Phase)PlayerPrefs.GetInt("Phase", 0);
+        var phase = PlayerPrefs.GetInt("Phase", 0);
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("Phase");
+        return (Phase)phase;
     }
 
     public static TrapData[] LoadTrapData()
@@ -90,6 +96,8 @@ public static class SaveController
         if (!PlayerPrefs.HasKey("TrapData")) return null;
 
         var saveText = PlayerPrefs.GetString("TrapData");
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("TrapData");
 
         // Load trapData like CSV
         var traps = saveText.Split(',');
@@ -112,6 +120,10 @@ public static class SaveController
 
         // ステージタイプを読み込む
         result.StageType = (StageType)PlayerPrefs.GetInt("StageType", 0);
+
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("StageName");
+        PlayerPrefs.DeleteKey("StageType");
 
         return result;
     }
