@@ -2,6 +2,7 @@ using System;
 using Enums;
 using Map.UI.Buttons;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Map.UI
 {
@@ -26,27 +27,30 @@ namespace Map.UI
         private MapEventTileButton mapEventTileButton;
 
         [SerializeField]
+        private MapShopTileButton mapShopTileButton;
+
+        [SerializeField]
         private GameObject mapRowPrefab;
 
         [SerializeField]
-        private GameObject mapWrapper;
+        private GameObject mapUIWrapper;
 
         private void Start()
         {
             // 現在のマップUIを削除
-            foreach (Transform child in mapWrapper.transform) Destroy(child.gameObject);
+            foreach (Transform child in mapUIWrapper.transform) Destroy(child.gameObject);
 
             // 現在のマップを
             var map = mapController.GetCurrentMap();
 
             //　行ごとに生成
-            for (var i = 0; i < map.rowCount; i++)
+            for (var i = 0; i < map.RowCount; i++)
             {
                 // マップの行を取得
                 var row = map.GetRow(i);
 
                 // 行のラッパーを生成
-                var mapRow = Instantiate(mapRowPrefab, mapWrapper.transform, true);
+                var mapRow = Instantiate(mapRowPrefab, mapUIWrapper.transform, true);
 
                 // 行のラッパーをマップの子要素にする
                 foreach (var mapTile in row)
@@ -70,12 +74,17 @@ namespace Map.UI
                         case MapTileType.Event:
                             button = Instantiate(mapEventTileButton, mapRow.transform);
                             break;
+                        case MapTileType.Shop:
+                            button = Instantiate(mapShopTileButton, mapRow.transform);
+                            break;
                         default:
                             throw new Exception("Invalid MapTileType");
                     }
 
                     // 列の子に追加
                     button.transform.SetParent(mapRow.transform);
+                    // ボタンの初期化
+                    button.Init(map, mapTile);
                 }
             }
 

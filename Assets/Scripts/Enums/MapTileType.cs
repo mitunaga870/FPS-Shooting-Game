@@ -8,6 +8,7 @@ namespace Enums
         Boss,
         Normal,
         Elite,
-        Event
+        Event,
+        Shop
     }
 }
