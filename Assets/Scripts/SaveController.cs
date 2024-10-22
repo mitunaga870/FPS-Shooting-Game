@@ -1,3 +1,4 @@
+using System;
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
@@ -52,6 +53,33 @@ public static class SaveController
     {
         PlayerPrefs.SetString("StageName", stageData.stageName);
         PlayerPrefs.SetInt("StageType", (int)stageData.StageType);
+    }
+
+    public static void SaveMap(MapWrapper[] mapWrappers)
+    {
+        var saveText = "";
+        for (var i = 0; i < mapWrappers.Length; i++)
+        {
+            saveText += mapWrappers[i].ToString();
+            if (i != mapWrappers.Length - 1) saveText += "\n\n";
+        }
+
+        PlayerPrefs.SetString("Map", saveText);
+    }
+
+    public static void SaveCurrentMapNumber(int mapNumber)
+    {
+        PlayerPrefs.SetInt("MapNumber", mapNumber);
+    }
+
+    public static void SaveCurrentMapRow(int currentMapRow)
+    {
+        PlayerPrefs.SetInt("CurrentMapRow", currentMapRow);
+    }
+
+    public static void SaveCurrentMapColumn(int currentMapColumn)
+    {
+        PlayerPrefs.SetInt("CurrentMapColumn", currentMapColumn);
     }
 
     // =======　読み込み処理　=======
@@ -131,8 +159,48 @@ public static class SaveController
     [CanBeNull]
     public static MapWrapper[] LoadMap()
     {
-        // TODO: 保存フォーマットを決めたらロード処理を書く（とりあえずnullを返す）
-        return null;
+        // キーを持ってないならヌルを返す
+        if (!PlayerPrefs.HasKey("Map")) return null;
+
+        // 値を取得
+        var saveText = PlayerPrefs.GetString("Map", null);
+        // 取得したものを放棄
+        PlayerPrefs.DeleteKey("Map");
+
+        if (string.IsNullOrEmpty(saveText))
+            return null;
+
+        // 二十改行で分割
+        var mapData = saveText.Split(new[] { "\n\n" }, StringSplitOptions.None);
+        var mapWrappers = new MapWrapper[mapData.Length];
+
+        for (var i = 0; i < mapData.Length; i++) mapWrappers[i] = new MapWrapper(mapData[i]);
+
+        return mapWrappers;
+    }
+
+    public static int LoadCurrentMapNumber()
+    {
+        var mapNumber = PlayerPrefs.GetInt("MapNumber", 0);
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("MapNumber");
+        return mapNumber;
+    }
+
+    public static int LoadCurrentMapRow()
+    {
+        var currentMapRow = PlayerPrefs.GetInt("CurrentMapRow", 0);
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("CurrentMapRow");
+        return currentMapRow;
+    }
+
+    public static int LoadCurrentMapColumn()
+    {
+        var currentMapColumn = PlayerPrefs.GetInt("CurrentMapColumn", 0);
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("CurrentMapColumn");
+        return currentMapColumn;
     }
 
     /**
@@ -147,10 +215,5 @@ public static class SaveController
     {
         // TODO: 保存フォーマットを決めたらロード処理を書く（とりあえずnullを返す）
         return null;
-    }
-
-    public static void SaveMap(MapWrapper[] mapWrappers)
-    {
-        // TODO: 保存フォーマットを決めたらセーブ処理を書く
     }
 }

@@ -37,11 +37,39 @@ namespace Map
             GenerateMap(mapData.Row, mapData.Column);
         }
 
+        public MapWrapper(string saveData)
+        {
+            // 改行で分割
+            var rowData = saveData.Split(new[] { "\n" }, StringSplitOptions.None);
+
+            var rowCount = rowData.Length;
+
+            // 行数から中央行を計算
+            _middleRow = (int)Math.Round((rowData.Length - 1) / 2.0);
+
+            // 中央行から列数を取得
+            var middleMapData = rowData[_middleRow].Split(new[] { "," }, StringSplitOptions.None);
+            ColumnCount = middleMapData.Length;
+
+            _mapTiles = new MapTile[rowCount][];
+
+            // 一行ずつ処理
+            for (var i = 0; i < rowCount; i++)
+            {
+                // その行のタイルの文字列を取得
+                var mapData = rowData[i].Split(new[] { "," }, StringSplitOptions.None);
+                _mapTiles[i] = new MapTile[mapData.Length];
+
+                // 一つずつ処理
+                for (var j = 0; j < mapData.Length; j++) _mapTiles[i][j] = new MapTile(mapData[j]);
+            }
+        }
+
         /**
-     * マップの生成
-     * @param row 行数
-     * @param column 列数
-     */
+         * マップの生成
+         * @param row 行数
+         * @param column 列数
+         */
         public void GenerateMap(int row, int column)
         {
             // バリデーション
@@ -134,9 +162,9 @@ namespace Map
         }
 
         /**
-     * マップを文字列化
-     * 保存とデバッグ用
-     */
+         * マップをCSV形式で文字列化
+         * 保存用
+         */
         public override string ToString()
         {
             var result = "";
@@ -153,8 +181,6 @@ namespace Map
                     // 最後の要素以外はカンマを追加
                     if (j != columnCount - 1) result += ",";
                 }
-
-                ;
 
                 // 最後の要素以外は改行を追加
                 if (i != RowCount - 1) result += "\n";

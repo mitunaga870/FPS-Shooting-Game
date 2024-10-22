@@ -20,22 +20,17 @@ namespace ScriptableObjects.S2SDataObjects
         public TrapData[] TrapData;
 
         [NonSerialized]
-        public Vector3 MazeOrigin;
-
-        [NonSerialized]
         public StageData StageData;
 
-
-        public override void OnBeforeSerialize()
+        public override void OnAfterDeserialize()
         {
             TileData = Array.Empty<TileData[]>();
             TrapData = Array.Empty<TrapData>();
-            MazeOrigin = Vector3.zero;
             IsInvasion = false;
             StageData = null;
         }
 
-        public override void OnAfterDeserialize()
+        public override void OnBeforeSerialize()
         {
         }
 
@@ -72,7 +67,6 @@ namespace ScriptableObjects.S2SDataObjects
         {
             TileData = Array.Empty<TileData[]>();
             TrapData = Array.Empty<TrapData>();
-            MazeOrigin = Vector3.zero;
             IsInvasion = false;
             StageData = null;
         }

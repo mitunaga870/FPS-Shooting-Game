@@ -29,7 +29,7 @@ namespace Map.UI.Buttons
             _mapTile = mapTile;
 
             // タイプでラベルを変える
-            label.text = mapTile.ToString();
+            label.text = mapTile.ToLabelString();
 
             // 現在地の場合はアウトライン
             if (mapTile.Row == generalS2SData.CurrentMapRow && mapTile.Column == generalS2SData.CurrentMapColumn)

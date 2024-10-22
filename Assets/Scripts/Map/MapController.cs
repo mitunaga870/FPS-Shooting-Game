@@ -62,9 +62,6 @@ namespace Map
                 _mapWrappers[1] = new MapWrapper(mapObject.SecondStage);
                 _mapWrappers[2] = new MapWrapper(mapObject.ThirdStage);
                 _mapWrappers[3] = new MapWrapper(mapObject.FourthStage);
-
-                // セーブ
-                SaveController.SaveMap(_mapWrappers);
             }
 
             generalS2SData.Maps = _mapWrappers;
@@ -79,6 +76,20 @@ namespace Map
                 throw new Exception("マップナンバーが不正です");
 
             return _mapWrappers[mapNumber];
+        }
+
+        public void SaveMap()
+        {
+            SaveController.SaveMap(_mapWrappers);
+
+            SaveController.SaveCurrentMapNumber(generalS2SData.MapNumber);
+            SaveController.SaveCurrentMapRow(generalS2SData.CurrentMapRow);
+            SaveController.SaveCurrentMapColumn(generalS2SData.CurrentMapColumn);
+        }
+
+        private void OnApplicationQuit()
+        {
+            SaveMap();
         }
     }
 }

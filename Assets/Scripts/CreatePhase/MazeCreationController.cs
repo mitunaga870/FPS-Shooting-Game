@@ -34,10 +34,6 @@ namespace CreatePhase
         [SerializeField]
         private DeckController deck;
 
-        /** シーン間のデータ共有用オブジェクト */
-        [SerializeField]
-        private CreateToInvasionData createToInvasionData;
-
         /** マップオブジェクト */
         [SerializeField]
         private MapController _mapController;
@@ -522,9 +518,6 @@ namespace CreatePhase
                  i < TrapCount;
                  i++)
                 createToInvasionData.TrapData[i] = TrapData[i];
-
-            // 迷路の原点を設定
-            createToInvasionData.MazeOrigin = _mazeOrigin;
         }
 
         protected override void Sync()

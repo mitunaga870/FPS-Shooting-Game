@@ -12,6 +12,18 @@ namespace ScriptableObjects.S2SDataObjects
     public class GeneralS2SData : AS2SData
     {
         [NonSerialized]
+        private int mapNumber = -1;
+
+        [NonSerialized]
+        private int currentMapRow = -1;
+
+        [NonSerialized]
+        private int currentMapColumn = -1;
+
+        [NonSerialized]
+        private int playerHp = 10;
+
+        [NonSerialized]
         public int MapNumber;
 
         [NonSerialized]
@@ -33,16 +45,16 @@ namespace ScriptableObjects.S2SDataObjects
                 $"MapNumber: {MapNumber}, CurrentMapRow: {CurrentMapRow}, CurrentMapColumn: {CurrentMapColumn}, PlayerHp: {PlayerHp}";
         }
 
-        public override void OnBeforeSerialize()
+        public override void OnAfterDeserialize()
         {
-            PlayerHp = PlayerPrefs.GetInt("PlayerHp", 10);
-            MapNumber = PlayerPrefs.GetInt("MapNumber", 0);
-            CurrentMapRow = PlayerPrefs.GetInt("CurrentMapRow", 0);
-            CurrentMapColumn = PlayerPrefs.GetInt("CurrentMapColumn", 0);
+            PlayerHp = playerHp;
+            MapNumber = mapNumber;
+            CurrentMapRow = currentMapRow;
+            CurrentMapColumn = currentMapColumn;
             Maps = null;
         }
 
-        public override void OnAfterDeserialize()
+        public override void OnBeforeSerialize()
         {
         }
     }
