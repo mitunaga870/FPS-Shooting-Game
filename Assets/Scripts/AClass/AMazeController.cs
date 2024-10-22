@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
+using Map;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -24,6 +25,9 @@ namespace AClass
 
         [SerializeField]
         protected CreateToInvasionData createToInvasionData;
+
+        [SerializeField]
+        private MapController mapController;
 
         /** 迷路タイル配列 */
         protected ATile[][] Maze { get; set; }
@@ -55,10 +59,33 @@ namespace AClass
         private void Awake()
         {
             // セーブデータからステージデータをとる
-            StageData =
+            var savedStage =
                 SaveController.LoadStageData(stageObject)
-                ?? createToInvasionData.StageData
-                ?? stageObject.getNormalStageData();
+                ?? createToInvasionData.StageData;
+
+            if (savedStage != null)
+            {
+                StageData = savedStage;
+                return;
+            }
+
+            // 現在のマップ
+            var currentMap = mapController.GetCurrentMap();
+
+            // 現在タイルの情報を取得
+            var currentTile = currentMap.GetTileData(generalS2SData.CurrentMapRow, generalS2SData.CurrentMapColumn);
+
+            // ステージデータを取得
+            StageData = currentTile.type switch
+            {
+                MapTileType.Start => stageObject.getNormalStageData(),
+                MapTileType.Normal => stageObject.getNormalStageData(),
+                MapTileType.Boss => stageObject.getBossStageData(),
+                MapTileType.Elite => stageObject.getEliteStageData(),
+                MapTileType.Event => stageObject.getEventStageData(),
+                MapTileType.Shop => stageObject.getShopStageData(),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         /**

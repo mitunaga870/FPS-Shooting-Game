@@ -64,5 +64,17 @@ namespace ScriptableObjects.S2SDataObjects
         {
             return TrapData.Length;
         }
+
+        /**
+         * リセットする
+         */
+        public void Reset()
+        {
+            TileData = Array.Empty<TileData[]>();
+            TrapData = Array.Empty<TrapData>();
+            MazeOrigin = Vector3.zero;
+            IsInvasion = false;
+            StageData = null;
+        }
     }
 }

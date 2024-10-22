@@ -14,9 +14,14 @@ namespace ScriptableObjects
     [CreateAssetMenu]
     public class StageObject : ScriptableObject
     {
-        [SerializeField] private LevelData normalLevelData;
-        [SerializeField] private LevelData eliteLevelData;
-        [SerializeField] private LevelData bossLevelData;
+        [SerializeField]
+        private LevelData normalLevelData;
+
+        [SerializeField]
+        private LevelData eliteLevelData;
+
+        [SerializeField]
+        private LevelData bossLevelData;
 
 
         /**
@@ -26,10 +31,8 @@ namespace ScriptableObjects
         public StageData getNormalStageData(int stageNum = -1)
         {
             if (stageNum == -1)
-            {
                 // ステージナンバーが未指定の時はランダムで取得
                 stageNum = UnityEngine.Random.Range(0, normalLevelData.StageDataList.Count);
-            }
 
             // ステージタイプをノーマルに変更
             var result = new StageData(normalLevelData.StageDataList[stageNum]);
@@ -45,10 +48,8 @@ namespace ScriptableObjects
         public StageData getEliteStageData(int stageNum = -1)
         {
             if (stageNum == -1)
-            {
                 // ステージナンバーが未指定の時はランダムで取得
                 stageNum = UnityEngine.Random.Range(0, eliteLevelData.StageDataList.Count);
-            }
 
             // ステージタイプをエリートに変更
             var result = eliteLevelData.StageDataList[stageNum];
@@ -64,10 +65,8 @@ namespace ScriptableObjects
         public StageData getBossStageData(int stageNum = -1)
         {
             if (stageNum == -1)
-            {
                 // ステージナンバーが未指定の時はランダムで取得
                 stageNum = UnityEngine.Random.Range(0, bossLevelData.StageDataList.Count);
-            }
 
             // ステージタイプをボスに変更
             var result = bossLevelData.StageDataList[stageNum];
@@ -105,6 +104,16 @@ namespace ScriptableObjects
         public RewardData getBossReward()
         {
             return bossLevelData.RewardDataList[UnityEngine.Random.Range(0, bossLevelData.RewardDataList.Count)];
+        }
+
+        public StageData getEventStageData()
+        {
+            throw new NotImplementedException();
+        }
+
+        public StageData getShopStageData()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 2439559142855516966}
   - component: {fileID: 5978789952734892234}
   - component: {fileID: -6652644940900928851}
+  - component: {fileID: -3127551376724202939}
   m_Layer: 5
   m_Name: EventMapTile
   m_TagString: Untagged
@@ -258,7 +259,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -6652644940900928851}
         m_TargetAssemblyTypeName: Map.UI.Buttons.AMapTileButton, Assembly-CSharp
-        m_MethodName: CheckArrayAddress
+        m_MethodName: HandleClickButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -281,3 +282,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   label: {fileID: 4289313947867482206}
+  generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
+--- !u!114 &-3127551376724202939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6777315638764574167}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 1, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 5, y: 5}
+  m_UseGraphicAlpha: 0

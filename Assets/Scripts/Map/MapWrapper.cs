@@ -245,5 +245,21 @@ namespace Map
 
             return (convertedRow, convertedColumn);
         }
+
+        public bool IsNextToCurrentMap(int mapTileRow, int mapTileColumn)
+        {
+            // TODO: 移動可能判定組み込み
+            return true;
+        }
+
+        /**
+         * 指定したマスの情報を取得
+         * マスは独自形式のアドレスで指定
+         */
+        public MapTile GetTileData(int currentMapRow, int currentMapColumn)
+        {
+            var (row, column) = ConvertToArrayAddress(currentMapRow, currentMapColumn);
+            return _mapTiles[row][column];
+        }
     }
 }

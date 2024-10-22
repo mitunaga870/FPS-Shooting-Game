@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 namespace Map
 {
-    [CreateAssetMenu(fileName = "MapControllerObject", menuName = "S2SData/MapControllerObject")]
+    [DefaultExecutionOrder(-1)]
     public class MapController : MonoBehaviour
     {
         // ReSharper disable once InconsistentNaming
