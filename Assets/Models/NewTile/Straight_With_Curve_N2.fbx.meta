@@ -3,7 +3,27 @@ guid: 86fff8aae12d1f94fb839ce608a80ac0
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: C
+    second: {fileID: 2100000, guid: ee2a55f91bf499c488a6e7e9c2aa6ab4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Lighit
+    second: {fileID: 2100000, guid: 78db849352bd786408613f8d816dc121, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MaterialA
+    second: {fileID: 2100000, guid: 9b8aaf6ac87cc254e93a5842a2a363ad, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MaterialB
+    second: {fileID: 2100000, guid: 6314c877718841048aa0db604f619198, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
