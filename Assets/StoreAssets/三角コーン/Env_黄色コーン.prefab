@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fecec78dcdd805849914b3fcfd46720d, type: 3}
       propertyPath: m_Name
-      value: "\u9EC4\u8272\u30B3\u30FC\u30F3"
+      value: "Env_\u9EC4\u8272\u30B3\u30FC\u30F3"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -74,6 +74,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6258520639678388547}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ce47e460790a684999b6563f801341d, type: 3}
+  m_Script: {fileID: 11500000, guid: a81245465b230d34988a2cd4d611091e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  time: 4
