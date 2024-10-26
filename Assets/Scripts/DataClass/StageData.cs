@@ -61,7 +61,13 @@ namespace DataClass
         {
             set
             {
-                Debug.Log("set StageType: " + value);
+                // ステージタイプが未定義の場合は例外を投げる
+                if (value == StageType.Undefined)
+                    throw new Exception("ステージタイプが未定義です");
+
+                // 同じステージタイプに変更しようとしている場合は変更しない
+                if (_stageType == value)
+                    return;
 
                 // ステージタイプが未定義の場合のみ変更可能
                 if (_stageType != StageType.Undefined)
