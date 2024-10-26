@@ -6,6 +6,7 @@ using Map.UI;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 namespace InvasionPhase
@@ -245,8 +246,30 @@ namespace InvasionPhase
             var selectedSkill = reward.selectedSkill;
             deckController.AddSkillRange(selectedSkill);
 
-            // マップを開く
-            mapUIController.ShowCurrentMap();
+            if (StageData.StageType == StageType.Boss)
+            {
+                // ボスの時はステージを進める
+                // 最終マップか確認 最大値は3
+                if (generalS2SData.MapNumber == 3)
+                {
+                    // 最終マップならクリア
+                    Debug.Log("All Clear!");
+                    return;
+                }
+
+                // マップを進める
+                generalS2SData.MapNumber++;
+                // ポジション
+                generalS2SData.CurrentMapRow = 0;
+                generalS2SData.CurrentMapColumn = 0;
+                // 作成フェーズに移行    
+                SceneManager.LoadScene("CreatePhase");
+            }
+            else
+            {
+                // マップを開く
+                mapUIController.ShowCurrentMap();
+            }
         }
 
         public void FastPlay()
