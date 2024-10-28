@@ -15,7 +15,6 @@ namespace ScriptableObjects.S2SDataObjects
     {
         public abstract override string ToString();
         public abstract void OnBeforeSerialize();
-
         public abstract void OnAfterDeserialize();
     }
 }

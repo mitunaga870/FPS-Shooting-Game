@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using AClass;
 using DataClass;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
@@ -8,18 +10,22 @@ namespace InvasionPhase
 {
     public class InvasionEnemyController : MonoBehaviour
     {
-        [FormerlySerializedAs("_generalS2SData")] [SerializeField]
+        [FormerlySerializedAs("_generalS2SData")]
+        [SerializeField]
 #pragma warning disable CS0414 // フィールドは割り当てられていますがその値は使用されていません
         private GeneralS2SData generalS2SData;
 #pragma warning restore CS0414 // フィールドは割り当てられていますがその値は使用されていません
 
-        [FormerlySerializedAs("_stageObject")] [SerializeField]
+        [FormerlySerializedAs("_stageObject")]
+        [SerializeField]
         private StageObject stageObject;
 
-        [FormerlySerializedAs("_invasionController")] [SerializeField]
+        [FormerlySerializedAs("_invasionController")]
+        [SerializeField]
         private InvasionController invasionController;
 
-        [FormerlySerializedAs("_invasionMazeController")] [SerializeField]
+        [FormerlySerializedAs("_invasionMazeController")]
+        [SerializeField]
         private InvasionMazeController invasionMazeController;
 
         /**
@@ -41,6 +47,11 @@ namespace InvasionPhase
          * 起動済みフラグ
          */
         private bool _isAwoke;
+
+        /**
+         * 管理している敵のリスト
+         */
+        private List<AEnemy> _enemies = new();
 
         public void Start()
         {
@@ -74,10 +85,7 @@ namespace InvasionPhase
                 var spawnData = invasionData.GetSpawnData(time - i);
 
                 // 敵を沸かせる
-                if (spawnData != null)
-                {
-                    SpawnEnemy(spawnData);
-                }
+                if (spawnData != null) SpawnEnemy(spawnData);
 
                 i++;
             }
@@ -98,6 +106,9 @@ namespace InvasionPhase
                 // 敵のスピードを設定
                 enemy.Initialize(10, 10, invasionMazeController.StartPosition, invasionController,
                     invasionMazeController, this);
+
+                // 敵をリストに追加
+                _enemies.Add(enemy);
             }
         }
 
@@ -117,10 +128,22 @@ namespace InvasionPhase
 
 
             // 残りの敵数が0になったらゲーム終了
-            if (_remainingEnemyCount == 0)
-            {
-                invasionController.ClearGame();
-            }
+            if (_remainingEnemyCount == 0) invasionController.ClearGame();
+        }
+
+        /**
+         * 指定タイルの敵にダメージを与える
+         */
+        public void DamageEnemy(TilePosition position, int i)
+        {
+            // 敵リストを走査
+            foreach (var enemy in _enemies)
+                // 位置が一致したらダメージを与える
+                if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
+                {
+                    enemy.Damage(i);
+                    break;
+                }
         }
     }
 }

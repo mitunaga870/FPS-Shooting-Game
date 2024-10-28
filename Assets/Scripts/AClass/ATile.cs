@@ -1,3 +1,4 @@
+using DataClass;
 using Enums;
 using lib;
 using UnityEngine;
@@ -8,52 +9,68 @@ namespace AClass
     public abstract class ATile : MonoBehaviour
     {
         /** デフォルトのモデル */
-        [SerializeField] protected Mesh defaultModel;
+        [SerializeField]
+        protected Mesh defaultModel;
 
         /** どこにもつながっていないモデル */
-        [SerializeField] protected Mesh noneModel;
+        [SerializeField]
+        protected Mesh noneModel;
 
         /** 行き止まりのモデル */
-        [SerializeField] protected Mesh deadEndModel;
+        [SerializeField]
+        protected Mesh deadEndModel;
 
         /** 直線のモデル */
-        [SerializeField] protected Mesh straightModel;
+        [SerializeField]
+        protected Mesh straightModel;
 
         /** コーナーのモデル */
-        [SerializeField] protected Mesh cornerModel;
+        [SerializeField]
+        protected Mesh cornerModel;
 
         /** T字路のモデル */
-        [SerializeField] protected Mesh tJunctionModel;
+        [SerializeField]
+        protected Mesh tJunctionModel;
 
         /** 十字路のモデル */
-        [SerializeField] protected Mesh crossroadsModel;
+        [SerializeField]
+        protected Mesh crossroadsModel;
 
         /** L字壁のモデル */
-        [SerializeField] protected Mesh halfOnceModel;
+        [SerializeField]
+        protected Mesh halfOnceModel;
 
         /** 太いやつの端っこ */
-        [SerializeField] protected Mesh halfRoadModel;
+        [SerializeField]
+        protected Mesh halfRoadModel;
 
         /** 太いやつの真ん中 */
-        [SerializeField] protected Mesh noWallModel;
+        [SerializeField]
+        protected Mesh noWallModel;
 
         /** 三角 */
-        [SerializeField] protected Mesh tripleCurve;
+        [SerializeField]
+        protected Mesh tripleCurve;
 
         /** ２角　*/
-        [SerializeField] protected Mesh doubleCurve;
+        [SerializeField]
+        protected Mesh doubleCurve;
 
         /** １角　*/
-        [SerializeField] protected Mesh singleCurve;
+        [SerializeField]
+        protected Mesh singleCurve;
 
         /** 角と壁 下に壁持ってきたときに右に角 */
-        [SerializeField] protected Mesh rightCornerAndBottomWall;
+        [SerializeField]
+        protected Mesh rightCornerAndBottomWall;
 
         /** 角と壁 下に壁持ってきたときに左に角 */
-        [SerializeField] protected Mesh leftCornerAndBottomWall;
+        [SerializeField]
+        protected Mesh leftCornerAndBottomWall;
 
         /** 斜め角 */
-        [SerializeField] protected Mesh diagonalCorner;
+        [SerializeField]
+        protected Mesh diagonalCorner;
 
         /** 現在のタイルタイプ */
         private TileTypes _tileType = TileTypes.Nothing;
@@ -75,7 +92,7 @@ namespace AClass
         protected int Column;
 
         /** 設置されているトラップ */
-        private ATrap _trap = null;
+        protected ATrap _trap = null;
 
         /** トラップの所持フラグ */
         private bool hasTrap = false;
@@ -349,10 +366,7 @@ namespace AClass
             var meshRenderer = GetComponent<MeshRenderer>();
             var materials = meshRenderer.materials;
 
-            foreach (var material in materials)
-            {
-                material.color = color;
-            }
+            foreach (var material in materials) material.color = color;
         }
 
         /**
@@ -402,7 +416,7 @@ namespace AClass
          */
         public void AwakeTrap()
         {
-            if (hasTrap) _trap.AwakeTrap();
+            if (hasTrap) _trap.AwakeTrap(new TilePosition(Row, Column));
         }
     }
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Map;
 using UnityEngine;
 
 namespace ScriptableObjects.S2SDataObjects
@@ -9,24 +11,50 @@ namespace ScriptableObjects.S2SDataObjects
     [CreateAssetMenu(fileName = "GeneralS2SData", menuName = "S2SData/GeneralS2SData")]
     public class GeneralS2SData : AS2SData
     {
-        [NonSerialized] public int Stage = 1;
-        [NonSerialized] public int Level = 1;
-        public static int PlayerHp { get; set; }
+        [NonSerialized]
+        private int mapNumber = -1;
+
+        [NonSerialized]
+        private int currentMapRow = -1;
+
+        [NonSerialized]
+        private int currentMapColumn = -1;
+
+        [NonSerialized]
+        private int playerHp = 10;
+
+        [NonSerialized]
+        public int MapNumber;
+
+        [NonSerialized]
+        public int CurrentMapRow;
+
+        [NonSerialized]
+        public int CurrentMapColumn;
+
+        [NonSerialized]
+        public int PlayerHp;
+
+        [NonSerialized]
+        [AllowNull]
+        public MapWrapper[] Maps;
 
         public override string ToString()
         {
-            return $"Stage: {Stage}, Level: {Level}";
-        }
-
-        public override void OnBeforeSerialize()
-        {
-            Stage = PlayerPrefs.GetInt("Stage", 1);
-            Level = PlayerPrefs.GetInt("Level", 1);
-
-            PlayerHp = PlayerPrefs.GetInt("PlayerHp", 10);
+            return
+                $"MapNumber: {MapNumber}, CurrentMapRow: {CurrentMapRow}, CurrentMapColumn: {CurrentMapColumn}, PlayerHp: {PlayerHp}";
         }
 
         public override void OnAfterDeserialize()
+        {
+            PlayerHp = playerHp;
+            MapNumber = mapNumber;
+            CurrentMapRow = currentMapRow;
+            CurrentMapColumn = currentMapColumn;
+            Maps = null;
+        }
+
+        public override void OnBeforeSerialize()
         {
         }
     }

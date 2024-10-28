@@ -1,6 +1,7 @@
 ﻿using System;
 using Enums;
 using ScriptableObjects;
+using UnityEngine;
 
 namespace DataClass
 {
@@ -60,6 +61,10 @@ namespace DataClass
         {
             set
             {
+                // 同じステージタイプに変更しようとしている場合は変更しない
+                if (_stageType == value)
+                    return;
+
                 // ステージタイプが未定義の場合のみ変更可能
                 if (_stageType != StageType.Undefined)
                     throw new Exception("ステージタイプは変更できません");
@@ -69,7 +74,8 @@ namespace DataClass
             get => _stageType;
         }
 
-        [NonSerialized] private StageType _stageType = StageType.Undefined;
+        [NonSerialized]
+        private StageType _stageType = StageType.Undefined;
 
         public StageData(StageData stageData)
         {
