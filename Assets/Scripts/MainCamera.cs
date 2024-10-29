@@ -1,48 +1,63 @@
 using AClass;
-using CreatePhase;
 using DataClass;
-using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class MainCamera : MonoBehaviour
 {
-    /** カメラの初期高さ */
+    /**
+     * カメラの初期高さ
+     */
     private const float CameraHeight = 10;
 
-    /** 制限のオフセット */
+    /**
+     * 制限のオフセット
+     */
     private const float LimitOffset = 2.5f;
 
-    /** 高さ制限の幅 */
+    /**
+     * 高さ制限の幅
+     */
     private const float HeightLimit = 5;
 
-    /** マウス感度 */
+    /**
+     * マウス感度
+     */
     private const float MouseSensitivity = 0.8f;
 
-    /** マウスの横制限 */
+    /**
+     * 迷路情報
+     */
+    [SerializeField]
+    private AMazeController _mazeController;
+
+    /**
+     * 一般情報
+     */
+    [SerializeField]
+    private GeneralS2SData _generalS2SData;
+
+    /**
+     * マウスの横制限
+     */
     private float _mouseXLimit;
 
-    /** マウスの縦制限 */
+    /**
+     * マウスの縦制限
+     */
     private float _mouseZLimit;
 
-    /** 迷路情報 */
-    [SerializeField] private AMazeController _mazeController;
-
-    /** 一般情報 */
-    [SerializeField] private GeneralS2SData _generalS2SData;
-    
     private StageData _stageData => _mazeController.StageData;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _mouseXLimit = _stageData.mazeColumn * 0.5f;
         _mouseZLimit = _stageData.mazeRow * 0.5f;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         var cam = GetComponent<MainCamera>();
 

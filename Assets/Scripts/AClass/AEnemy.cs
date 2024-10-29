@@ -25,7 +25,7 @@ namespace AClass
 
         /** 自身の現在地 */
         [CanBeNull]
-        private TilePosition CurrentPosition { get; set; }
+        public TilePosition CurrentPosition { get; private set; }
 
         /** 現在の経路 */
         [CanBeNull]
@@ -35,7 +35,8 @@ namespace AClass
         private bool Initialized { get; set; }
 
         /** 作成フェーズから侵略フェーズへのデータ */
-        [SerializeField] private CreateToInvasionData c2IData;
+        [SerializeField]
+        private CreateToInvasionData c2IData;
 
         /** Sceneコントローラー */
         private InvasionController _sceneController;
@@ -99,10 +100,8 @@ namespace AClass
             var distance = Vector3.Distance(position, nextTileCoordinate);
             // 次のタイルに到達した場合
             if (distance < 0.1f)
-            {
                 // 現在地を更新
                 CurrentPosition = nextTilePosition;
-            }
 
             if (CurrentPosition == null) throw new Exception("Current position is null");
 
@@ -110,10 +109,7 @@ namespace AClass
             _mazeController.AwakeTrap(CurrentPosition);
 
             // 目的地に到達した場合
-            if (CurrentPosition.Equals(Destination))
-            {
-                Path = null;
-            }
+            if (CurrentPosition.Equals(Destination)) Path = null;
 
             // ゴールに到達した場合
             if (CurrentPosition.Equals(_mazeController.GoalPosition))
@@ -126,6 +122,19 @@ namespace AClass
 
             // ロード済み時間を更新
             _prevTime = time;
+        }
+
+        /**
+         * ダメージ処理
+         */
+        public void Damage(int damage)
+        {
+            HP -= damage;
+
+            // HPが0以下になった場合
+            if (HP <= 0)
+                // ゲームオブジェクトを削除
+                Destroy(gameObject);
         }
 
         /**

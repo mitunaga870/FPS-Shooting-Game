@@ -4,9 +4,9 @@ namespace Enums
 {
     public enum StageType
     {
-        Undefined,
-        Normal,
-        Elite,
-        Boss
+        Undefined = 0,
+        Normal = 1,
+        Elite = 2,
+        Boss = 3
     }
 }

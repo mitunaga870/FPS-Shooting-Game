@@ -1,9 +1,10 @@
+using System;
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
+using Map;
 using ScriptableObjects;
 using UnityEngine;
-using UnityEngine.TerrainUtils;
 
 public static class SaveController
 {
@@ -16,10 +17,7 @@ public static class SaveController
         foreach (var row in tileData)
         {
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var tile in row)
-            {
-                saveText += $"{tile},";
-            }
+            foreach (var tile in row) saveText += $"{tile},";
 
             // 最後のカンマを削除
             saveText = saveText.Substring(0, saveText.Length - 1);
@@ -43,10 +41,7 @@ public static class SaveController
         // Save trapData like CSV
         var saveText = "";
 
-        foreach (var trap in trapData)
-        {
-            saveText += $"{trap},";
-        }
+        foreach (var trap in trapData) saveText += $"{trap},";
 
         // 最後のカンマを削除
         saveText = saveText.Substring(0, saveText.Length - 1);
@@ -57,6 +52,34 @@ public static class SaveController
     public static void SaveStageData(StageData stageData)
     {
         PlayerPrefs.SetString("StageName", stageData.stageName);
+        PlayerPrefs.SetInt("StageType", (int)stageData.StageType);
+    }
+
+    public static void SaveMap(MapWrapper[] mapWrappers)
+    {
+        var saveText = "";
+        for (var i = 0; i < mapWrappers.Length; i++)
+        {
+            saveText += mapWrappers[i].ToString();
+            if (i != mapWrappers.Length - 1) saveText += "\n\n";
+        }
+
+        PlayerPrefs.SetString("Map", saveText);
+    }
+
+    public static void SaveCurrentMapNumber(int mapNumber)
+    {
+        PlayerPrefs.SetInt("MapNumber", mapNumber);
+    }
+
+    public static void SaveCurrentMapRow(int currentMapRow)
+    {
+        PlayerPrefs.SetInt("CurrentMapRow", currentMapRow);
+    }
+
+    public static void SaveCurrentMapColumn(int currentMapColumn)
+    {
+        PlayerPrefs.SetInt("CurrentMapColumn", currentMapColumn);
     }
 
     // =======　読み込み処理　=======
@@ -69,6 +92,9 @@ public static class SaveController
         // セーブデータを読み込む
         var saveText = PlayerPrefs.GetString("TileData");
 
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("TileData");
+
         // セーブデータをCSV形式で読み込む
         // Load tileData like CSV
         var rows = saveText.Split('\n');
@@ -79,10 +105,7 @@ public static class SaveController
             var tiles = rows[i].Split(',');
             tileData[i] = new TileData[tiles.Length];
 
-            for (var j = 0; j < tiles.Length; j++)
-            {
-                tileData[i][j] = new TileData(tiles[j]);
-            }
+            for (var j = 0; j < tiles.Length; j++) tileData[i][j] = new TileData(tiles[j]);
         }
 
         return tileData;
@@ -90,7 +113,10 @@ public static class SaveController
 
     public static Phase LoadPhase()
     {
-        return (Phase)PlayerPrefs.GetInt("Phase", 0);
+        var phase = PlayerPrefs.GetInt("Phase", 0);
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("Phase");
+        return (Phase)phase;
     }
 
     public static TrapData[] LoadTrapData()
@@ -98,15 +124,14 @@ public static class SaveController
         if (!PlayerPrefs.HasKey("TrapData")) return null;
 
         var saveText = PlayerPrefs.GetString("TrapData");
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("TrapData");
 
         // Load trapData like CSV
         var traps = saveText.Split(',');
         var trapData = new TrapData[traps.Length];
 
-        for (var i = 0; i < traps.Length; i++)
-        {
-            trapData[i] = new TrapData(traps[i]);
-        }
+        for (var i = 0; i < traps.Length; i++) trapData[i] = new TrapData(traps[i]);
 
         return trapData;
     }
@@ -119,7 +144,63 @@ public static class SaveController
         if (stageName == "") return null;
 
         var result = stageObject.GetFromStageName(stageName);
+        if (result == null) return null;
+
+        // ステージタイプを読み込む
+        result.StageType = (StageType)PlayerPrefs.GetInt("StageType", 0);
+
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("StageName");
+        PlayerPrefs.DeleteKey("StageType");
+
         return result;
+    }
+
+    [CanBeNull]
+    public static MapWrapper[] LoadMap()
+    {
+        // キーを持ってないならヌルを返す
+        if (!PlayerPrefs.HasKey("Map")) return null;
+
+        // 値を取得
+        var saveText = PlayerPrefs.GetString("Map", null);
+        // 取得したものを放棄
+        PlayerPrefs.DeleteKey("Map");
+
+        if (string.IsNullOrEmpty(saveText))
+            return null;
+
+        // 二十改行で分割
+        var mapData = saveText.Split(new[] { "\n\n" }, StringSplitOptions.None);
+        var mapWrappers = new MapWrapper[mapData.Length];
+
+        for (var i = 0; i < mapData.Length; i++) mapWrappers[i] = new MapWrapper(mapData[i]);
+
+        return mapWrappers;
+    }
+
+    public static int LoadCurrentMapNumber()
+    {
+        var mapNumber = PlayerPrefs.GetInt("MapNumber", 0);
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("MapNumber");
+        return mapNumber;
+    }
+
+    public static int LoadCurrentMapRow()
+    {
+        var currentMapRow = PlayerPrefs.GetInt("CurrentMapRow", 0);
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("CurrentMapRow");
+        return currentMapRow;
+    }
+
+    public static int LoadCurrentMapColumn()
+    {
+        var currentMapColumn = PlayerPrefs.GetInt("CurrentMapColumn", 0);
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("CurrentMapColumn");
+        return currentMapColumn;
     }
 
     /**

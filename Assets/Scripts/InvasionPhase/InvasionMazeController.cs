@@ -8,8 +8,12 @@ namespace InvasionPhase
     public class InvasionMazeController : AMazeController
     {
         /** タイルのプレハブ */
-        [FormerlySerializedAs("tilePrefab")] [SerializeField]
+        [FormerlySerializedAs("tilePrefab")]
+        [SerializeField]
         private InvasionPhaseTile createPhaseTilePrefab;
+
+        [SerializeField]
+        private InvasionEnemyController enemyController;
 
         /**
          * 迷路の配列
@@ -52,10 +56,7 @@ namespace InvasionPhase
             }
 
             // トラップを設定
-            foreach (var trap in trapData)
-            {
-                _maze[trap.Row][trap.Column].SetTrap(trap.Trap);
-            }
+            foreach (var trap in trapData) _maze[trap.Row][trap.Column].SetInvasionTrap(trap.Trap, enemyController);
 
             // スタート・ゴールのタイルを設定
             _maze[StartPosition.Row][StartPosition.Col].SetStart();
@@ -72,10 +73,7 @@ namespace InvasionPhase
             for (var i = 0; i < MazeRows; i++)
             {
                 syncTiles[i] = new ATile[_maze[i].Length];
-                for (var j = 0; j < MazeColumns; j++)
-                {
-                    syncTiles[i][j] = _maze[i][j];
-                }
+                for (var j = 0; j < MazeColumns; j++) syncTiles[i][j] = _maze[i][j];
             }
 
             SyncMazeData(syncTiles);

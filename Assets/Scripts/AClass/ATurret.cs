@@ -8,11 +8,14 @@ using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
+#pragma warning disable CS8618 // null 非許容のフィールドには、コンストラクターの終了時に null 以外の値が入っていなければなりません。Null 許容として宣言することをご検討ください。
+
 namespace AClass
 {
     public abstract class ATurret : MonoBehaviour
     {
-        [SerializeField] protected TurretObject turretObject;
+        [SerializeField]
+        protected TurretObject turretObject;
 
         private CreationSceneController _creationSceneController;
 
@@ -28,11 +31,11 @@ namespace AClass
 
         private bool _isEnable;
 
-        protected Phase _phase;
+        protected Phase Phase;
 
         protected (CreationSceneController?, InvasionController?) GetControllers()
         {
-            switch (_phase)
+            switch (Phase)
             {
                 case Phase.Create:
                     return (_creationSceneController, null);
@@ -45,7 +48,7 @@ namespace AClass
 
         protected (MazeCreationController?, InvasionMazeController?) GetMazeControllers()
         {
-            switch (_phase)
+            switch (Phase)
             {
                 case Phase.Create:
                     return (_mazeCreationController, null);
@@ -72,7 +75,7 @@ namespace AClass
             _creationSceneController = sceneController;
             _mazeCreationController = mazeController;
 
-            _phase = Phase.Create;
+            Phase = Phase.Create;
 
             _isInitialized = true;
         }
@@ -89,7 +92,7 @@ namespace AClass
             _invasionMazeController = invasionMazeController;
             _invasionEnemyController = invasionEnemyController;
 
-            _phase = Phase.Invade;
+            Phase = Phase.Invade;
 
             _isInitialized = true;
         }

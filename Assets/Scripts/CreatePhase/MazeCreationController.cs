@@ -5,6 +5,7 @@ using AClass;
 using CreatePhase.UI;
 using Enums;
 using JetBrains.Annotations;
+using Map;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -21,17 +22,21 @@ namespace CreatePhase
     public class MazeCreationController : AMazeController
     {
         /** タイルのプレハブ */
-        [FormerlySerializedAs("tile")] [SerializeField]
+        [FormerlySerializedAs("tile")]
+        [SerializeField]
         private CreatePhaseTile createPhaseTile;
 
         /** リロールボタン */
-        [SerializeField] private ReRollButton reRollButton;
+        [SerializeField]
+        private ReRollButton reRollButton;
 
         /** デッキシステムつなぎこみ */
-        [SerializeField] private DeckController deck;
+        [SerializeField]
+        private DeckController deck;
 
-        /** シーン間のデータ共有用オブジェクト */
-        [SerializeField] private CreateToInvasionData createToInvasionData;
+        /** マップオブジェクト */
+        [SerializeField]
+        private MapController _mapController;
 
         /** 迷路の原点 */
         private Vector3 _mazeOrigin;
@@ -226,14 +231,10 @@ namespace CreatePhase
             for (var row = 0;
                  row < MazeRows;
                  row++)
-            {
-                for (var column = 0;
-                     column < MazeColumns;
-                     column++)
-                {
-                    Maze[row][column].ResetTile();
-                }
-            }
+            for (var column = 0;
+                 column < MazeColumns;
+                 column++)
+                Maze[row][column].ResetTile();
         }
 
         // パブリック関数
@@ -265,21 +266,15 @@ namespace CreatePhase
 
             // 既存の道を削除
             var roadAddresses = GetRoadAddresses();
-            foreach (var address in roadAddresses)
-            {
-                Maze[address["row"]][address["col"]].SetNone();
-            }
+            foreach (var address in roadAddresses) Maze[address["row"]][address["col"]].SetNone();
 
             // プレビューを下げる
-            foreach (var address in _previewAddresses)
-            {
-                Maze[address["row"]][address["col"]].ResetPreview();
-            }
+            foreach (var address in _previewAddresses) Maze[address["row"]][address["col"]].ResetPreview();
 
             var newRoadAddresses = new List<Dictionary<string, int>>();
 
             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-            switch (this.EditingTargetTileType)
+            switch (EditingTargetTileType)
             {
                 // 道を設置のとき
                 case TileTypes.Road:
@@ -300,9 +295,7 @@ namespace CreatePhase
                     {
                         if (_previewAddresses.Exists(previewAddress =>
                                 previewAddress["col"] == address["col"] && previewAddress["row"] == address["row"]))
-                        {
                             continue;
-                        }
 
                         newRoadAddresses.Add(address);
                     }
@@ -355,13 +348,8 @@ namespace CreatePhase
 
             // 横からつないだか縦からつないだか判定
             if (lastCol == endCol)
-            {
                 _lastEditVertical = false;
-            }
-            else if (lastRow == endRow)
-            {
-                _lastEditVertical = true;
-            }
+            else if (lastRow == endRow) _lastEditVertical = true;
 
             // プレビュー中のタイルを削除
             foreach (var address in _previewAddresses)
@@ -376,24 +364,16 @@ namespace CreatePhase
             // 行を左右どちらにずらすか
             int diffCol;
             if (startCol < endCol)
-            {
                 diffCol = 1;
-            }
             else
-            {
                 diffCol = -1;
-            }
 
             // 列を上下どちらにずらすか
             int diffRow;
             if (startRow < endRow)
-            {
                 diffRow = 1;
-            }
             else
-            {
                 diffRow = -1;
-            }
 
             // カレントの列と行を設定
             var currentCol = startCol;
@@ -483,17 +463,11 @@ namespace CreatePhase
             for (var row = 0;
                  row < MazeRows;
                  row++)
-            {
-                for (var col = 0;
-                     col < MazeColumns;
-                     col++)
-                {
-                    if (Maze[row][col].TileType == TileTypes.Road)
-                    {
-                        roadAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
-                    }
-                }
-            }
+            for (var col = 0;
+                 col < MazeColumns;
+                 col++)
+                if (Maze[row][col].TileType == TileTypes.Road)
+                    roadAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
 
             return roadAddresses;
         }
@@ -503,9 +477,7 @@ namespace CreatePhase
             // プレビュー中のタイルを削除
             foreach (var address in _previewAddresses.Where(address =>
                          address != null && address.ContainsKey("row") && address.ContainsKey("col")))
-            {
                 Maze[address["row"]][address["col"]].ResetPreview();
-            }
 
             _previewAddresses.Clear();
 
@@ -527,32 +499,25 @@ namespace CreatePhase
             for (var row = 0;
                  row < MazeRows;
                  row++)
+            for (var column = 0;
+                 column < MazeColumns;
+                 column++)
             {
-                for (var column = 0;
-                     column < MazeColumns;
-                     column++)
-                {
-                    var tile = Maze[row][column];
+                var tile = Maze[row][column];
 
-                    createToInvasionData.TileData[row][column] = new TileData(
-                        row,
-                        column,
-                        tile.TileType,
-                        tile.RoadAdjust
-                    );
-                }
+                createToInvasionData.TileData[row][column] = new TileData(
+                    row,
+                    column,
+                    tile.TileType,
+                    tile.RoadAdjust
+                );
             }
 
             // トラップ情報を設定
             for (var i = 0;
                  i < TrapCount;
                  i++)
-            {
                 createToInvasionData.TrapData[i] = TrapData[i];
-            }
-
-            // 迷路の原点を設定
-            createToInvasionData.MazeOrigin = _mazeOrigin;
         }
 
         protected override void Sync()
@@ -561,10 +526,7 @@ namespace CreatePhase
             for (var i = 0; i < Maze.Length; i++)
             {
                 maze[i] = new ATile[Maze[i].Length];
-                for (var j = 0; j < Maze[i].Length; j++)
-                {
-                    maze[i][j] = Maze[i][j];
-                }
+                for (var j = 0; j < Maze[i].Length; j++) maze[i][j] = Maze[i][j];
             }
 
             SyncMazeData(maze);
@@ -581,9 +543,7 @@ namespace CreatePhase
             {
                 result[i] = new TileData[Maze[i].Length];
                 for (var j = 0; j < Maze[i].Length; j++)
-                {
                     result[i][j] = new TileData(i, j, Maze[i][j].TileType, Maze[i][j].RoadAdjust);
-                }
             }
 
             return result;
