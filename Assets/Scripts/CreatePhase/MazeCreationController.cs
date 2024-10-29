@@ -6,6 +6,7 @@ using CreatePhase.UI;
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
+using lib;
 using Map;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -278,7 +279,7 @@ namespace CreatePhase
             foreach (var address in roadAddresses) Maze[address["row"]][address["col"]].SetNone();
 
             // プレビューを下げる
-            foreach (var address in _previewAddresses) Maze[address["row"]][address["col"]].ResetPreview();
+            foreach (var address in _previewAddresses) Maze[address["row"]][address["col"]].ResetRoadPreview();
 
             var newRoadAddresses = new List<Dictionary<string, int>>();
 
@@ -369,7 +370,7 @@ namespace CreatePhase
             {
                 if (address == null || !address.ContainsKey("row") || !address.ContainsKey("col")) continue;
 
-                Maze[address["row"]][address["col"]].ResetPreview();
+                Maze[address["row"]][address["col"]].ResetRoadPreview();
             }
 
             _previewAddresses.Clear();
@@ -398,7 +399,7 @@ namespace CreatePhase
                 for (var i = 0; i < Mathf.Abs(endRow - startRow); i++)
                 {
                     // タイルの種類を変更
-                    Maze[currentRow][currentCol].SetPreview();
+                    Maze[currentRow][currentCol].SetRoadPreview();
                     // プレビュー用のタイルを追加
                     _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                     // インクリメント
@@ -409,7 +410,7 @@ namespace CreatePhase
                 for (var i = 0; i < Mathf.Abs(endCol - startCol) + 1; i++)
                 {
                     // タイルの種類を変更
-                    Maze[currentRow][currentCol].SetPreview();
+                    Maze[currentRow][currentCol].SetRoadPreview();
                     // プレビュー用のタイルを追加
                     _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                     // インクリメント
@@ -422,7 +423,7 @@ namespace CreatePhase
                 for (var i = 0; i < Mathf.Abs(endCol - startCol); i++)
                 {
                     // タイルの種類を変更
-                    Maze[currentRow][currentCol].SetPreview();
+                    Maze[currentRow][currentCol].SetRoadPreview();
                     // プレビュー用のタイルを追加
                     _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                     // インクリメント
@@ -433,7 +434,7 @@ namespace CreatePhase
                 for (var i = 0; i < Mathf.Abs(endRow - startRow) + 1; i++)
                 {
                     // タイルの種類を変更
-                    Maze[currentRow][currentCol].SetPreview();
+                    Maze[currentRow][currentCol].SetRoadPreview();
                     // プレビュー用のタイルを追加
                     _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                     // インクリメント
@@ -456,12 +457,12 @@ namespace CreatePhase
             if (lastCol != col && lastRow != row)
             {
                 // 中継地点を設定
-                Maze[lastRow][col].SetPreview();
+                Maze[lastRow][col].SetRoadPreview();
                 _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = lastRow });
             }
 
             // プレビュー中のタイルに追加
-            Maze[row][col].SetPreview();
+            Maze[row][col].SetRoadPreview();
             _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
         }
 
@@ -479,7 +480,9 @@ namespace CreatePhase
             for (var col = 0;
                  col < MazeColumns;
                  col++)
-                if (Maze[row][col].TileType == TileTypes.Road)
+                if (Maze[row][col].TileType == TileTypes.Road ||
+                    Maze[row][col].TileType == TileTypes.Start ||
+                    Maze[row][col].TileType == TileTypes.Goal)
                     roadAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
 
             return roadAddresses;
@@ -490,7 +493,7 @@ namespace CreatePhase
             // プレビュー中のタイルを削除
             foreach (var address in _previewAddresses.Where(address =>
                          address != null && address.ContainsKey("row") && address.ContainsKey("col")))
-                Maze[address["row"]][address["col"]].ResetPreview();
+                Maze[address["row"]][address["col"]].ResetRoadPreview();
 
             _previewAddresses.Clear();
 
@@ -585,6 +588,9 @@ namespace CreatePhase
             // 設置不可能なら赤くする
             _previewTurret.SetColor(Maze[row][column].SettableTurret ? Color.green : Color.red);
 
+            // 効果エリアをプレビュー中
+            SetPreviewTurretEffectArea(_settingTurret, new TilePosition(row, column), 100f);
+
             // トラップの位置を設定
             _previewTurret.transform.position = new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin;
             _previewTurretAddress = new TilePosition(row, column);
@@ -608,8 +614,55 @@ namespace CreatePhase
                 _previewTurret = null;
             }
 
+            // プレビュー中のエリアを削除
+            foreach (var address in _previewAddresses)
+            {
+                var row = address["row"];
+                var col = address["col"];
+                Maze[row][col].ResetAreaPreview();
+            }
+
+            _previewAddresses.Clear();
+
             // トラップ設置モードを終了
             _settingTurret = null;
+        }
+
+        /**
+         * トラップの効果範囲をプレビュー
+         * @param turret プレビューするトラップ
+         * @param origin プレビューの原点
+         * @param duration プレビューの持続時間(ms)　デフォルトは100
+         */
+        public void SetPreviewTurretEffectArea(ATurret turret, TilePosition origin, float duration)
+        {
+            // トラップの効果範囲を取得
+            var effectArea = turret.GetEffectArea();
+
+            // 既存のプレビューを削除
+            foreach (var address in _previewAddresses)
+            {
+                var row = address["row"];
+                var col = address["col"];
+                Maze[row][col].ResetAreaPreview();
+            }
+
+            // トラップの効果範囲をプレビュー
+            foreach (var tilePosition in effectArea)
+            {
+                // 絶対座標を取得
+                var row = origin.Row + tilePosition.Row;
+                var col = origin.Col + tilePosition.Col;
+
+                // プレビュー中のタイルを取得
+                var previewTile = Maze[row][col];
+
+                // プレビュー中のタイルを設定
+                previewTile.SetAreaPreview();
+
+                // リストに追加
+                _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using CreatePhase;
+using DataClass;
 using Enums;
 using InvasionPhase;
 using JetBrains.Annotations;
@@ -100,6 +102,7 @@ namespace AClass
         // ================= abstract =================
         public abstract float GetHeight();
         public abstract void AwakeTurret();
+        public abstract List<TilePosition> GetEffectArea();
 
         /**
          * タレットの色を変更する

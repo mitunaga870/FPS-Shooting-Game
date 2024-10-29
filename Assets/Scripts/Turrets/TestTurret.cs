@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using AClass;
+using DataClass;
 
 namespace Turrets
 {
@@ -12,6 +14,11 @@ namespace Turrets
         public override void AwakeTurret()
         {
             throw new System.NotImplementedException();
+        }
+
+        public override List<TilePosition> GetEffectArea()
+        {
+            return new List<TilePosition>() { new(0, 1) };
         }
     }
 }

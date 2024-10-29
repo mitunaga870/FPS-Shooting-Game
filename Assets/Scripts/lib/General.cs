@@ -20,6 +20,7 @@ namespace lib
 
         /**
          * 遅延処理用コルーチン
+         * @param seconds 遅延時間(sec)
          */
         public static IEnumerator DelayCoroutine(float seconds, Action action)
         {

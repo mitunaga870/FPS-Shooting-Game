@@ -26,9 +26,6 @@ namespace CreatePhase
         /** プレビュー中フラグ */
         public bool isPreview;
 
-        [SerializeField]
-        private TurretRotateUI turretRotateUI;
-
         private IMouseEvent _mouseEventImplementation;
         public bool HasTurret => hasTurret;
 
@@ -179,7 +176,7 @@ namespace CreatePhase
         /**
      * プレビュー中のフラグを立てる
      */
-        public void SetPreview()
+        public void SetRoadPreview()
         {
             // 既にプレビュー中の場合は処理しない
             if (isPreview) return;
@@ -193,7 +190,7 @@ namespace CreatePhase
         /**
      * プレビュー中のフラグを下ろす
      */
-        public void ResetPreview()
+        public void ResetRoadPreview()
         {
             // プレビュー中でない場合は処理しない
             if (!isPreview) return;

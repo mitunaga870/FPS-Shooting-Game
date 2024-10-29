@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using DataClass;
 using Enums;
 using lib;
@@ -77,6 +79,9 @@ namespace AClass
 
         public bool SettableTurret => !hasTrap && TileType == TileTypes.Nothing && !hasTurret;
 
+        /** トラップのプレビューの色 */
+        private Color _prevColor;
+
         public TileTypes TileType
         {
             get => _tileType;
@@ -101,6 +106,9 @@ namespace AClass
 
         /** turretの所持フラグ */
         protected bool hasTurret = false;
+
+        /** 色を変えたときの元の色を持たせる */
+        private Dictionary<string, Color> prevColor;
 
         /**
          * タイルのステータスの変更
@@ -371,10 +379,52 @@ namespace AClass
      */
         public void SetColor(Color color)
         {
+            // 既存の色リストを初期化
+            prevColor ??= new Dictionary<string, Color>();
+
             var meshRenderer = GetComponent<MeshRenderer>();
             var materials = meshRenderer.materials;
 
-            foreach (var material in materials) material.color = color;
+            foreach (var material in materials)
+            {
+                // 色を取得
+                Color? materialColor =
+                    material.HasProperty("_Color") ? material.color : null;
+
+                Debug.Log(material.name);
+
+                // 既存の色を保存
+                if (materialColor != null)
+                    prevColor.Add(material.name, materialColor.Value);
+
+                material.color = color;
+            }
+        }
+
+        /**
+         * 既存の色に戻す
+         */
+        private void ResetColor()
+        {
+            if (prevColor == null) return;
+
+            var meshRenderer = GetComponent<MeshRenderer>();
+            var materials = meshRenderer.materials;
+
+            for (var i = 0; i < materials.Length; i++)
+            {
+                var material = materials[i];
+
+                // 色を取得
+                Color? materialColor =
+                    material.HasProperty("_Color") ? material.color : null;
+
+                // 既存の色を保存
+                if (materialColor != null)
+                    material.color = prevColor[material.name];
+            }
+
+            prevColor = null;
         }
 
         /**
@@ -448,6 +498,25 @@ namespace AClass
             var position = turret.transform.position;
             position = new Vector3(position.x, turret.GetHeight(), position.z);
             turret.transform.position = position;
+        }
+
+        /**
+         * 効果エリアを見せる
+         * @return 元の色
+         */
+        public void SetAreaPreview()
+        {
+            _prevColor = GetComponent<Renderer>().material.color;
+            // とりあえず色を変える
+            SetColor(Color.green);
+        }
+
+        /**
+         * 効果エリアを元に戻す
+         */
+        public void ResetAreaPreview()
+        {
+            ResetColor();
         }
     }
 }
