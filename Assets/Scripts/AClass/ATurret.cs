@@ -100,5 +100,13 @@ namespace AClass
         // ================= abstract =================
         public abstract float GetHeight();
         public abstract void AwakeTurret();
+
+        /**
+         * タレットの色を変更する
+         */
+        public void SetColor(Color color)
+        {
+            GetComponent<Renderer>().material.color = color;
+        }
     }
 }

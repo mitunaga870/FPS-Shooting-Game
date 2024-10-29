@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AClass;
 using CreatePhase.UI;
+using DataClass;
 using Enums;
 using JetBrains.Annotations;
 using Map;
@@ -71,8 +72,16 @@ namespace CreatePhase
         public TrapData[] TrapData { get; private set; }
 
         /** トラップ設置中フラグ */
-        [FormerlySerializedAs("IsSettingTrap")]
-        public bool IsSettingTurret;
+        public bool isSettingTurret { get; private set; }
+
+        /** 設置中トラップのアクセサ */
+        private ATurret _settingTurret = null;
+
+        /** プレビューのトラップ */
+        private ATurret _previewTurret;
+
+        /** プレビュー中のトラップのアドレス */
+        private TilePosition _previewTurretAddress;
 
         // Start is called before the first frame update
         private void Start()
@@ -306,10 +315,14 @@ namespace CreatePhase
                     throw new ArgumentOutOfRangeException();
             }
 
+            // 道のアドレス群からタレット設置済みのアドレスを削除
+            newRoadAddresses = newRoadAddresses.FindAll(address =>
+                Maze[address["row"]][address["col"]].HasTurret == false);
+
             // 道を設置
             foreach (var address in newRoadAddresses)
             {
-                if (address == null || !address.ContainsKey("row") || !address.ContainsKey("col")) continue;
+                if (!address.ContainsKey("row") || !address.ContainsKey("col")) continue;
 
                 // つながり肩を取得
                 var roadAdjust = GetRoadAdjust(address["col"], address["row"], newRoadAddresses);
@@ -547,6 +560,56 @@ namespace CreatePhase
             }
 
             return result;
+        }
+
+        /**
+         * トラップ設置モードに変換
+         */
+        public void StartSettingTurret(ATurret turretPrefab)
+        {
+            isSettingTurret = true;
+            _settingTurret = turretPrefab;
+        }
+
+        public void PreviewTurret(int column, int row)
+        {
+            if (!_settingTurret && _settingTurret == null)
+                return;
+
+            // 半透明のトラップを設置
+            if (_previewTurret == null)
+                _previewTurret = Instantiate(_settingTurret,
+                    new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin,
+                    Quaternion.identity);
+
+            // 設置不可能なら赤くする
+            _previewTurret.SetColor(Maze[row][column].SettableTurret ? Color.green : Color.red);
+
+            // トラップの位置を設定
+            _previewTurret.transform.position = new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin;
+            _previewTurretAddress = new TilePosition(row, column);
+        }
+
+        public void EndSettingTurret()
+        {
+            if (!_settingTurret && _settingTurret == null)
+                return;
+            // トラップ設置モードを終了
+            isSettingTurret = false;
+
+            // トラップを固定
+            if (Maze[_previewTurretAddress.Row][_previewTurretAddress.Col].SettableTurret)
+                Maze[_previewTurretAddress.Row][_previewTurretAddress.Col].SetTurret(_settingTurret);
+
+            // トラップを設置したのでプレビューを削除
+            if (_previewTurret != null)
+            {
+                Destroy(_previewTurret.gameObject);
+                _previewTurret = null;
+            }
+
+            // トラップ設置モードを終了
+            _settingTurret = null;
         }
     }
 }

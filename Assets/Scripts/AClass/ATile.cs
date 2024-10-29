@@ -75,6 +75,8 @@ namespace AClass
         /** 現在のタイルタイプ */
         private TileTypes _tileType = TileTypes.Nothing;
 
+        public bool SettableTurret => !hasTrap && TileType == TileTypes.Nothing && !hasTurret;
+
         public TileTypes TileType
         {
             get => _tileType;
@@ -95,7 +97,10 @@ namespace AClass
         protected ATrap _trap = null;
 
         /** トラップの所持フラグ */
-        private bool hasTrap = false;
+        protected bool hasTrap = false;
+
+        /** turretの所持フラグ */
+        protected bool hasTurret = false;
 
         /**
          * タイルのステータスの変更
@@ -106,13 +111,16 @@ namespace AClass
         }
 
         /**
-     * タイルを道に設定する
-     * @param roadAdjust 道の形状
-     */
+         * タイルを道に設定する
+         * @param roadAdjust 道の形状
+         */
         public void SetRoad(RoadAdjust roadAdjust)
         {
             // 既に道・トラップが設定されている場合は処理しない
             if (TileType == TileTypes.Road) return;
+
+            // turretが設置されている場合は処理しない
+            if (hasTurret) return;
 
             // タイルの種類を道に設定
             TileType = TileTypes.Road;
@@ -376,6 +384,8 @@ namespace AClass
         {
             // TODO: スタート地点の状態固定と示し方を決める
             SetColor(Color.blue);
+
+            TileType = TileTypes.Start;
         }
 
         /**
@@ -385,6 +395,8 @@ namespace AClass
         {
             // TODO: ゴール地点の状態固定と示し方を決める
             SetColor(Color.red);
+
+            TileType = TileTypes.Goal;
         }
 
         /**
@@ -417,6 +429,25 @@ namespace AClass
         public void AwakeTrap()
         {
             if (hasTrap) _trap.AwakeTrap(new TilePosition(Row, Column));
+        }
+
+        /**
+         * turretを設置する
+         */
+        public void SetTurret(ATurret settingTurret)
+        {
+            // 既に道・トラップが設定されている場合は処理しない
+            if (hasTrap) return;
+
+            hasTurret = true;
+
+            // トラップを生成
+            var turret = Instantiate(settingTurret, transform.position, Quaternion.identity);
+
+            // トラップの高さを設定
+            var position = turret.transform.position;
+            position = new Vector3(position.x, turret.GetHeight(), position.z);
+            turret.transform.position = position;
         }
     }
 }

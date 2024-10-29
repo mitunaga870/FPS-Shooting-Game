@@ -6,7 +6,7 @@ namespace Turrets
     {
         public override float GetHeight()
         {
-            throw new System.NotImplementedException();
+            return 0.5f;
         }
 
         public override void AwakeTurret()

@@ -869,7 +869,6 @@ MonoBehaviour:
   reRollButton: {fileID: 777972593}
   deck: {fileID: 637409399}
   _mapController: {fileID: 1146026208}
-  IsSettingTurret: 0
 --- !u!114 &335259404 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7837832386491098584, guid: 2e4e6e20c0bbb774ba533c64716ce008, type: 3}
@@ -1767,8 +1766,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26d6e4fa171fd8949b521a25477b62d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turretPrefab: {fileID: 0}
-  mazeCreationController: {fileID: 0}
+  turretPrefab: {fileID: 6233832138599324131, guid: 0281779c11152dd4aa702fee6ae87692, type: 3}
+  mazeCreationController: {fileID: 321828198}
 --- !u!114 &688432146
 MonoBehaviour:
   m_ObjectHideFlags: 0
