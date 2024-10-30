@@ -12,67 +12,67 @@ namespace AClass
     {
         /** デフォルトのモデル */
         [SerializeField]
-        protected Mesh defaultModel;
+        protected GameObject defaultModel;
 
         /** どこにもつながっていないモデル */
         [SerializeField]
-        protected Mesh noneModel;
+        protected GameObject noneModel;
 
         /** 行き止まりのモデル */
         [SerializeField]
-        protected Mesh deadEndModel;
+        protected GameObject deadEndModel;
 
         /** 直線のモデル */
         [SerializeField]
-        protected Mesh straightModel;
+        protected GameObject straightModel;
 
         /** コーナーのモデル */
         [SerializeField]
-        protected Mesh cornerModel;
+        protected GameObject cornerModel;
 
         /** T字路のモデル */
         [SerializeField]
-        protected Mesh tJunctionModel;
+        protected GameObject tJunctionModel;
 
         /** 十字路のモデル */
         [SerializeField]
-        protected Mesh crossroadsModel;
+        protected GameObject crossroadsModel;
 
         /** L字壁のモデル */
         [SerializeField]
-        protected Mesh halfOnceModel;
+        protected GameObject halfOnceModel;
 
         /** 太いやつの端っこ */
         [SerializeField]
-        protected Mesh halfRoadModel;
+        protected GameObject halfRoadModel;
 
         /** 太いやつの真ん中 */
         [SerializeField]
-        protected Mesh noWallModel;
+        protected GameObject noWallModel;
 
         /** 三角 */
         [SerializeField]
-        protected Mesh tripleCurve;
+        protected GameObject tripleCurve;
 
         /** ２角　*/
         [SerializeField]
-        protected Mesh doubleCurve;
+        protected GameObject doubleCurve;
 
         /** １角　*/
         [SerializeField]
-        protected Mesh singleCurve;
+        protected GameObject singleCurve;
 
         /** 角と壁 下に壁持ってきたときに右に角 */
         [SerializeField]
-        protected Mesh rightCornerAndBottomWall;
+        protected GameObject rightCornerAndBottomWall;
 
         /** 角と壁 下に壁持ってきたときに左に角 */
         [SerializeField]
-        protected Mesh leftCornerAndBottomWall;
+        protected GameObject leftCornerAndBottomWall;
 
         /** 斜め角 */
         [SerializeField]
-        protected Mesh diagonalCorner;
+        protected GameObject diagonalCorner;
 
         /** 現在のタイルタイプ */
         private TileTypes _tileType = TileTypes.Nothing;
@@ -138,203 +138,305 @@ namespace AClass
 
             // 道の形状によってモデルを変更
             var meshFilter = GetComponent<MeshFilter>();
+            var meshRenderer = GetComponent<MeshRenderer>();
 
             // つながった道の回転を設定
             var rotation = transform.rotation;
+
+            GameObject _model = null;
 
             switch (roadAdjust)
             {
                 // ========== 行き止まり ==========
                 case RoadAdjust.LeftDeadEnd:
-                    meshFilter.mesh = deadEndModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(deadEndModel);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.BottomDeadEnd:
-                    meshFilter.mesh = deadEndModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(deadEndModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.RightDeadEnd:
-                    meshFilter.mesh = deadEndModel;
+                    Debug.Log("VAR");
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(deadEndModel);
+
+                    rotation = Quaternion.Euler(-90, 0, 0);
                     break;
                 case RoadAdjust.TopDeadEnd:
-                    meshFilter.mesh = deadEndModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(deadEndModel);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // ========== 直線 ==========
                 case RoadAdjust.TopBottom:
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(straightModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
-                    meshFilter.mesh = straightModel;
                     break;
                 case RoadAdjust.LeftRight:
-                    meshFilter.mesh = straightModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(straightModel);
                     break;
                 // ========== コーナー ==========
                 case RoadAdjust.TopRight:
                 case RoadAdjust.RightTop:
-                    meshFilter.mesh = cornerModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(cornerModel);
+
                     break;
                 case RoadAdjust.LeftTop:
                 case RoadAdjust.TopLeft:
-                    meshFilter.mesh = cornerModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(cornerModel);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.LeftBottom:
                 case RoadAdjust.BottomLeft:
-                    meshFilter.mesh = cornerModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(cornerModel);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.RightBottom:
                 case RoadAdjust.BottomRight:
-                    meshFilter.mesh = cornerModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(cornerModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 // ========== T字路 ==========
                 case RoadAdjust.TopRightLeft:
-                    meshFilter.mesh = tJunctionModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tJunctionModel);
+
                     break;
                 case RoadAdjust.RightBottomTop:
-                    meshFilter.mesh = tJunctionModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tJunctionModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.LeftTopBottom:
-                    meshFilter.mesh = tJunctionModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tJunctionModel);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.BottomLeftRight:
-                    meshFilter.mesh = tJunctionModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tJunctionModel);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.Cross:
-                    meshFilter.mesh = crossroadsModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(crossroadsModel);
                     break;
                 // ========== 太い道路 ==========
                 // ========== 太い道路の真ん中 ==========
                 case RoadAdjust.BottomLeftDot:
-                    meshFilter.mesh = singleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(singleCurve);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.BottomRightDot:
-                    meshFilter.mesh = singleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(singleCurve);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopLeftDot:
-                    meshFilter.mesh = singleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(singleCurve);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.TopRightDot:
-                    meshFilter.mesh = singleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(singleCurve);
+
                     break;
                 // ２角
                 case RoadAdjust.TopDoubleDot:
-                    meshFilter.mesh = doubleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(doubleCurve);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.BottomDoubleDot:
-                    meshFilter.mesh = doubleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(doubleCurve);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.LeftDoubleDot:
-                    meshFilter.mesh = doubleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(doubleCurve);
+
                     break;
                 case RoadAdjust.RightDoubleDot:
-                    meshFilter.mesh = doubleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(doubleCurve);
+
                     rotation = Quaternion.Euler(-90, -180, 0);
                     break;
                 case RoadAdjust.TopLeftAndBottomRightDot:
-                    meshFilter.mesh = diagonalCorner;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(diagonalCorner);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopRightAndBottomLeftDot:
-                    meshFilter.mesh = diagonalCorner;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(diagonalCorner);
+
                     break;
                 // 三角
                 case RoadAdjust.ExpectBottomLeftDot:
-                    meshFilter.mesh = tripleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tripleCurve);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.ExpectBottomRightDot:
-                    meshFilter.mesh = tripleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tripleCurve);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.ExpectTopLeftDot:
-                    meshFilter.mesh = tripleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tripleCurve);
                     break;
                 case RoadAdjust.ExpectTopRightDot:
-                    meshFilter.mesh = tripleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tripleCurve);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.NoWall:
-                    meshFilter.mesh = noWallModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(noWallModel);
                     break;
                 // 壁と角　下に壁持ってきたときに右に角
                 case RoadAdjust.BottomWallWithRightDot:
-                    meshFilter.mesh = rightCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(rightCornerAndBottomWall);
                     break;
                 case RoadAdjust.LeftWallWithBottomDot:
-                    meshFilter.mesh = rightCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(rightCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopWallWithLeftDot:
-                    meshFilter.mesh = rightCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(rightCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.RightWallWithTopDot:
-                    meshFilter.mesh = rightCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(rightCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // 壁と角　下に壁持ってきたときに左に角
                 case RoadAdjust.BottomWallWithLeftDot:
-                    meshFilter.mesh = leftCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(leftCornerAndBottomWall);
+
                     break;
                 case RoadAdjust.LeftWallWithTopDot:
-                    meshFilter.mesh = leftCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(leftCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopWallWithRightDot:
-                    meshFilter.mesh = leftCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(leftCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.RightWallWithBottomDot:
-                    meshFilter.mesh = leftCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(leftCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // ========= 壁だけ ==========
                 case RoadAdjust.LeftWall:
-                    meshFilter.mesh = halfRoadModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfRoadModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.RightWall:
-                    meshFilter.mesh = halfRoadModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfRoadModel);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.BottomWall:
-                    meshFilter.mesh = halfRoadModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfRoadModel);
+
                     rotation = Quaternion.Euler(-90, 0, 0);
                     break;
                 case RoadAdjust.TopWall:
-                    meshFilter.mesh = halfRoadModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfRoadModel);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 // ========== L字壁 ==========
                 case RoadAdjust.TopRightHalfOnce:
-                    meshFilter.mesh = halfOnceModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfOnceModel);
+
                     break;
                 case RoadAdjust.BottomRightHalfOnce:
-                    meshFilter.mesh = halfOnceModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfOnceModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.BottomLeftHalfOnce:
-                    meshFilter.mesh = halfOnceModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfOnceModel);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.TopLeftHalfOnce:
-                    meshFilter.mesh = halfOnceModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfOnceModel);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // つながっていない場合
                 case RoadAdjust.NoAdjust:
-                    meshFilter.mesh = noneModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(noneModel);
                     break;
+            }
+
+            // モデルを変更
+            if (_model != null)
+            {
+                GetComponent<MeshFilter>().mesh = _model.GetComponent<MeshFilter>().sharedMesh;
+                GetComponent<MeshRenderer>().materials = _model.GetComponent<MeshRenderer>().materials;
+
+                Destroy(_model);
             }
 
             // つながった道の回転を設定
@@ -363,7 +465,8 @@ namespace AClass
 
             // モデルを変更
             var meshFilter = GetComponent<MeshFilter>();
-            meshFilter.mesh = defaultModel;
+            meshFilter = defaultModel.GetComponent<MeshFilter>();
+            GetComponent<MeshFilter>().mesh = meshFilter.sharedMesh;
 
             // アウトラインを消す
             var outline = GetComponent<Outline>();
