@@ -465,10 +465,11 @@ namespace AClass
             // タイルの種類を空に設定
             TileType = TileTypes.Nothing;
 
-            // モデルを変更
-            var meshFilter = GetComponent<MeshFilter>();
-            meshFilter = defaultModel.GetComponent<MeshFilter>();
-            GetComponent<MeshFilter>().mesh = meshFilter.sharedMesh;
+
+            var model = Instantiate(defaultModel);
+            GetComponent<MeshFilter>().mesh = model.GetComponent<MeshFilter>().sharedMesh;
+            GetComponent<MeshRenderer>().materials = model.GetComponent<MeshRenderer>().materials;
+            Destroy(model);
 
             // アウトラインを消す
             var outline = GetComponent<Outline>();
