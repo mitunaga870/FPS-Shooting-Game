@@ -596,6 +596,9 @@ namespace CreatePhase
             _previewTurretAddress = new TilePosition(row, column);
         }
 
+        /**
+         * トラップ設置モードを終了
+         */
         public void EndSettingTurret()
         {
             if (!_settingTurret && _settingTurret == null)

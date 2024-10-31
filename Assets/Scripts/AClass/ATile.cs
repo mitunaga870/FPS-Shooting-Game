@@ -82,6 +82,9 @@ namespace AClass
         /** トラップのプレビューの色 */
         private Color _prevColor;
 
+        /** 設置されているturret */
+        protected ATurret Turret;
+
         public TileTypes TileType
         {
             get => _tileType;
@@ -161,7 +164,6 @@ namespace AClass
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.RightDeadEnd:
-                    Debug.Log("VAR");
                     // 読み取り用にインスタンス化
                     _model = Instantiate(deadEndModel);
 
@@ -494,8 +496,6 @@ namespace AClass
                 Color? materialColor =
                     material.HasProperty("_Color") ? material.color : null;
 
-                Debug.Log(material.name);
-
                 // 既存の色を保存
                 if (materialColor != null)
                     prevColor.Add(material.name, materialColor.Value);
@@ -595,12 +595,12 @@ namespace AClass
             hasTurret = true;
 
             // トラップを生成
-            var turret = Instantiate(settingTurret, transform.position, Quaternion.identity);
+            Turret = Instantiate(settingTurret, transform.position, Quaternion.identity);
 
             // トラップの高さを設定
-            var position = turret.transform.position;
-            position = new Vector3(position.x, turret.GetHeight(), position.z);
-            turret.transform.position = position;
+            var position = Turret.transform.position;
+            position = new Vector3(position.x, Turret.GetHeight(), position.z);
+            Turret.transform.position = position;
         }
 
         /**

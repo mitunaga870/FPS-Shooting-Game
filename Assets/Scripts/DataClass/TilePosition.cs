@@ -28,10 +28,7 @@ namespace DataClass
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
+            if (obj == null || GetType() != obj.GetType()) return false;
 
             var p = (TilePosition)obj;
             return Col == p.Col && Row == p.Row;
@@ -51,6 +48,16 @@ namespace DataClass
         public override string ToString()
         {
             return $"Row: {Row}, Col: {Col}";
+        }
+
+        public TilePosition Rotate(double angle)
+        {
+            // ラジアンに変換
+            angle = angle * Math.PI / 180;
+
+            var x = Col * Math.Cos(angle) - Row * Math.Sin(angle);
+            var y = Col * Math.Sin(angle) + Row * Math.Cos(angle);
+            return new TilePosition((int)Math.Round(x), (int)Math.Round(y));
         }
     }
 }

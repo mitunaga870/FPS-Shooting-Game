@@ -102,7 +102,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5000001
   m_Height: 2
@@ -120,4 +120,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b6baef47f16458bb6bc228f809869cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turretObject: {fileID: 11400000, guid: dfafa4fbd1617004aafc9b2eafda2e95, type: 2}
+  turretObject: {fileID: 0}

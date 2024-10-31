@@ -35,6 +35,8 @@ namespace AClass
 
         protected Phase Phase;
 
+        protected double angle = 0;
+
         protected (CreationSceneController?, InvasionController?) GetControllers()
         {
             switch (Phase)
@@ -97,6 +99,15 @@ namespace AClass
             Phase = Phase.Invade;
 
             _isInitialized = true;
+        }
+
+        /**
+         * 90度回転させる
+         */
+        public void Rotate()
+        {
+            angle += 90;
+            transform.Rotate(0, 90, 0);
         }
 
         // ================= abstract =================

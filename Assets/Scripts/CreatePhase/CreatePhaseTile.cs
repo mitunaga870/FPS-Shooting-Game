@@ -1,6 +1,7 @@
 using System;
 using AClass;
 using CreatePhase.UI;
+using DataClass;
 using Enums;
 using lib;
 using UnityEngine;
@@ -52,6 +53,21 @@ namespace CreatePhase
             if (_mazeCreationController.isSettingTurret)
             {
                 _mazeCreationController.PreviewTurret(Column, Row);
+
+                return;
+            }
+
+            if (hasTurret && Input.GetMouseButtonDown(0))
+            {
+                // タレットを回転
+                Turret.Rotate();
+
+                // プレビュー
+                _mazeCreationController.SetPreviewTurretEffectArea(
+                    Turret,
+                    new TilePosition(Row, Column),
+                    500
+                );
 
                 return;
             }

@@ -18,7 +18,12 @@ namespace Turrets
 
         public override List<TilePosition> GetEffectArea()
         {
-            return new List<TilePosition>() { new(0, 1) };
+            var area = new List<TilePosition>() { new(0, 1) };
+            var result = new List<TilePosition>();
+
+            foreach (var position in area) result.Add(position.Rotate(angle));
+
+            return result;
         }
     }
 }
