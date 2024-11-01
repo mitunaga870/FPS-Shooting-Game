@@ -84,6 +84,9 @@ namespace CreatePhase
         /** プレビュー中のトラップのアドレス */
         private TilePosition _previewTurretAddress;
 
+        /** 設置したトラップデータ */
+        public List<TurretData> TurretData { get; private set; } = new();
+
         // Start is called before the first frame update
         private void Start()
         {
@@ -96,9 +99,10 @@ namespace CreatePhase
             // セーブデータ読み込み
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();
+            var turretData = SaveController.LoadTurretData();
 
             // 迷路の生成
-            CreateMaze(tileData, trapData);
+            CreateMaze(tileData, trapData, turretData);
 
             // リロールボタンの表示
             reRollButton.Show(ReRollWaitTime);
@@ -121,7 +125,14 @@ namespace CreatePhase
          * 迷路の生成
          * すべてのタイルを生成し、初期化する
          */
-        private void CreateMaze([CanBeNull] TileData[][] tileData, [CanBeNull] TrapData[] trapData = null)
+        private void CreateMaze(
+            [CanBeNull]
+            TileData[][] tileData,
+            [CanBeNull]
+            TrapData[] trapData = null,
+            [CanBeNull]
+            TurretData[] turretData = null
+        )
         {
             // 原点を設定
             _mazeOrigin = new Vector3(-(MazeColumns - 1) / 2.0f, 0,
@@ -183,6 +194,17 @@ namespace CreatePhase
             else
             {
                 SetRandomTrap();
+            }
+
+            // ============== タレット設置 ================
+            if (turretData != null)
+            {
+                // タレット情報を設定
+                TurretData = turretData.ToList();
+
+                // タレットを設置
+                foreach (var turret in TurretData)
+                    Maze[turret.Row][turret.Column].SetTurret(turret.Turret, turret.angle);
             }
 
             // スタートとゴールを設置
@@ -534,6 +556,9 @@ namespace CreatePhase
                  i < TrapCount;
                  i++)
                 createToInvasionData.TrapData[i] = TrapData[i];
+
+            // タレット情報を設定
+            createToInvasionData.TurretData = TurretData.ToArray();
         }
 
         protected override void Sync()
@@ -589,7 +614,7 @@ namespace CreatePhase
             _previewTurret.SetColor(Maze[row][column].SettableTurret ? Color.green : Color.red);
 
             // 効果エリアをプレビュー中
-            SetPreviewTurretEffectArea(_settingTurret, new TilePosition(row, column), 100f);
+            SetPreviewTurretEffectArea(_settingTurret, new TilePosition(row, column), 5000);
 
             // トラップの位置を設定
             _previewTurret.transform.position = new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin;
@@ -627,6 +652,11 @@ namespace CreatePhase
 
             _previewAddresses.Clear();
 
+            // タレット情報を設定
+            TurretData.Add(
+                new TurretData(_previewTurretAddress.Row, _previewTurretAddress.Col, _settingTurret)
+            );
+
             // トラップ設置モードを終了
             _settingTurret = null;
         }
@@ -657,6 +687,9 @@ namespace CreatePhase
                 var row = origin.Row + tilePosition.Row;
                 var col = origin.Col + tilePosition.Col;
 
+                // 範囲外の場合はスキップ
+                if (row < 0 || row >= MazeRows || col < 0 || col >= MazeColumns) continue;
+
                 // プレビュー中のタイルを取得
                 var previewTile = Maze[row][col];
 
@@ -665,6 +698,25 @@ namespace CreatePhase
 
                 // リストに追加
                 _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
+
+                // プレビューの持続時間を設定
+                var delay = General.DelayCoroutine(duration / 1000f, () => previewTile.ResetAreaPreview());
+                StartCoroutine(delay);
+            }
+        }
+
+        /**
+         * turretデータを更新
+         * 同じ場所のやつが合ったら書き換え、そうじゃなきゃついか
+         */
+        public void UpdateTurretData(TurretData turretData)
+        {
+            foreach (var data in TurretData.Where(
+                         data => data.Row == turretData.Row && data.Column == turretData.Column))
+            {
+                TurretData.Remove(data);
+                TurretData.Add(turretData);
+                return;
             }
         }
     }

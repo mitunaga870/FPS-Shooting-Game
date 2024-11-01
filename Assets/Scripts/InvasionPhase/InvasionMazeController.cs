@@ -24,7 +24,7 @@ namespace InvasionPhase
         public TileData[][] TileData { get; private set; }
         public TrapData[] TrapData { get; private set; }
 
-        public void Create(TileData[][] tiles, TrapData[] trapData)
+        public void Create(TileData[][] tiles, TrapData[] trapData, TurretData[] turretData)
         {
             var mazeRows = tiles.Length;
             var mazeColumns = tiles[0].Length;
@@ -57,6 +57,10 @@ namespace InvasionPhase
 
             // トラップを設定
             foreach (var trap in trapData) _maze[trap.Row][trap.Column].SetInvasionTrap(trap.Trap, enemyController);
+
+            // タレットを設定
+            foreach (var turret in turretData)
+                _maze[turret.Row][turret.Column].SetInvasionTurret(turret.Turret, turret.angle, enemyController);
 
             // スタート・ゴールのタイルを設定
             _maze[StartPosition.Row][StartPosition.Col].SetStart();

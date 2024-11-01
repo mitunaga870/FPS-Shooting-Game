@@ -35,38 +35,7 @@ namespace AClass
 
         protected Phase Phase;
 
-        protected double angle = 0;
-
-        protected (CreationSceneController?, InvasionController?) GetControllers()
-        {
-            switch (Phase)
-            {
-                case Phase.Create:
-                    return (_creationSceneController, null);
-                case Phase.Invade:
-                    return (null, _invasionController);
-                default:
-                    throw new Exception("Invalid phase");
-            }
-        }
-
-        protected (MazeCreationController?, InvasionMazeController?) GetMazeControllers()
-        {
-            switch (Phase)
-            {
-                case Phase.Create:
-                    return (_mazeCreationController, null);
-                case Phase.Invade:
-                    return (null, _invasionMazeController);
-                default:
-                    throw new Exception("Invalid phase");
-            }
-        }
-
-        protected InvasionEnemyController? GetInvasionEnemyController()
-        {
-            return _invasionEnemyController;
-        }
+        public int Angle { get; protected set; } = 0;
 
         /**
          * 制作phase用の初期化処理
@@ -106,7 +75,7 @@ namespace AClass
          */
         public void Rotate()
         {
-            angle += 90;
+            Angle += 90;
             transform.Rotate(0, 90, 0);
         }
 
@@ -114,6 +83,7 @@ namespace AClass
         public abstract float GetHeight();
         public abstract void AwakeTurret();
         public abstract List<TilePosition> GetEffectArea();
+        public abstract string GetTurretName();
 
         /**
          * タレットの色を変更する
@@ -121,6 +91,13 @@ namespace AClass
         public void SetColor(Color color)
         {
             GetComponent<Renderer>().material.color = color;
+        }
+
+        public abstract void SetAngle(int angle);
+
+        public void InvasionInitialize(InvasionEnemyController enemyController)
+        {
+            _invasionEnemyController = enemyController;
         }
     }
 }

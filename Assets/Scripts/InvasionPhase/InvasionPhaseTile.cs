@@ -39,5 +39,13 @@ namespace InvasionPhase
             // 侵攻phase用に初期化
             _trap.InvasionInitialize(enemyController);
         }
+
+        public void SetInvasionTurret(string turretTurret, int angle, InvasionEnemyController enemyController)
+        {
+            SetTurret(turretTurret, angle);
+
+            // 侵攻phase用に初期化
+            Turret.InvasionInitialize(enemyController);
+        }
     }
 }

@@ -104,6 +104,9 @@ namespace AClass
         /** 設置されているトラップ */
         protected ATrap _trap = null;
 
+        /** 設置されているturret */
+        protected ATurret _turret = null;
+
         /** トラップの所持フラグ */
         protected bool hasTrap = false;
 
@@ -441,6 +444,18 @@ namespace AClass
                 Destroy(_model);
             }
 
+            // ゴール地点の場合は色を変更
+            switch (TileType)
+            {
+                case TileTypes.Goal:
+                    SetGoal();
+                    break;
+                case TileTypes.Start:
+                    SetStart();
+                    break;
+            }
+
+
             // つながった道の回転を設定
             transform.rotation = rotation;
         }
@@ -562,7 +577,7 @@ namespace AClass
             var tilePosition = transform.position;
 
             // トラップを生成
-            var trap = TrapGenerator.GenerateTrap(trapName);
+            var trap = InstanceGenerator.GenerateTrap(trapName);
 
             // トラップの位置を設定
             trap.transform.position = new Vector3(
@@ -588,7 +603,7 @@ namespace AClass
         /**
          * turretを設置する
          */
-        public void SetTurret(ATurret settingTurret)
+        public void SetTurret(ATurret settingTurret, int angle = 0)
         {
             // 既に道・トラップが設定されている場合は処理しない
             if (hasTrap) return;
@@ -598,10 +613,21 @@ namespace AClass
             // トラップを生成
             Turret = Instantiate(settingTurret, transform.position, Quaternion.identity);
 
+            Turret.SetAngle(angle);
+
             // トラップの高さを設定
             var position = Turret.transform.position;
             position = new Vector3(position.x, Turret.GetHeight(), position.z);
             Turret.transform.position = position;
+        }
+
+        /**
+         * turretを設置する
+         */
+        public void SetTurret(string turretName, int angle = 0)
+        {
+            var turret = InstanceGenerator.GenerateTurret(turretName);
+            SetTurret(turret, angle);
         }
 
         /**

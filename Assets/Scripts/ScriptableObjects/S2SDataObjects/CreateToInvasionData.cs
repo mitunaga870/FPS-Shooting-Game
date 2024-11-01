@@ -20,12 +20,16 @@ namespace ScriptableObjects.S2SDataObjects
         public TrapData[] TrapData;
 
         [NonSerialized]
+        public TurretData[] TurretData;
+
+        [NonSerialized]
         public StageData StageData;
 
         public override void OnAfterDeserialize()
         {
             TileData = Array.Empty<TileData[]>();
             TrapData = Array.Empty<TrapData>();
+            TurretData = Array.Empty<TurretData>();
             IsInvasion = false;
             StageData = null;
         }

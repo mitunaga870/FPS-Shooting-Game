@@ -8,21 +8,26 @@ using ATrap = AClass.ATrap;
 
 public class DeckController : MonoBehaviour
 {
-    [SerializeField] private List<ATrap> defaultTraps;
-    [SerializeField] private List<ASkill> defaultSkills;
-    [SerializeField] private List<ATurret> defaultTurrets;
+    [SerializeField]
+    private List<ATrap> defaultTraps;
 
-    private List<ATrap> _deckTraps = new List<ATrap>();
-    private List<ASkill> _deckSkills = new List<ASkill>();
-    private List<ATurret> _deckTurrets = new List<ATurret>();
+    [SerializeField]
+    private List<ASkill> defaultSkills;
 
-    private List<ATrap> _discardTraps = new List<ATrap>();
-    private List<ASkill> _discardSkills = new List<ASkill>();
-    private List<ATurret> _discardTurrets = new List<ATurret>();
+    [SerializeField]
+    private List<ATurret> defaultTurrets;
 
-    private List<ATrap> _handTraps = new List<ATrap>();
-    private List<ASkill> _handSkills = new List<ASkill>();
-    private List<ATurret> _handTurrets = new List<ATurret>();
+    private List<ATrap> _deckTraps = new();
+    private List<ASkill> _deckSkills = new();
+    private List<ATurret> _deckTurrets = new();
+
+    private List<ATrap> _discardTraps = new();
+    private List<ASkill> _discardSkills = new();
+    private List<ATurret> _discardTurrets = new();
+
+    private List<ATrap> _handTraps = new();
+    private List<ASkill> _handSkills = new();
+    private List<ATurret> _handTurrets = new();
 
     public int TrapDeckCount => _deckTraps.Count;
 
@@ -39,10 +44,7 @@ public class DeckController : MonoBehaviour
             var saveData = saveDataTuple.Value;
 
             // トラップ
-            foreach (var trap in saveData.Traps)
-            {
-                _deckTraps.Add(TrapGenerator.GenerateTrap(trap.Trap));
-            }
+            foreach (var trap in saveData.Traps) _deckTraps.Add(InstanceGenerator.GenerateTrap(trap.Trap));
         }
         else
         {

@@ -98,6 +98,7 @@ namespace InvasionPhase
             // セーブデータ読み込み
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();
+            var turretData = SaveController.LoadTurretData();
 
             // ステージデータ読み込み
             StageData = mazeController.StageData;
@@ -105,14 +106,18 @@ namespace InvasionPhase
             if (createToInvasionData.IsInvasion)
             {
                 // シーン間のデータ共有オブジェクトからデータを取得
-                mazeController.Create(createToInvasionData.TileData, createToInvasionData.TrapData);
+                mazeController.Create(
+                    createToInvasionData.TileData,
+                    createToInvasionData.TrapData,
+                    createToInvasionData.TurretData
+                );
                 // 読み込み後はフラグを戻す
                 createToInvasionData.IsInvasion = false;
             }
             else
             {
                 // セーブデータからデータを取得
-                mazeController.Create(tileData, trapData);
+                mazeController.Create(tileData, trapData, turretData);
             }
 
             // プレイヤーデータ読み込み

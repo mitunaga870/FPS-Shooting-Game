@@ -62,11 +62,16 @@ namespace CreatePhase
                 // タレットを回転
                 Turret.Rotate();
 
+                // タレット情報を上書き
+                _mazeCreationController.UpdateTurretData(
+                    new TurretData(Row, Column, Turret)
+                );
+
                 // プレビュー
                 _mazeCreationController.SetPreviewTurretEffectArea(
                     Turret,
                     new TilePosition(Row, Column),
-                    500
+                    1000
                 );
 
                 return;

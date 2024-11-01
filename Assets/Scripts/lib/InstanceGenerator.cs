@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 namespace lib
 {
-    public static class TrapGenerator
+    public static class InstanceGenerator
     {
         /**
          * トラップ名からトラップを生成する
@@ -17,14 +17,26 @@ namespace lib
             // Linqを使うと見づらいのでforeachで書いている
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var trap in traps)
-            {
                 if (trap.GetTrapName() == trapName)
-                {
                     return Object.Instantiate(trap);
-                }
-            }
 
             throw new Exception("トラップデータが見つかりません、セーブデータが壊れている可能性があります。");
+        }
+
+        /**
+         * 砲台名から砲台を生成する
+         */
+        public static ATurret GenerateTurret(string turretName)
+        {
+            var turrets = Resources.LoadAll<ATurret>("Prefabs/Turrets");
+
+            // Linqを使うと見づらいのでforeachで書いている
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (var turret in turrets)
+                if (turret.GetTurretName() == turretName)
+                    return turret;
+
+            throw new Exception("砲台データが見つかりません、セーブデータが壊れている可能性があります。");
         }
     }
 }

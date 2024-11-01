@@ -13,13 +13,16 @@ namespace CreatePhase
     public class CreationSceneController : MonoBehaviour
     {
         /** シーン間のデータ共有オブジェクト */
-        [SerializeField] private CreateToInvasionData createToInvasionData;
+        [SerializeField]
+        private CreateToInvasionData createToInvasionData;
 
         /** 迷路作成コントローラ */
-        [SerializeField] private MazeCreationController mazeCreationController;
+        [SerializeField]
+        private MazeCreationController mazeCreationController;
 
         /** ステージ情報 */
-        [FormerlySerializedAs("stageData")] [SerializeField]
+        [FormerlySerializedAs("stageData")]
+        [SerializeField]
         private StageObject stageObject;
 
         /**
@@ -32,6 +35,7 @@ namespace CreatePhase
             SaveController.SaveStageData(mazeCreationController.StageData);
             SaveController.SaveTileData(mazeCreationController.GetTileData());
             SaveController.SaveTrapData(mazeCreationController.TrapData);
+            SaveController.SaveTurretData(mazeCreationController.TurretData);
         }
 
         /**
