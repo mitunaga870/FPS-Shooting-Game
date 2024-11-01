@@ -188,6 +188,8 @@ namespace CreatePhase
             switch (tileType)
             {
                 case TileTypes.Road:
+                case TileTypes.Goal:
+                case TileTypes.Start:
                     SetRoad(roadAdjust);
                     break;
             }

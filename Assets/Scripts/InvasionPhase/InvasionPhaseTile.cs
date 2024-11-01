@@ -22,6 +22,8 @@ namespace InvasionPhase
                     SetNone();
                     break;
                 case TileTypes.Road:
+                case TileTypes.Start:
+                case TileTypes.Goal:
                     SetRoad(roadAdjust);
                     break;
                 default:

@@ -210,6 +210,13 @@ namespace CreatePhase
             // スタートとゴールを設置
             Maze[StartPosition.Row][StartPosition.Col].SetStart();
             Maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
+
+            // スタート・ゴールを迷路にする
+            var roadData = GetRoadAddresses();
+            var startAdjust = GetRoadAdjust(StartPosition.Col, StartPosition.Row, roadData);
+            var goalAdjust = GetRoadAdjust(GoalPosition.Col, GoalPosition.Row, roadData);
+            Maze[StartPosition.Row][StartPosition.Col].SetRoad(startAdjust);
+            Maze[GoalPosition.Row][GoalPosition.Col].SetRoad(goalAdjust);
         }
 
         /**
@@ -289,8 +296,8 @@ namespace CreatePhase
         }
 
         /**
-     * 道制作モードの終了処理
-     */
+         * 道制作モードの終了処理
+         */
         public void EndRoadEdit()
         {
             // 変数確認
@@ -298,7 +305,6 @@ namespace CreatePhase
 
             // 既存の道を削除
             var roadAddresses = GetRoadAddresses();
-            foreach (var address in roadAddresses) Maze[address["row"]][address["col"]].SetNone();
 
             // プレビューを下げる
             foreach (var address in _previewAddresses) Maze[address["row"]][address["col"]].ResetRoadPreview();
@@ -325,8 +331,11 @@ namespace CreatePhase
                     // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
                     foreach (var address in roadAddresses)
                     {
-                        if (_previewAddresses.Exists(previewAddress =>
-                                previewAddress["col"] == address["col"] && previewAddress["row"] == address["row"]))
+                        if (
+                            _previewAddresses.Exists(previewAddress =>
+                                previewAddress["col"] == address["col"] && previewAddress["row"] == address["row"]) &&
+                            Maze[address["row"]][address["col"]].TileType == TileTypes.Road // 道のみ削除(スタート・ゴールは削除しない)
+                        )
                             continue;
 
                         newRoadAddresses.Add(address);
@@ -337,6 +346,9 @@ namespace CreatePhase
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            // 道を削除
+            foreach (var address in roadAddresses) Maze[address["row"]][address["col"]].SetNone();
 
             // 道のアドレス群からタレット設置済みのアドレスを削除
             newRoadAddresses = newRoadAddresses.FindAll(address =>
@@ -491,8 +503,8 @@ namespace CreatePhase
         // ==================== プライベート関数 ====================
 
         /**
-     * 道のアドレスを取得
-     */
+         * 道のアドレスを取得
+         */
         private List<Dictionary<string, int>> GetRoadAddresses()
         {
             var roadAddresses = new List<Dictionary<string, int>>();

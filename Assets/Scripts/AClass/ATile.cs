@@ -137,7 +137,8 @@ namespace AClass
             if (hasTurret) return;
 
             // タイルの種類を道に設定
-            TileType = TileTypes.Road;
+            if (TileType != TileTypes.Goal && TileType != TileTypes.Start)
+                TileType = TileTypes.Road;
 
             // 道のつながり型を設定
             RoadAdjust = roadAdjust;
@@ -477,6 +478,7 @@ namespace AClass
      */
         public void SetNone()
         {
+            if (TileType is TileTypes.Goal or TileTypes.Start) return;
             // タイルの種類を空に設定
             TileType = TileTypes.Nothing;
 
@@ -501,7 +503,7 @@ namespace AClass
         public void SetColor(Color color)
         {
             // 既存の色リストを初期化
-            prevColor ??= new Dictionary<string, Color>();
+            prevColor = new Dictionary<string, Color>();
 
             var meshRenderer = GetComponent<MeshRenderer>();
             var materials = meshRenderer.materials;
