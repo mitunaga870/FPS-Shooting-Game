@@ -168,6 +168,7 @@ namespace InvasionPhase
             SaveController.SaveTileData(mazeController.TileData);
             SaveController.SaveTrapData(mazeController.TrapData);
             SaveController.SaveStageData(mazeController.StageData);
+            SaveController.SaveTurretData(mazeController.TurretData);
         }
 
 

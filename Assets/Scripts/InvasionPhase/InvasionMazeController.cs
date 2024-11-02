@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AClass;
 using DataClass;
 using UnityEngine;
@@ -11,6 +12,9 @@ namespace InvasionPhase
         [FormerlySerializedAs("tilePrefab")]
         [SerializeField]
         private InvasionPhaseTile createPhaseTilePrefab;
+
+        [SerializeField]
+        private InvasionController sceneController;
 
         [SerializeField]
         private InvasionEnemyController enemyController;
@@ -56,11 +60,17 @@ namespace InvasionPhase
             }
 
             // トラップを設定
-            foreach (var trap in trapData) _maze[trap.Row][trap.Column].SetInvasionTrap(trap.Trap, enemyController);
+            foreach (var trap in trapData)
+                _maze[trap.Row][trap.Column].SetInvasionTrap(trap.Trap, sceneController, enemyController);
 
             // タレットを設定
             foreach (var turret in turretData)
-                _maze[turret.Row][turret.Column].SetInvasionTurret(turret.Turret, turret.angle, enemyController);
+                _maze[turret.Row][turret.Column].SetInvasionTurret(
+                    turret.Turret,
+                    turret.angle,
+                    sceneController,
+                    enemyController
+                );
 
             // スタート・ゴールのタイルを設定
             _maze[StartPosition.Row][StartPosition.Col].SetStart();
@@ -69,6 +79,7 @@ namespace InvasionPhase
             // データを保存
             TileData = tiles;
             TrapData = trapData;
+            TurretData = new List<TurretData>(turretData);
         }
 
         protected override void Sync()

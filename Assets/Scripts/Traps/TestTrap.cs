@@ -10,8 +10,6 @@ namespace Traps
 
         public override void AwakeTrap(TilePosition position)
         {
-            Debug.Log("TestTrapが発火しました");
-
             // とりあえず色を変える
             GetComponent<Renderer>().material.color = Color.red;
 

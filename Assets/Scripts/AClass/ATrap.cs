@@ -1,3 +1,4 @@
+using System;
 using DataClass;
 using InvasionPhase;
 using JetBrains.Annotations;
@@ -15,6 +16,13 @@ namespace AClass
         protected TrapObject trapObject;
 
         /**
+         * シーンコントローラー
+         * 時刻取得
+         */
+        [CanBeNull]
+        protected InvasionController sceneController = null;
+
+        /**
          * 敵をコントロールしてるクラス
          * これにアクセスして敵に影響を与える
          */
@@ -25,6 +33,34 @@ namespace AClass
          * 侵攻準備ができているか
          */
         protected bool IsInvasionReady = false;
+
+        /**
+         * チャージ時間
+         * 0の場合は即発火
+         */
+        protected int ChargeTime = 0;
+
+        /** 前読み込んだ時のゲーム内時間 */
+        private int _prevTime;
+
+        private void Update()
+        {
+            // 侵攻phaseじゃないと処理しない
+            if (sceneController == null || IsInvasionReady) return;
+
+            // CD中の場合は時間を進める
+            if (ChargeTime <= 0) return;
+
+            // 時間処理
+            var currentTime = sceneController.GameTime;
+            var timeDiff = currentTime - _prevTime;
+
+            // CD時間を減らす
+            ChargeTime -= timeDiff;
+
+            // 0以下になったら0にする
+            if (ChargeTime < 0) ChargeTime = 0;
+        }
 
         /**
          * トラップの発火
@@ -50,9 +86,10 @@ namespace AClass
          */
         public abstract string GetTrapName();
 
-        public void InvasionInitialize(InvasionEnemyController enemyController)
+        public void InvasionInitialize(InvasionController sceneController, InvasionEnemyController enemyController)
         {
             IsInvasionReady = true;
+            this.sceneController = sceneController;
             this.enemyController = enemyController;
         }
 

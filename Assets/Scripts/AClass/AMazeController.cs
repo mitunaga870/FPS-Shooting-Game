@@ -56,6 +56,9 @@ namespace AClass
 
         private int _placedTrapCount = -1;
 
+        /** 設置したトラップデータ */
+        public List<TurretData> TurretData { get; protected set; } = new();
+
         private void Awake()
         {
             // セーブデータからステージデータをとる

@@ -59,5 +59,69 @@ namespace DataClass
             var y = Col * Math.Sin(angle) + Row * Math.Cos(angle);
             return new TilePosition((int)Math.Round(x), (int)Math.Round(y));
         }
+
+        /**
+         * 上のタイルを取得
+         */
+        public TilePosition GetUp()
+        {
+            return new TilePosition(Row - 1, Col);
+        }
+
+        /**
+         * 下のタイルを取得
+         */
+        public TilePosition GetDown()
+        {
+            return new TilePosition(Row + 1, Col);
+        }
+
+        /**
+         * 左のタイルを取得
+         */
+        public TilePosition GetLeft()
+        {
+            return new TilePosition(Row, Col - 1);
+        }
+
+        /**
+         * 右のタイルを取得
+         */
+        public TilePosition GetRight()
+        {
+            return new TilePosition(Row, Col + 1);
+        }
+
+        /**
+         * 右上のタイルを取得
+         */
+        public TilePosition GetRightUp()
+        {
+            return new TilePosition(Row - 1, Col + 1);
+        }
+
+        /**
+         * 右下のタイルを取得
+         */
+        public TilePosition GetRightDown()
+        {
+            return new TilePosition(Row + 1, Col + 1);
+        }
+
+        /**
+         * 左上のタイルを取得
+         */
+        public TilePosition GetLeftUp()
+        {
+            return new TilePosition(Row - 1, Col - 1);
+        }
+
+        /**
+         * 左下のタイルを取得
+         */
+        public TilePosition GetLeftDown()
+        {
+            return new TilePosition(Row + 1, Col - 1);
+        }
     }
 }

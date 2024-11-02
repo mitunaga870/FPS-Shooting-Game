@@ -1,5 +1,6 @@
 using System;
 using AClass;
+using DataClass;
 using Enums;
 using lib;
 using Unity.VisualScripting;
@@ -34,20 +35,33 @@ namespace InvasionPhase
         /**
          * 侵攻phaseようにセットアップしたトラップを設置する
          */
-        public void SetInvasionTrap(string trapName, InvasionEnemyController enemyController)
+        public void SetInvasionTrap(
+            string trapName,
+            InvasionController sceneController,
+            InvasionEnemyController enemyController
+        )
         {
             SetTrap(trapName);
 
             // 侵攻phase用に初期化
-            _trap.InvasionInitialize(enemyController);
+            _trap.InvasionInitialize(sceneController, enemyController);
         }
 
-        public void SetInvasionTurret(string turretTurret, int angle, InvasionEnemyController enemyController)
+        public void SetInvasionTurret(
+            string turretTurret,
+            int angle,
+            InvasionController sceneController,
+            InvasionEnemyController enemyController
+        )
         {
             SetTurret(turretTurret, angle);
 
             // 侵攻phase用に初期化
-            Turret.InvasionInitialize(enemyController);
+            Turret.InvasionInitialize(
+                new TilePosition(Row, Column),
+                sceneController,
+                enemyController
+            );
         }
     }
 }

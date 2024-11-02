@@ -84,9 +84,6 @@ namespace CreatePhase
         /** プレビュー中のトラップのアドレス */
         private TilePosition _previewTurretAddress;
 
-        /** 設置したトラップデータ */
-        public List<TurretData> TurretData { get; private set; } = new();
-
         // Start is called before the first frame update
         private void Start()
         {

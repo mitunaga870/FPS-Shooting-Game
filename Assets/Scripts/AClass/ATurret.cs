@@ -19,15 +19,9 @@ namespace AClass
         [SerializeField]
         protected TurretObject turretObject;
 
-        private CreationSceneController _creationSceneController;
+        private InvasionController _sceneController;
 
-        private MazeCreationController _mazeCreationController;
-
-        private InvasionController _invasionController;
-
-        private InvasionMazeController _invasionMazeController;
-
-        private InvasionEnemyController _invasionEnemyController;
+        protected InvasionEnemyController EnemyController;
 
         private bool _isInitialized;
 
@@ -37,37 +31,36 @@ namespace AClass
 
         public int Angle { get; protected set; } = 0;
 
-        /**
-         * 制作phase用の初期化処理
-         */
-        public void InitializeCreationTurret(CreationSceneController sceneController,
-            MazeCreationController mazeController)
-        {
-            if (_isInitialized) throw new Exception("Already initialized");
+        private int chargeTime;
 
-            _creationSceneController = sceneController;
-            _mazeCreationController = mazeController;
-
-            Phase = Phase.Create;
-
-            _isInitialized = true;
-        }
+        protected TilePosition SetPosition { get; private set; }
 
         /**
-         * 侵略phase用の初期化処理
+         * 一定期間ごとにAwakeTurretを呼び出す
          */
-        public void InitializeInvasionTurret(InvasionController invasionController,
-            InvasionMazeController invasionMazeController, InvasionEnemyController invasionEnemyController)
+        private void Update()
         {
-            if (_isInitialized) throw new Exception("Already initialized");
+            // 侵攻phaseのみ
+            if (Phase != Phase.Invade) return;
 
-            _invasionController = invasionController;
-            _invasionMazeController = invasionMazeController;
-            _invasionEnemyController = invasionEnemyController;
+            // 字関連処理
+            var currentTime = _sceneController.GameTime;
+            chargeTime = chargeTime % GetInterval();
 
-            Phase = Phase.Invade;
+            // 未チャージ状態なら戻す
+            if (chargeTime != 0) return;
 
-            _isInitialized = true;
+            // 範囲内に敵がいるか確認
+            var effectArea = GetAbsoluteEffectArea(SetPosition);
+
+            // 範囲の敵取得
+            var enemies = EnemyController.GetEnemies(effectArea);
+
+            // 敵がいない場合は戻す
+            if (enemies.Count == 0) return;
+
+            // タレットの処理
+            AwakeTurret(enemies);
         }
 
         /**
@@ -81,9 +74,10 @@ namespace AClass
 
         // ================= abstract =================
         public abstract float GetHeight();
-        public abstract void AwakeTurret();
+        protected abstract void AwakeTurret(List<AEnemy> enemies);
         public abstract List<TilePosition> GetEffectArea();
         public abstract string GetTurretName();
+        public abstract int GetInterval();
 
         /**
          * タレットの色を変更する
@@ -95,9 +89,39 @@ namespace AClass
 
         public abstract void SetAngle(int angle);
 
-        public void InvasionInitialize(InvasionEnemyController enemyController)
+        /**
+         * 侵攻phase用の初期化
+         */
+        public void InvasionInitialize(
+            TilePosition setPosition,
+            InvasionController sceneController,
+            InvasionEnemyController enemyController
+        )
         {
-            _invasionEnemyController = enemyController;
+            Phase = Phase.Invade;
+
+            SetPosition = setPosition;
+            _sceneController = sceneController;
+            EnemyController = enemyController;
+        }
+
+        /**
+         * タレットの絶対位置を取得
+         */
+        public TilePosition[] GetAbsoluteEffectArea(TilePosition position)
+        {
+            if (Phase != Phase.Invade) throw new Exception("侵攻phase以外では使用できません");
+
+            var relativeArea = GetEffectArea();
+            var result = new TilePosition[relativeArea.Count];
+
+            for (var i = 0; i < relativeArea.Count; i++)
+            {
+                var relativePosition = relativeArea[i];
+                result[i] = new TilePosition(position.Row + relativePosition.Row, position.Col + relativePosition.Col);
+            }
+
+            return result;
         }
     }
 }

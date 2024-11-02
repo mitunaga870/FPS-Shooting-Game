@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using AClass;
 using DataClass;
+using JetBrains.Annotations;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -104,7 +106,7 @@ namespace InvasionPhase
                 // 敵を生成
                 var enemy = Instantiate(spawnData.enemy);
                 // 敵のスピードを設定
-                enemy.Initialize(10, 10, invasionMazeController.StartPosition, invasionController,
+                enemy.Initialize(10, 10, 1, invasionMazeController.StartPosition, invasionController,
                     invasionMazeController, this);
 
                 // 敵をリストに追加
@@ -121,10 +123,19 @@ namespace InvasionPhase
             _isAwoke = true;
         }
 
-        public void EnemyDestroyed()
+        public void EnemyDestroyed(int id)
         {
             // 残りの敵数を減らす
             _remainingEnemyCount--;
+
+            // 敵リストを走査
+            foreach (var enemy in _enemies)
+                // IDが一致したらリストから削除
+                if (enemy.GetInstanceID() == id)
+                {
+                    _enemies.Remove(enemy);
+                    break;
+                }
 
 
             // 残りの敵数が0になったらゲーム終了
@@ -142,6 +153,58 @@ namespace InvasionPhase
                 if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
                 {
                     enemy.Damage(i);
+                    break;
+                }
+        }
+
+        [ItemCanBeNull]
+        public List<AEnemy> GetEnemies(TilePosition[] effectAreas)
+        {
+            var result = new List<AEnemy>();
+
+            foreach (var enemy in _enemies)
+                result.AddRange(from effectArea in effectAreas
+                    where enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(effectArea)
+                    select enemy);
+
+            return result;
+        }
+
+        /**
+         * 指定タイルの敵を跳ね飛ばす
+         */
+        public void JumpEnemy(TilePosition position, int height, int damage)
+        {
+            // 敵リストを走査
+            foreach (var enemy in _enemies)
+                // 位置が一致したらダメージを与える
+                if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
+                {
+                    enemy.Jump(height, damage);
+                    break;
+                }
+        }
+
+        public void KnockBackEnemy(TilePosition position, int distance)
+        {
+            // 敵リストを走査
+            foreach (var enemy in _enemies)
+                // 位置が一致したらダメージを与える
+                if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
+                {
+                    enemy.KnockBack(distance);
+                    break;
+                }
+        }
+
+        public void InfusePoison(TilePosition position, int damage, int duration, int level)
+        {
+            // 敵リストを走査
+            foreach (var enemy in _enemies)
+                // 位置が一致したらダメージを与える
+                if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
+                {
+                    enemy.InfusePoison(damage, duration, level);
                     break;
                 }
         }

@@ -1,21 +1,24 @@
 using System.Collections.Generic;
 using AClass;
 using DataClass;
+using UnityEngine;
 
 namespace Turrets
 {
     public class TestTurret : ATurret
     {
         private const string TurretName = "TestTurret";
+        private const int Interval = 10;
+        private const float Height = 0.5f;
 
         public override float GetHeight()
         {
-            return 0.5f;
+            return Height;
         }
 
-        public override void AwakeTurret()
+        protected override void AwakeTurret(List<AEnemy> enemies)
         {
-            throw new System.NotImplementedException();
+            foreach (var enemy in enemies) enemy.Damage(10);
         }
 
         public override List<TilePosition> GetEffectArea()
@@ -34,6 +37,11 @@ namespace Turrets
         public override string GetTurretName()
         {
             return TurretName;
+        }
+
+        public override int GetInterval()
+        {
+            return Interval;
         }
 
         public override void SetAngle(int angle)
