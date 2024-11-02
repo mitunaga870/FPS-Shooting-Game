@@ -58,5 +58,14 @@ namespace Traps
         {
             return "Alligator";
         }
+
+        public override int GetTrapAngle()
+        {
+            return 0;
+        }
+
+        public override void SetAngle(int trapAngle)
+        {
+        }
     }
 }

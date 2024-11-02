@@ -94,6 +94,10 @@ namespace AClass
          */
         public abstract string GetTrapName();
 
+        public abstract int GetTrapAngle();
+        public abstract void SetAngle(int trapAngle);
+
+        /** カスタムのコンストラクタ */
         public void InvasionInitialize(InvasionController sceneController, InvasionEnemyController enemyController)
         {
             IsInvasionReady = true;

@@ -42,5 +42,14 @@ namespace Traps
         {
             return TrapName;
         }
+
+        public override int GetTrapAngle()
+        {
+            return 0;
+        }
+
+        public override void SetAngle(int trapAngle)
+        {
+        }
     }
 }

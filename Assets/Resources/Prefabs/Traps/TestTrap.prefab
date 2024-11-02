@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 8660915668482140678}
   - component: {fileID: 4948804174038681855}
   - component: {fileID: 6794651523355597914}
-  - component: {fileID: -549976925186524320}
   - component: {fileID: -6287788327951969820}
+  - component: {fileID: -2545296777373082874}
   m_Layer: 0
   m_Name: TestTrap
   m_TagString: Trap
@@ -85,19 +85,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 166629032004494834}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &-549976925186524320
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 166629032004494834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf5783e1dc1746beaca2bd1080c601c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  trapObject: {fileID: 11400000, guid: 34421192c5e66e247a425cc0e3094f7a, type: 2}
 --- !u!136 &-6287788327951969820
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -121,3 +108,16 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-2545296777373082874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 166629032004494834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48266fd56e29484d9e1881aaf6249ab3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trapObject: {fileID: 11400000, guid: 34421192c5e66e247a425cc0e3094f7a, type: 2}

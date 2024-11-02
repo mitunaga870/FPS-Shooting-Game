@@ -575,7 +575,7 @@ namespace AClass
          * 指定されたトラップを設置する
          * 設置出来たらtrueを返す
          */
-        public bool SetTrap(AMazeController mazeController, string trapName)
+        public bool SetTrap(AMazeController mazeController, string trapName, int TrapAngle = -1)
         {
             // 既に道・トラップが設定されている場合は処理しない
             if (hasTrap) return false;
@@ -603,13 +603,20 @@ namespace AClass
 
             // トラップの位置を設定
             tilePosition = new Vector3(
-                tilePosition.x + Environment.TileSize / 2f * (trap.GetSetRange() / 2f),
+                tilePosition.x + Environment.TileSize / 2f * (trap.GetSetRange() - 1),
                 trap.GetHeight(),
-                tilePosition.z + Environment.TileSize / 2f * (trap.GetSetRange() / 2f)
+                tilePosition.z + Environment.TileSize / 2f * (trap.GetSetRange() - 1)
             );
+
 
             // トラップを生成
             trap = Instantiate(trap, tilePosition, Quaternion.identity);
+
+            // トラップの角度を指定
+            if (TrapAngle != -1)
+                trap.SetAngle(TrapAngle);
+
+            trap.transform.rotation = Quaternion.Euler(0, trap.GetTrapAngle(), 0);
 
             // 周囲タイルにトラップを設置したことにする
             foreach (var tile in tiles)

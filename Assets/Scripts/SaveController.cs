@@ -57,6 +57,9 @@ public static class SaveController
 
         foreach (var turret in turretData) saveText += $"{turret},";
 
+        if (saveText.Length == 0)
+            return;
+
         // 最後のカンマを削除
         saveText = saveText.Substring(0, saveText.Length - 1);
 

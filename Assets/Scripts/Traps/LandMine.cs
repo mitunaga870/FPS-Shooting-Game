@@ -46,5 +46,14 @@ namespace Traps
         {
             throw new System.NotImplementedException();
         }
+
+        public override int GetTrapAngle()
+        {
+            return 0;
+        }
+
+        public override void SetAngle(int trapAngle)
+        {
+        }
     }
 }
