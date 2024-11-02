@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using AClass;
 using DataClass;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -61,7 +62,12 @@ namespace InvasionPhase
 
             // トラップを設定
             foreach (var trap in trapData)
-                _maze[trap.Row][trap.Column].SetInvasionTrap(trap.Trap, sceneController, enemyController);
+                _maze[trap.Row][trap.Column].SetInvasionTrap(
+                    trap.Trap,
+                    sceneController,
+                    this,
+                    enemyController
+                );
 
             // タレットを設定
             foreach (var turret in turretData)
@@ -92,6 +98,14 @@ namespace InvasionPhase
             }
 
             SyncMazeData(syncTiles);
+        }
+
+        [CanBeNull]
+        public override ATile GetTile(int row, int column)
+        {
+            if (row < 0 || row >= MazeRows || column < 0 || column >= MazeColumns) return null;
+
+            return _maze[row][column];
         }
 
         public void AwakeTrap(TilePosition position)

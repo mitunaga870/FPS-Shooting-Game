@@ -7,32 +7,40 @@ namespace Traps
     {
         private const int Damage = 10;
         private const int Duration = 100;
+        private const int SetRange = 1;
+        private const float Height = 0.5f;
+        private const string TrapName = "PoisonSwamp";
 
-        private int level = 1;
+        private int _level = 1;
 
         public override void AwakeTrap(TilePosition position)
         {
             if (enemyController == null) return;
 
-            enemyController.InfusePoison(position, Damage, Duration, level);
-            enemyController.InfusePoison(position.GetUp(), Damage, Duration, level);
-            enemyController.InfusePoison(position.GetDown(), Damage, Duration, level);
-            enemyController.InfusePoison(position.GetLeft(), Damage, Duration, level);
-            enemyController.InfusePoison(position.GetRight(), Damage, Duration, level);
-            enemyController.InfusePoison(position.GetRightUp(), Damage, Duration, level);
-            enemyController.InfusePoison(position.GetRightDown(), Damage, Duration, level);
-            enemyController.InfusePoison(position.GetLeftUp(), Damage, Duration, level);
-            enemyController.InfusePoison(position.GetLeftDown(), Damage, Duration, level);
+            enemyController.InfusePoison(position, Damage, Duration, _level);
+            enemyController.InfusePoison(position.GetUp(), Damage, Duration, _level);
+            enemyController.InfusePoison(position.GetDown(), Damage, Duration, _level);
+            enemyController.InfusePoison(position.GetLeft(), Damage, Duration, _level);
+            enemyController.InfusePoison(position.GetRight(), Damage, Duration, _level);
+            enemyController.InfusePoison(position.GetRightUp(), Damage, Duration, _level);
+            enemyController.InfusePoison(position.GetRightDown(), Damage, Duration, _level);
+            enemyController.InfusePoison(position.GetLeftUp(), Damage, Duration, _level);
+            enemyController.InfusePoison(position.GetLeftDown(), Damage, Duration, _level);
         }
 
         public override float GetHeight()
         {
-            throw new System.NotImplementedException();
+            return Height;
+        }
+
+        public override int GetSetRange()
+        {
+            return SetRange;
         }
 
         public override string GetTrapName()
         {
-            throw new System.NotImplementedException();
+            return TrapName;
         }
     }
 }

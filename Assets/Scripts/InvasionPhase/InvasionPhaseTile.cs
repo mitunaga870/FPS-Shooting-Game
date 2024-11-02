@@ -38,10 +38,11 @@ namespace InvasionPhase
         public void SetInvasionTrap(
             string trapName,
             InvasionController sceneController,
+            InvasionMazeController mazeController,
             InvasionEnemyController enemyController
         )
         {
-            SetTrap(trapName);
+            var result = SetTrap(mazeController, trapName);
 
             // 侵攻phase用に初期化
             _trap.InvasionInitialize(sceneController, enemyController);

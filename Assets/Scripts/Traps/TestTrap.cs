@@ -6,7 +6,9 @@ namespace Traps
 {
     public class TestTrap : ATrap
     {
-        public static readonly string TrapName = "TestTrap";
+        private const string TrapName = "TestTrap";
+        private const float Height = 0.5f;
+        private const int SetRange = 1;
 
         public override void AwakeTrap(TilePosition position)
         {
@@ -20,6 +22,11 @@ namespace Traps
         public override float GetHeight()
         {
             return trapObject.TestTrapHeight;
+        }
+
+        public override int GetSetRange()
+        {
+            return SetRange;
         }
 
         public override string GetTrapName()

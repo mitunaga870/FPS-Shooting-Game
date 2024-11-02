@@ -73,6 +73,12 @@ namespace AClass
         public abstract float GetHeight();
 
         /**
+         * トラップの設置範囲取得
+         * 1なら1＊1、2なら2＊2って感じ
+         */
+        public abstract int GetSetRange();
+
+        /**
          * トラップごとの禁止エリア処理
          * - 禁止エリアのときはtrueを返す
          */

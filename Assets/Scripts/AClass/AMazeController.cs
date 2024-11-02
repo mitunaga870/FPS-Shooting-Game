@@ -375,5 +375,11 @@ namespace AClass
             else
                 return RoadAdjust.NoAdjust;
         }
+
+        /**
+         * 外部からタイルを取得する
+         */
+        [CanBeNull]
+        public abstract ATile GetTile(int row, int column);
     }
 }

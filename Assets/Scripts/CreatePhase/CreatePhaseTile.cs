@@ -50,7 +50,7 @@ namespace CreatePhase
             // ======== トラップ設置用処理 =========
 
             // トラップ設置中の場合はトラップのプレビューを表示
-            if (_mazeCreationController.isSettingTurret)
+            if (_mazeCreationController.IsSettingTurret)
             {
                 _mazeCreationController.PreviewTurret(Column, Row);
 
@@ -134,7 +134,7 @@ namespace CreatePhase
         private void OnMouseEnter()
         {
             // トラップ設置中の場合は処理しない
-            if (_mazeCreationController.isSettingTurret) return;
+            if (_mazeCreationController.IsSettingTurret) return;
 
             // タレットがある時は処理しない
             if (hasTurret) return;

@@ -7,8 +7,6 @@ using DataClass;
 using Enums;
 using JetBrains.Annotations;
 using lib;
-using Map;
-using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -35,10 +33,6 @@ namespace CreatePhase
         /** デッキシステムつなぎこみ */
         [SerializeField]
         private DeckController deck;
-
-        /** マップオブジェクト */
-        [SerializeField]
-        private MapController _mapController;
 
         /** 迷路の原点 */
         private Vector3 _mazeOrigin;
@@ -73,10 +67,10 @@ namespace CreatePhase
         public TrapData[] TrapData { get; private set; }
 
         /** トラップ設置中フラグ */
-        public bool isSettingTurret { get; private set; }
+        public bool IsSettingTurret { get; private set; }
 
         /** 設置中トラップのアクセサ */
-        private ATurret _settingTurret = null;
+        private ATurret _settingTurret;
 
         /** プレビューのトラップ */
         private ATurret _previewTurret;
@@ -171,6 +165,8 @@ namespace CreatePhase
                 }
             }
 
+            Sync();
+
             // ============== トラップ設置 ================
             if (trapData != null)
             {
@@ -185,7 +181,7 @@ namespace CreatePhase
                 for (var i = 0; i < TrapData.Length; i++)
                 {
                     var trap = TrapData[i];
-                    Maze[trap.Row][trap.Column].SetTrap(trapData[i].Trap);
+                    Maze[trap.Row][trap.Column].SetTrap(this, trapData[i].Trap);
                 }
             }
             else
@@ -219,18 +215,14 @@ namespace CreatePhase
         /**
          * ランダムにトラップを設置
          */
-        public void SetRandomTrap()
+        private void SetRandomTrap()
         {
             // トラップを取得
             var traps = deck.DrowTraps(TrapCount);
             var i = 0;
 
-            // 取得できたトラップ数はトラップ数と異なる場合があるので書き換え
-            TrapCount = traps.Count;
-
-            // トラップ配列を初期化
-            TrapData = new TrapData[TrapCount];
-            createToInvasionData.TrapData = new TrapData[TrapCount];
+            // 一時トラップリストを作成
+            var tempTrapData = new List<TrapData>();
 
             // トラップの設置数分乱数をもとに場所を決定
             foreach (var trap in traps)
@@ -240,22 +232,34 @@ namespace CreatePhase
                 var column = Random.Range(0, MazeColumns);
 
                 var loopCount = 0;
+                var setTrapResult = false;
+
                 // nullの場合は設置できてないので再度設置
                 while (true)
                 {
                     // トラップを設置
-                    var setTrupResult = Maze[row][column].SetTrap(trap.GetTrapName());
+                    setTrapResult = Maze[row][column].SetTrap(this, trap.GetTrapName());
 
                     // 設置できてたらbreak
-                    if (setTrupResult) break;
+                    if (setTrapResult) break;
 
                     // 設置できるものがない等で無限ループになる場合があるので、10回で終了
-                    if (loopCount++ > 10) throw new Exception("Trap setting failed");
+                    if (loopCount++ > 10) break;
                 }
 
+                // 設置できなかった場合はリストに追加せずに次のトラップへ
+                if (!setTrapResult) continue;
+
                 // トラップ情報を格納
-                TrapData[i++] = new TrapData(row, column, trap);
+                tempTrapData.Add(new TrapData(row, column, trap));
             }
+
+            // トラップ情報を設定
+            TrapData = tempTrapData.ToArray();
+            createToInvasionData.TrapData = TrapData;
+
+            // 実際に設置できたトラップ数を設定
+            TrapCount = tempTrapData.Count;
         }
 
         /**
@@ -582,6 +586,15 @@ namespace CreatePhase
             SyncMazeData(maze);
         }
 
+        [CanBeNull]
+        public override ATile GetTile(int row, int column)
+        {
+            if (row < 0 || row >= MazeRows || column < 0 || column >= MazeColumns)
+                return null;
+
+            return Maze[row][column];
+        }
+
         /**
          * タイルデータを取得
          */
@@ -604,7 +617,7 @@ namespace CreatePhase
          */
         public void StartSettingTurret(ATurret turretPrefab)
         {
-            isSettingTurret = true;
+            IsSettingTurret = true;
             _settingTurret = turretPrefab;
         }
 
@@ -638,7 +651,7 @@ namespace CreatePhase
             if (!_settingTurret && _settingTurret == null)
                 return;
             // トラップ設置モードを終了
-            isSettingTurret = false;
+            IsSettingTurret = false;
 
             // トラップを固定
             if (Maze[_previewTurretAddress.Row][_previewTurretAddress.Col].SettableTurret)

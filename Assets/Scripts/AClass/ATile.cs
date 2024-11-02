@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DataClass;
 using Enums;
 using lib;
+using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -574,19 +575,48 @@ namespace AClass
          * 指定されたトラップを設置する
          * 設置出来たらtrueを返す
          */
-        public bool SetTrap(string trapName)
+        public bool SetTrap(AMazeController mazeController, string trapName)
         {
+            // 既に道・トラップが設定されている場合は処理しない
+            if (hasTrap) return false;
+
             var tilePosition = transform.position;
 
-            // トラップを生成
+            // トラップを取得
             var trap = InstanceGenerator.GenerateTrap(trapName);
 
+            // 周囲のタイルを取得
+            var tiles = new List<ATile>();
+            for (var i = 0; i < trap.GetSetRange(); i++)
+            for (var j = 0; j < trap.GetSetRange(); j++)
+            {
+                if (i == 0 && j == 0) continue;
+
+                var tile = mazeController.GetTile(Row + i, Column + j);
+
+                if (tile == null) return false;
+
+                if (tile.hasTrap) return false;
+
+                tiles.Add(tile);
+            }
+
             // トラップの位置を設定
-            trap.transform.position = new Vector3(
-                tilePosition.x,
+            tilePosition = new Vector3(
+                tilePosition.x + Environment.TileSize / 2f * (trap.GetSetRange() / 2f),
                 trap.GetHeight(),
-                tilePosition.z
+                tilePosition.z + Environment.TileSize / 2f * (trap.GetSetRange() / 2f)
             );
+
+            // トラップを生成
+            trap = Instantiate(trap, tilePosition, Quaternion.identity);
+
+            // 周囲タイルにトラップを設置したことにする
+            foreach (var tile in tiles)
+            {
+                tile.hasTrap = true;
+                tile._trap = trap;
+            }
 
             _trap = trap;
             hasTrap = true;

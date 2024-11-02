@@ -18,7 +18,7 @@ namespace lib
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var trap in traps)
                 if (trap.GetTrapName() == trapName)
-                    return Object.Instantiate(trap);
+                    return trap;
 
             throw new Exception("トラップデータが見つかりません、セーブデータが壊れている可能性があります。");
         }

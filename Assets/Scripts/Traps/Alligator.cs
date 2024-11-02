@@ -9,6 +9,7 @@ namespace Traps
         private const int Height = 1;
         private const int CoolDown = 100;
         private const int KnockBack = 3;
+        private const int SetRange = 1;
 
         public override void AwakeTrap(TilePosition position)
         {
@@ -45,12 +46,17 @@ namespace Traps
 
         public override float GetHeight()
         {
-            throw new System.NotImplementedException();
+            return Height;
+        }
+
+        public override int GetSetRange()
+        {
+            return SetRange;
         }
 
         public override string GetTrapName()
         {
-            throw new System.NotImplementedException();
+            return "Alligator";
         }
     }
 }
