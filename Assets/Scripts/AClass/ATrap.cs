@@ -46,7 +46,7 @@ namespace AClass
         private void Update()
         {
             // 侵攻phaseじゃないと処理しない
-            if (sceneController == null || IsInvasionReady) return;
+            if (sceneController == null || !IsInvasionReady) return;
 
             // CD中の場合は時間を進める
             if (ChargeTime <= 0) return;
@@ -60,6 +60,8 @@ namespace AClass
 
             // 0以下になったら0にする
             if (ChargeTime < 0) ChargeTime = 0;
+
+            _prevTime = currentTime;
         }
 
         /**
