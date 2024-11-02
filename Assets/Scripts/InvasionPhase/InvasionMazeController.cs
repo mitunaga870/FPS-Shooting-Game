@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using AClass;
 using DataClass;
+using Enums;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -53,7 +54,7 @@ namespace InvasionPhase
                     var tileRotation = Quaternion.Euler(-90, 0, 0);
                     // タイルを生成し、初期化する
                     var newTile = Instantiate(createPhaseTilePrefab, tilePosition, tileRotation);
-                    newTile.Initialize(row, column, tileData.TileType, tileData.RoadAdjust);
+                    newTile.Initialize(row, column, tileData.TileType, tileData.RoadAdjust, sceneController);
 
                     // タイルを迷路に追加する
                     _maze[row][column] = newTile;
@@ -75,6 +76,7 @@ namespace InvasionPhase
                     turret.Turret,
                     turret.angle,
                     sceneController,
+                    this,
                     enemyController
                 );
 
@@ -113,6 +115,61 @@ namespace InvasionPhase
             var tile = _maze[position.Row][position.Col];
 
             tile.AwakeTrap();
+        }
+
+        /**
+         * 指定タイルから最も近い道路のタイルの座標を取得
+         */
+        public TilePosition GetClosestRoadTilePosition(TilePosition originPosition)
+        {
+            // ベース値作成
+            var minDistance = float.MaxValue;
+            var result = new TilePosition(0, 0);
+
+            // すべてのタイルを検索
+            foreach (var row in _maze)
+            foreach (var tile in row)
+            {
+                // 道路でない場合はスキップ
+                if (tile.TileType != TileTypes.Road) continue;
+
+                var tilePosition = tile.getPosition();
+
+                // 距離を計算
+                var distance = TilePosition.GetDistance(
+                    tilePosition,
+                    originPosition
+                );
+
+                // 最小値を更新
+                if (distance >= minDistance) continue;
+
+                minDistance = distance;
+                result = tilePosition;
+            }
+
+            return result;
+        }
+
+
+        public void IgniteFloor(TilePosition targetCurrentPosition, int igniteDamage, int igniteDuration)
+        {
+            if (targetCurrentPosition.Row < 0 || targetCurrentPosition.Row >= MazeRows ||
+                targetCurrentPosition.Col < 0 || targetCurrentPosition.Col >= MazeColumns) return;
+
+            var tile = _maze[targetCurrentPosition.Row][targetCurrentPosition.Col];
+
+            tile.IgniteFloor(sceneController, igniteDamage, igniteDuration);
+        }
+
+        public bool IsIgnite(TilePosition currentPosition)
+        {
+            if (currentPosition.Row < 0 || currentPosition.Row >= MazeRows ||
+                currentPosition.Col < 0 || currentPosition.Col >= MazeColumns) return false;
+
+            var tile = _maze[currentPosition.Row][currentPosition.Col];
+
+            return tile.IsIgniteFloor;
         }
     }
 }

@@ -526,7 +526,7 @@ namespace AClass
         /**
          * 既存の色に戻す
          */
-        private void ResetColor()
+        public void ResetColor()
         {
             if (prevColor == null) return;
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AClass;
 using DataClass;
+using Enums;
 using JetBrains.Annotations;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
@@ -12,12 +13,6 @@ namespace InvasionPhase
 {
     public class InvasionEnemyController : MonoBehaviour
     {
-        [FormerlySerializedAs("_generalS2SData")]
-        [SerializeField]
-#pragma warning disable CS0414 // フィールドは割り当てられていますがその値は使用されていません
-        private GeneralS2SData generalS2SData;
-#pragma warning restore CS0414 // フィールドは割り当てられていますがその値は使用されていません
-
         [FormerlySerializedAs("_stageObject")]
         [SerializeField]
         private StageObject stageObject;
@@ -54,6 +49,9 @@ namespace InvasionPhase
          * 管理している敵のリスト
          */
         private List<AEnemy> _enemies = new();
+
+        /** 現ステージの侵攻データ */
+        public InvasionData CurrentInvasionData => _currentStageData.invasionData;
 
         public void Start()
         {

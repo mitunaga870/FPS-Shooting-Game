@@ -694,14 +694,6 @@ namespace CreatePhase
             // トラップの効果範囲を取得
             var effectArea = turret.GetEffectArea();
 
-            // 効果範囲がない場合は全エリア
-            if (effectArea == null)
-            {
-                effectArea = new List<TilePosition>();
-                for (var row = 0; row < MazeRows; row++)
-                for (var col = 0; col < MazeColumns; col++)
-                    effectArea.Add(new TilePosition(row, col));
-            }
 
             // 既存のプレビューを削除
             foreach (var address in _previewAddresses)
@@ -710,6 +702,30 @@ namespace CreatePhase
                 var col = address["col"];
                 Maze[row][col].ResetAreaPreview();
             }
+
+            // 効果範囲がない場合は全エリア
+            if (effectArea == null)
+            {
+                for (var row = 0; row < MazeRows; row++)
+                for (var col = 0; col < MazeColumns; col++)
+                {
+                    // プレビュー中のタイルを取得
+                    var previewTile = Maze[row][col];
+
+                    // プレビュー中のタイルを設定
+                    previewTile.SetAreaPreview();
+
+                    // リストに追加
+                    _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
+
+                    // プレビューの持続時間を設定
+                    var delay = General.DelayCoroutine(duration / 1000f, () => previewTile.ResetAreaPreview());
+                    StartCoroutine(delay);
+                }
+
+                return;
+            }
+
 
             // トラップの効果範囲をプレビュー
             foreach (var tilePosition in effectArea)

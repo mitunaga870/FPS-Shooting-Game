@@ -67,6 +67,20 @@ namespace AClass
         private int _poisonDuration = 0;
         // ============================================
 
+        // ============= スロー用変数 =============
+        private bool _hasSlow = false;
+        private float _slowPercentage;
+        private int _slowDuration;
+        // ============================================
+
+        /**
+         * 初期化処理
+         */
+        private void Start()
+        {
+            Destination = _mazeController.GoalPosition;
+        }
+
         /**
          * マイフレームの処理
          */
@@ -99,6 +113,25 @@ namespace AClass
                 if (_poisonDuration <= 0) _hasPoison = false;
             }
 
+            // 燃焼床処理
+            if (_mazeController.IsIgnite(CurrentPosition))
+            {
+                var tile = (InvasionPhaseTile)_mazeController.GetTile(CurrentPosition.Row, CurrentPosition.Col);
+                if (tile == null) throw new Exception("Tile is null");
+
+                // 発火情報を取得
+                var igniteDamage = tile.IgniteDuration;
+                var igniteDuration = tile.IgniteDuration;
+
+                // ダメージ計算
+                // 効果時間が時間差分より小さい場合は効果時間を使う
+                var damage = igniteDamage * (timeDiff < igniteDuration ? timeDiff : igniteDuration);
+                // ダメージ処理
+                Damage((int)damage);
+
+                Debug.Log("ignite Damage: " + damage);
+            }
+
             switch (_status)
             {
                 case EnemyStatus.None:
@@ -122,14 +155,23 @@ namespace AClass
         // ReSharper disable once UnusedParameter.Local
         private void Moving(int time, int timeDiff, Vector3 mazeOrigin)
         {
-            // 目的地がない場合はゴールに指定
-            Destination ??= _mazeController.GoalPosition;
-
-            // 経路がない場合は生成
-            Path ??= _mazeController.GetShortestPath(CurrentPosition, _mazeController.GoalPosition);
-
             // 現在地がない場合はエラー
             if (CurrentPosition == null) throw new ArgumentNullException($"Cant find current position.");
+
+            // 目的地がない場合はその場で待機
+            if (Destination == null) return;
+
+            // 経路がない場合は生成
+            if (Path == null)
+            {
+                Path = _mazeController.GetShortestPath(CurrentPosition, Destination);
+
+                // 位置をタイルの中心に補正
+                var _localTransform = transform;
+                var _position = _localTransform.position;
+                _position = Path.Get(0).ToVector3(mazeOrigin);
+                _localTransform.position = _position;
+            }
 
             // 経路がない場合はエラー
             if (Path == null) throw new ArgumentNullException($"Cant find path to destination.");
@@ -146,6 +188,23 @@ namespace AClass
 
             // 移動
             var moveAmount = (nextTileCoordinate - currentTileCoordinate) / 1000 * (Speed * timeDiff);
+            // スロー状態の場合はスロー処理
+            if (_hasSlow)
+            {
+                if (_slowDuration >= timeDiff) // 効果時間が時間差分より大きい場合
+                {
+                    moveAmount *= 1 - _slowPercentage;
+                    _slowDuration -= timeDiff;
+                }
+                else // 効果時間が時間差分より小さい場合
+                {
+                    moveAmount *= 1 - _slowPercentage;
+                    moveAmount *= _slowDuration / (float)timeDiff;
+                    _slowDuration = 0;
+                    _hasSlow = false;
+                }
+            }
+
             var position = localTransform.position;
             position += moveAmount;
             localTransform.position = position;
@@ -163,7 +222,11 @@ namespace AClass
             _mazeController.AwakeTrap(CurrentPosition);
 
             // 目的地に到達した場合
-            if (CurrentPosition.Equals(Destination)) Path = null;
+            if (CurrentPosition.Equals(Destination))
+            {
+                Destination = null;
+                Path = null;
+            }
 
             // ゴールに到達した場合
             if (CurrentPosition.Equals(_mazeController.GoalPosition))
@@ -359,6 +422,42 @@ namespace AClass
             _poisonLevel = level;
             _poisonDamage = damage;
             _poisonDuration = duration;
+        }
+
+        /**
+         * 目的地を設定
+         */
+        public void SetDestination(TilePosition setPosition)
+        {
+            // 目的地を設定
+            Destination = setPosition;
+            // 現在ルートを消す
+            Path = null;
+        }
+
+        /**
+         * 目的地を解除
+         */
+        public void ReleaseDestination()
+        {
+            // 目的地を解除
+            Destination = _mazeController.GoalPosition;
+            // 現在ルートを消す
+            Path = null;
+        }
+
+        public void Slow(float slowPercentage, int duration)
+        {
+            // すでにスロー状態の場合は強い方を採用
+            if (_hasSlow && _slowPercentage < slowPercentage)
+                return;
+            // 同レベルの場合は時間を延長
+            if (_hasSlow && Math.Abs(_slowPercentage - slowPercentage) < 0.01)
+                _slowDuration += duration;
+
+            _hasSlow = true;
+            _slowPercentage = slowPercentage;
+            _slowDuration = duration;
         }
     }
 }

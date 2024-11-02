@@ -19,9 +19,11 @@ namespace AClass
         [SerializeField]
         protected TurretObject turretObject;
 
-        private InvasionController _sceneController;
+        protected InvasionController sceneController;
 
         protected InvasionEnemyController EnemyController;
+
+        protected InvasionMazeController MazeController;
 
         private bool _isInitialized;
 
@@ -33,7 +35,17 @@ namespace AClass
 
         private int chargeTime;
 
+        private int prevTime = 0;
+
         protected TilePosition SetPosition { get; private set; }
+
+        /**
+         * 初期化処理
+         */
+        private void Start()
+        {
+            chargeTime = GetInterval();
+        }
 
         /**
          * 一定期間ごとにAwakeTurretを呼び出す
@@ -44,11 +56,15 @@ namespace AClass
             if (Phase != Phase.Invade) return;
 
             // 字関連処理
-            var currentTime = _sceneController.GameTime;
-            chargeTime = chargeTime % GetInterval();
+            var currentTime = sceneController.GameTime;
+            var deltaTime = currentTime - prevTime;
+            prevTime = currentTime;
+
+            // インターバルの処理
+            chargeTime -= deltaTime;
 
             // 未チャージ状態なら戻す
-            if (chargeTime != 0) return;
+            if (chargeTime > 0) return;
 
             // 範囲内に敵がいるか確認
             var effectArea = GetAbsoluteEffectArea(SetPosition);
@@ -58,6 +74,8 @@ namespace AClass
 
             // 敵がいない場合は戻す
             if (enemies.Count == 0) return;
+
+            chargeTime = GetInterval();
 
             // タレットの処理
             AwakeTurret(enemies);
@@ -94,14 +112,17 @@ namespace AClass
          */
         public void InvasionInitialize(
             TilePosition setPosition,
+            // ReSharper disable once ParameterHidesMember
             InvasionController sceneController,
+            InvasionMazeController mazeController,
             InvasionEnemyController enemyController
         )
         {
             Phase = Phase.Invade;
 
             SetPosition = setPosition;
-            _sceneController = sceneController;
+            this.sceneController = sceneController;
+            MazeController = mazeController;
             EnemyController = enemyController;
         }
 

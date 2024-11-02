@@ -76,6 +76,17 @@ namespace CreatePhase
 
                 return;
             }
+            else if (hasTurret && Input.GetMouseButtonDown(1))
+            {
+                // TODO: タレット削除処理
+                _mazeCreationController.SetPreviewTurretEffectArea(
+                    Turret,
+                    new TilePosition(Row, Column),
+                    1000
+                );
+
+                return;
+            }
 
 
             // ======== 道路設置用処理 =========

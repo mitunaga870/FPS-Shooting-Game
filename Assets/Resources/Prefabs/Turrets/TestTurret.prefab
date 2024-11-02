@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4315595004972918263}
   - component: {fileID: 198352369711290655}
   - component: {fileID: 8329043060587988176}
-  - component: {fileID: 6233832138599324131}
+  - component: {fileID: 1960722587041022799}
   m_Layer: 0
   m_Name: TestTurret
   m_TagString: Untagged
@@ -108,7 +108,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &6233832138599324131
+--- !u!114 &1960722587041022799
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,7 +117,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3556537994017319667}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b6baef47f16458bb6bc228f809869cb, type: 3}
+  m_Script: {fileID: 11500000, guid: 1eb37239b4fe4f7a911012741ee35e97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turretObject: {fileID: 0}
+  turretObject: {fileID: 11400000, guid: ea2ced23a75ca2d408e1300b8551b4c0, type: 2}

@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using AClass;
 using DataClass;
-using ScriptableObjects.S2SDataObjects;
-using UnityEngine;
 
 namespace Turrets
 {
-    public class TunaSword : ATurret
+    public class Fan : ATurret
     {
-        private const int Damage = 10;
         private const int Height = 1;
+        private const float SlowPercentage = 0.8f;
+        private const int Duration = 1;
         private const int Interval = 1;
+        private const string TurretName = "Fan";
 
+        private int _angle;
 
         public override float GetHeight()
         {
@@ -20,27 +21,30 @@ namespace Turrets
 
         protected override void AwakeTurret(List<AEnemy> enemies)
         {
-            foreach (var enemy in enemies) enemy.Damage(Damage);
+            foreach (var enemy in enemies) enemy.Slow(SlowPercentage, Duration);
         }
 
         public override List<TilePosition> GetEffectArea()
         {
-            return new List<TilePosition>()
+            var BaseList = new List<TilePosition>()
             {
                 new(0, 1),
-                new(1, 1),
-                new(1, 0),
-                new(1, -1),
-                new(0, -1),
-                new(-1, -1),
-                new(-1, 0),
-                new(-1, 1)
+                new(0, 2),
+                new(0, 3),
+                new(0, 4)
             };
+
+            var result = new List<TilePosition>();
+
+            // 角度によってエフェクトエリアを変更
+            foreach (var position in BaseList) result.Add(position.Rotate(_angle));
+
+            return result;
         }
 
         public override string GetTurretName()
         {
-            throw new System.NotImplementedException();
+            return TurretName;
         }
 
         public override int GetInterval()
@@ -50,6 +54,7 @@ namespace Turrets
 
         public override void SetAngle(int angle)
         {
+            _angle = angle;
         }
     }
 }
