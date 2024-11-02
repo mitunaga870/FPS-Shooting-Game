@@ -123,5 +123,13 @@ namespace DataClass
         {
             return new TilePosition(Row + 1, Col - 1);
         }
+
+        public static float GetDistance(TilePosition enemyPosition, TilePosition setPosition)
+        {
+            return Mathf.Sqrt(
+                Mathf.Pow(enemyPosition.Row - setPosition.Row, 2) +
+                Mathf.Pow(enemyPosition.Col - setPosition.Col, 2)
+            );
+        }
     }
 }

@@ -681,6 +681,15 @@ namespace CreatePhase
             // トラップの効果範囲を取得
             var effectArea = turret.GetEffectArea();
 
+            // 効果範囲がない場合は全エリア
+            if (effectArea == null)
+            {
+                effectArea = new List<TilePosition>();
+                for (var row = 0; row < MazeRows; row++)
+                for (var col = 0; col < MazeColumns; col++)
+                    effectArea.Add(new TilePosition(row, col));
+            }
+
             // 既存のプレビューを削除
             foreach (var address in _previewAddresses)
             {

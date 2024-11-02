@@ -75,7 +75,7 @@ namespace AClass
         // ================= abstract =================
         public abstract float GetHeight();
         protected abstract void AwakeTurret(List<AEnemy> enemies);
-        public abstract List<TilePosition> GetEffectArea();
+        public abstract List<TilePosition>? GetEffectArea();
         public abstract string GetTurretName();
         public abstract int GetInterval();
 
@@ -108,11 +108,14 @@ namespace AClass
         /**
          * タレットの絶対位置を取得
          */
-        public TilePosition[] GetAbsoluteEffectArea(TilePosition position)
+        public TilePosition[]? GetAbsoluteEffectArea(TilePosition position)
         {
             if (Phase != Phase.Invade) throw new Exception("侵攻phase以外では使用できません");
 
             var relativeArea = GetEffectArea();
+
+            if (relativeArea == null) return null;
+
             var result = new TilePosition[relativeArea.Count];
 
             for (var i = 0; i < relativeArea.Count; i++)

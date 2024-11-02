@@ -158,11 +158,20 @@ namespace InvasionPhase
         }
 
         [ItemCanBeNull]
-        public List<AEnemy> GetEnemies(TilePosition[] effectAreas)
+        public List<AEnemy> GetEnemies([CanBeNull] TilePosition[] effectAreas)
         {
             var result = new List<AEnemy>();
 
+            // エリアが指定されていない場合は全ての敵を返す
+            if (effectAreas == null)
+            {
+                result.AddRange(_enemies);
+                return result;
+            }
+
+            // 敵リストを走査
             foreach (var enemy in _enemies)
+                // 位置が一致したらリストに追加
                 result.AddRange(from effectArea in effectAreas
                     where enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(effectArea)
                     select enemy);
