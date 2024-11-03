@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AClass;
 using DataClass;
@@ -171,6 +172,15 @@ namespace InvasionPhase
             var tile = _maze[currentPosition.Row][currentPosition.Col];
 
             return tile.IsIgniteFloor;
+        }
+
+        private void OnApplicationQuit()
+        {
+            // シーン遷移で読み込んだデータをそのまま保存
+            SaveController.SaveTileData(TileData);
+            SaveController.SaveTrapData(TrapData);
+            SaveController.SaveStageData(StageData);
+            SaveController.SaveTurretData(TurretData);
         }
     }
 }

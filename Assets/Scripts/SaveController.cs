@@ -58,7 +58,10 @@ public static class SaveController
         foreach (var turret in turretData) saveText += $"{turret},";
 
         if (saveText.Length == 0)
+        {
+            PlayerPrefs.SetString("TurretData", "");
             return;
+        }
 
         // 最後のカンマを削除
         saveText = saveText.Substring(0, saveText.Length - 1);
@@ -161,6 +164,10 @@ public static class SaveController
         var saveText = PlayerPrefs.GetString("TurretData");
         // 読み込んだやつを消す
         PlayerPrefs.DeleteKey("TurretData");
+        
+        // セーブデータが空文字列の場合は空の配列を返す
+        if (string.IsNullOrEmpty(saveText))
+            return Array.Empty<TurretData>();
 
         // Load trapData like CSV
         var turrets = saveText.Split(',');
