@@ -12,7 +12,7 @@ namespace TitleScene
             GetComponent<UnityEngine.UI.Button>().onClick.AddListener(StartGame);
         }
 
-        private static void StartGame()
+        public static void StartGame()
         {
             Debug.Log("StartGame");
 

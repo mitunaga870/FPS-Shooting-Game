@@ -10,7 +10,8 @@ namespace TitleScene
             GetComponent<UnityEngine.UI.Button>().onClick.AddListener(StartGame);
         }
 
-        private static void StartGame()
+
+        public static void StartGame()
         {
             // セーブデータ削除
             SaveController.DelSave();
