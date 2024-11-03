@@ -8,7 +8,7 @@ namespace Turrets
 {
     public class Fan : ATurret
     {
-        private const int Height = 1;
+        private const float Height = 0.155f;
         private const float SlowPercentage = 0.8f;
         private const int EffectDuration = 100;
         private const int SlowDuration = 5;

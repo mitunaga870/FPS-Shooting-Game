@@ -9,7 +9,7 @@ namespace Turrets
 {
     public class Missile : ATurret
     {
-        private const int Height = 1;
+        private const float Height = 0.13f;
         private const int Damage = 1;
         private const int ObjectDuration = 10;
         private const int IgniteDamage = 0;
