@@ -9,7 +9,7 @@ namespace Turrets
 {
     public class TunaSword : ATurret
     {
-        private const int Damage = 10;
+        private const int Damage = 1;
         private const float Height = -0.5f;
         private const int Interval = 1;
         private const string TurretName = "TunaSword";
