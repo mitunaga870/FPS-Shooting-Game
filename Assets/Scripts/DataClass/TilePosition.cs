@@ -131,5 +131,12 @@ namespace DataClass
                 Mathf.Pow(enemyPosition.Col - setPosition.Col, 2)
             );
         }
+
+        public float GetAngle(TilePosition targetPosition)
+        {
+            var x = targetPosition.Col - Col;
+            var y = targetPosition.Row - Row;
+            return Mathf.Atan2(y, x) * 180 / Mathf.PI;
+        }
     }
 }

@@ -10,33 +10,44 @@ public class TrapFan_IgnitionAction : MonoBehaviour
     [SerializeField] private float Y = 0;
     [SerializeField] private float Z = 1800;
     [SerializeField] private string ActionKey = "U";
-    [SerializeField] private float time = 4;
-    [SerializeField] GameObject obj;
-    public enum SampleEnum
-    {
-        None,
-        A,
-        B,
-        C,
-        D,
-    }
-    [SerializeField] private SampleEnum sampleEnum;
+    
+    // 遷移に１秒かける
+    private const float transitionTime = 0.5f;
+    
+    // ループ感覚
+    private const float loopInterval = 0.25f;
+    
+    // 回転中フラグ
+    private bool isRotating = false;
 
-    // Start is called before the first frame update
-    void Start()
+    /** アニメーションを再生する */
+    public void IgnitionAction()
     {
-        obj.SetActive(false);   // 無効にする
+        if (isRotating) return;
+        isRotating = true;
+        
+        //time秒間にX,Y,Z度回転させる
+        transform.DOLocalRotate(new Vector3(X,Y,Z),transitionTime,RotateMode.FastBeyond360).SetEase(Ease.InQuart)
+            .OnComplete((() =>
+            {
+                // 無限回転
+                transform.DOLocalRotate(new Vector3(X,Y,Z),loopInterval,RotateMode.FastBeyond360)
+                    .SetEase(Ease.Linear).
+                    SetLoops(-1,LoopType.Restart);
+            }));
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    /** アニメーションを停止する */
+    public void StopAction()
     {
-        if (Input.GetKey (KeyCode.F)) {
-            obj.SetActive(true);    // 有効にする
-            //time秒間にX,Y,Z度回転させる
-            //https://kingmo.jp/kumonos/dotween-rotate360loop/
-            transform.DOLocalRotate(new Vector3(X,Y,Z),time,RotateMode.FastBeyond360).SetEase(Ease.OutQuad);
-            DOTween.Sequence().Append(DOVirtual.DelayedCall(time, () => obj.SetActive(false))); //time goni mukou
-        }
+        Debug.Log("StopAction");
+        isRotating = false;
+        
+        // 無限回転を停止
+        transform.DOKill();
+        
+        //time秒間にX,Y,Z度回転させる
+        transform.DOLocalRotate(new Vector3(0,0,0),transitionTime,RotateMode.FastBeyond360)
+            .SetEase(Ease.OutQuart);
     }
 }

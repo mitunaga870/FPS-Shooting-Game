@@ -1,16 +1,20 @@
 using System.Collections.Generic;
 using AClass;
 using DataClass;
+using UnityEngine;
 
 namespace Turrets
 {
     public class BeansGatling : ATurret
     {
-        private const int Damage = 10;
+        private const int Damage = 0;
         private const int Height = 1;
         private const int Interval = 1;
         private const string TurretName = "BeansGatling";
-
+        
+        [SerializeField]
+        private GatlingGun gatlingGun;
+        
         public override float GetHeight()
         {
             return Height;
@@ -34,7 +38,15 @@ namespace Turrets
                 }
             }
 
-            if (target == null) return;
+            if (target == null)
+            {
+                // アニメーションを止める
+                gatlingGun.StopFiring();
+                return;
+            }
+            
+            // アニメーションを再生する
+            gatlingGun.SetTarget(target);
 
             // 敵にダメージを与える
             target.Damage(Damage);
@@ -57,6 +69,15 @@ namespace Turrets
 
         public override void SetAngle(int angle)
         {
+        }
+
+        protected override void AsleepTurret()
+        {
+        }
+
+        protected override int GetDuration()
+        {
+            return 0;
         }
     }
 }

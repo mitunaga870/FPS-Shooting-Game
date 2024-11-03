@@ -12,7 +12,7 @@ namespace Turrets
     {
         private const int InvasionDataAnalysisTimeSpan = 10;
 
-        private int Height = 1;
+        private int Height = 3;
         private int Interval = 1;
         private int Damage = 9999;
         private string TurretName = "Shark";
@@ -26,6 +26,9 @@ namespace Turrets
         // 開始時に最大スポーン時間を計算
         private void Start()
         {
+            // サイズを設定
+            transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            
             // 侵攻フェーズでだけやる
             if (Phase != Phase.Invade) return;
 
@@ -78,6 +81,8 @@ namespace Turrets
             foreach (var enemy in enemies) enemy.Damage(Damage);
 
             isFired = true;
+            
+            gameObject.SetActive(false);
         }
 
         private float GetPossibility(int time)
@@ -111,6 +116,15 @@ namespace Turrets
 
         public override void SetAngle(int angle)
         {
+        }
+
+        protected override void AsleepTurret()
+        {
+        }
+
+        protected override int GetDuration()
+        {
+            return 0;
         }
     }
 }

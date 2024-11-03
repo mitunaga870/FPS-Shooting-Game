@@ -48,5 +48,14 @@ namespace Turrets
         {
             Angle = angle;
         }
+
+        protected override void AsleepTurret()
+        {
+        }
+
+        protected override int GetDuration()
+        {
+            return 0;
+        }
     }
 }

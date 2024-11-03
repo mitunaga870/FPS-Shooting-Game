@@ -116,7 +116,10 @@ namespace AClass
 
         /** 色を変えたときの元の色を持たせる */
         private Dictionary<string, Color> prevColor;
-
+        
+        /** 禁止エリア・効果エリアの前の色 */
+        private Dictionary<string, Color> _prevPreviewColor;
+        
         /**
          * タイルのステータスの変更
          */
@@ -526,9 +529,17 @@ namespace AClass
         /**
          * 既存の色に戻す
          */
-        public void ResetColor()
+        public void ResetColor(Dictionary<string, Color> _prevColor = null)
         {
-            if (prevColor == null) return;
+            
+            if (prevColor == null ) return;
+
+            if (_prevColor == null)
+            {
+                _prevColor = prevColor;
+                prevColor = null;
+            }
+            
 
             var meshRenderer = GetComponent<MeshRenderer>();
             var materials = meshRenderer.materials;
@@ -541,12 +552,10 @@ namespace AClass
                 Color? materialColor =
                     material.HasProperty("_Color") ? material.color : null;
 
-                // 既存の色を保存
+                // 既存の色を当てる
                 if (materialColor != null)
-                    material.color = prevColor[material.name];
+                    material.color = _prevColor[material.name];
             }
-
-            prevColor = null;
         }
 
         /**
@@ -658,6 +667,9 @@ namespace AClass
             var position = Turret.transform.position;
             position = new Vector3(position.x, Turret.GetHeight(), position.z);
             Turret.transform.position = position;
+            
+            // turretの向きを設定
+            Turret.transform.rotation = Quaternion.Euler(0, Turret.Angle, 0);
         }
 
         /**
@@ -675,7 +687,27 @@ namespace AClass
          */
         public void SetAreaPreview()
         {
-            _prevColor = GetComponent<Renderer>().material.color;
+            if (_prevPreviewColor == null)
+            {
+                _prevPreviewColor = new Dictionary<string, Color>();
+                
+                // マテリアル取得
+                var meshRenderer = GetComponent<MeshRenderer>();
+                var materials = meshRenderer.materials;
+
+                // 既存の色を保存
+                foreach (var material in materials)
+                {
+                    // 色を取得
+                    Color? materialColor =
+                        material.HasProperty("_Color") ? material.color : null;
+
+                    // 既存の色を保存
+                    if (materialColor != null)
+                        _prevPreviewColor.Add(material.name, materialColor.Value);
+                }
+            }
+
             // とりあえず色を変える
             SetColor(Color.green);
         }
@@ -685,7 +717,48 @@ namespace AClass
          */
         public void ResetAreaPreview()
         {
-            ResetColor();
+            ResetColor(_prevPreviewColor);
+            
+            _prevPreviewColor = null;
+        }
+        
+        /**
+         * 禁止エリア処理
+         */
+        public void SetProhibitedArea()
+        {
+            if (_prevPreviewColor == null)
+            {
+                _prevPreviewColor = new Dictionary<string, Color>();
+                
+                // マテリアル取得
+                var meshRenderer = GetComponent<MeshRenderer>();
+                var materials = meshRenderer.materials;
+
+                // 既存の色を保存
+                foreach (var material in materials)
+                {
+                    // 色を取得
+                    Color? materialColor =
+                        material.HasProperty("_Color") ? material.color : null;
+
+                    // 既存の色を保存
+                    if (materialColor != null)
+                        _prevPreviewColor.Add(material.name, materialColor.Value);
+                }
+            }
+            
+            SetColor(Color.red);
+        }
+
+        /**
+         * 禁止エリア処理
+         */
+        public void ResetProhibitedArea()
+        {
+            ResetColor( _prevPreviewColor);
+            
+            _prevPreviewColor = null;
         }
     }
 }

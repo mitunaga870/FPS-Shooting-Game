@@ -2,18 +2,33 @@ using System.Collections.Generic;
 using AClass;
 using DataClass;
 using lib;
+using Pallab.TinyTank;
+using UnityEngine;
 
 namespace Turrets
 {
-    public class RPG : ATurret
+    public class Missile : ATurret
     {
         private const int Height = 1;
-        private const int Damage = 0;
+        private const int Damage = 1;
         private const int ObjectDuration = 10;
-        private const int IgniteDamage = 10;
+        private const int IgniteDamage = 0;
         private const int IgniteDuration = 100;
         private const int Interval = 500;
-        private const string TurretName = "RPG";
+        private const string TurretName = "Missile";
+        
+        // Missileの向いてる方
+        private float missileAngle = 0;
+        
+        [SerializeField]
+        TinyTankAnimController animController;
+        [SerializeField]
+        TinyTankTurretRotator turretRotator;
+        
+        private void Start()
+        {
+            missileAngle = Angle;
+        }
 
         public override float GetHeight()
         {
@@ -63,7 +78,27 @@ namespace Turrets
                     MazeController.IgniteFloor(targetPosition.GetRightUp(), IgniteDamage, IgniteDuration);
                     MazeController.IgniteFloor(targetPosition.GetRightDown(), IgniteDamage, IgniteDuration);
                 });
-            StartCoroutine(delay);
+            
+            // 敵との角度を計算
+            var targetPosition = target.CurrentPosition;
+            if (targetPosition == null) return;
+            var angle = SetPosition.GetAngle(targetPosition);
+            // 上が0度なので90度ずらす
+            angle -= 90;
+            
+            // 砲塔を回転
+            turretRotator.Rotate(-angle);
+            
+            // 回転を待つ
+            var rotateDelay = General.DelayCoroutine(0.5f, () =>
+            {
+                // 発射アニメーション
+                animController.Fire();
+                
+                StartCoroutine(delay);
+            });
+            
+            StartCoroutine(rotateDelay);
         }
 
         public override List<TilePosition> GetEffectArea()
@@ -83,6 +118,15 @@ namespace Turrets
 
         public override void SetAngle(int angle)
         {
+        }
+
+        protected override void AsleepTurret()
+        {
+        }
+
+        protected override int GetDuration()
+        {
+            return 0;
         }
     }
 }

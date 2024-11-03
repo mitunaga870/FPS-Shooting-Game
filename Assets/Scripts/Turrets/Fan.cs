@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using AClass;
 using DataClass;
+using UnityEngine;
 
 namespace Turrets
 {
@@ -8,11 +10,15 @@ namespace Turrets
     {
         private const int Height = 1;
         private const float SlowPercentage = 0.8f;
-        private const int Duration = 1;
-        private const int Interval = 1;
+        private const int EffectDuration = 100;
+        private const int SlowDuration = 5;
+        private const int Interval = 400;
         private const string TurretName = "Fan";
 
-        private int _angle;
+        private bool _isAwaken;
+        
+        [SerializeField]
+        TrapFan_IgnitionAction _trapFanIgnitionAction;
 
         public override float GetHeight()
         {
@@ -21,7 +27,11 @@ namespace Turrets
 
         protected override void AwakeTurret(List<AEnemy> enemies)
         {
-            foreach (var enemy in enemies) enemy.Slow(SlowPercentage, Duration);
+            _isAwaken = true;
+            
+            foreach (var enemy in enemies) enemy.Slow(SlowPercentage, SlowDuration);
+            
+            _trapFanIgnitionAction.IgnitionAction();
         }
 
         public override List<TilePosition> GetEffectArea()
@@ -37,7 +47,7 @@ namespace Turrets
             var result = new List<TilePosition>();
 
             // 角度によってエフェクトエリアを変更
-            foreach (var position in BaseList) result.Add(position.Rotate(_angle));
+            foreach (var position in BaseList) result.Add(position.Rotate(Angle));
 
             return result;
         }
@@ -54,7 +64,20 @@ namespace Turrets
 
         public override void SetAngle(int angle)
         {
-            _angle = angle;
+            Angle = angle;
+        }
+
+        protected override void AsleepTurret()
+        {
+            if (!_isAwaken) return;
+            _isAwaken = false;
+            
+            _trapFanIgnitionAction.StopAction();
+        }
+
+        protected override int GetDuration()
+        {
+            return EffectDuration;
         }
     }
 }

@@ -36,9 +36,13 @@ namespace AClass
         private int chargeTime;
 
         private int prevTime = 0;
+        
+        private int effectTime = 0;
+        
+        private bool _isFistAwake = true;
 
         protected TilePosition SetPosition { get; private set; }
-
+        
         /**
          * 初期化処理
          */
@@ -50,7 +54,7 @@ namespace AClass
         /**
          * 一定期間ごとにAwakeTurretを呼び出す
          */
-        private void Update()
+        private void FixedUpdate()
         {
             // 侵攻phaseのみ
             if (Phase != Phase.Invade) return;
@@ -62,9 +66,19 @@ namespace AClass
 
             // インターバルの処理
             chargeTime -= deltaTime;
+            
+            // エフェクト時間の処理
+            effectTime -= deltaTime;
+            
+            // エフェクト時間が終わったらタレットを休眠
+            if (effectTime <= 0)
+            {
+                AsleepTurret();
+                _isFistAwake = true;
+            }
 
-            // 未チャージ状態なら戻す
-            if (chargeTime > 0) return;
+            // 未チャージ状態かつエフェクト時間が終わっている場合は戻す
+            if (chargeTime > 0 && effectTime <= 0) return;
 
             // 範囲内に敵がいるか確認
             var effectArea = GetAbsoluteEffectArea(SetPosition);
@@ -72,13 +86,17 @@ namespace AClass
             // 範囲の敵取得
             var enemies = EnemyController.GetEnemies(effectArea);
 
-            // 敵がいない場合は戻す
-            if (enemies.Count == 0) return;
-
             chargeTime = GetInterval();
 
             // タレットの処理
             AwakeTurret(enemies);
+            
+            // エフェクト時間の設定
+            if (_isFistAwake)
+            {
+                _isFistAwake = false;
+                effectTime = GetDuration();
+            }
         }
 
         /**
@@ -97,15 +115,9 @@ namespace AClass
         public abstract string GetTurretName();
         public abstract int GetInterval();
 
-        /**
-         * タレットの色を変更する
-         */
-        public void SetColor(Color color)
-        {
-            GetComponent<Renderer>().material.color = color;
-        }
-
         public abstract void SetAngle(int angle);
+        protected abstract void AsleepTurret();
+        protected abstract int GetDuration();
 
         /**
          * 侵攻phase用の初期化

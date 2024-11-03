@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using AClass;
 using DataClass;
+using Enums;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 
@@ -9,9 +10,21 @@ namespace Turrets
     public class TunaSword : ATurret
     {
         private const int Damage = 10;
-        private const int Height = 1;
+        private const float Height = -0.5f;
         private const int Interval = 1;
+        private const string TurretName = "TunaSword";
+        
+        [SerializeField]
+        TrapKihada_IgnitionAction trapKihadaIgnitionAction;
 
+        private void Start()
+        {
+            if (Phase == Phase.Invade)
+            {
+                // 横に向ける
+                trapKihadaIgnitionAction.IgnitionAction();
+            }
+        }
 
         public override float GetHeight()
         {
@@ -40,7 +53,7 @@ namespace Turrets
 
         public override string GetTurretName()
         {
-            throw new System.NotImplementedException();
+            return TurretName;
         }
 
         public override int GetInterval()
@@ -50,6 +63,15 @@ namespace Turrets
 
         public override void SetAngle(int angle)
         {
+        }
+
+        protected override void AsleepTurret()
+        {
+        }
+
+        protected override int GetDuration()
+        {
+            return 0;
         }
     }
 }

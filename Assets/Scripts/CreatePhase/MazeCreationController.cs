@@ -8,6 +8,7 @@ using Enums;
 using JetBrains.Annotations;
 using lib;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 using TrapData = DataClass.TrapData;
@@ -634,16 +635,44 @@ namespace CreatePhase
                 _previewTurret = Instantiate(_settingTurret,
                     new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin,
                     Quaternion.identity);
-
-            // 設置不可能なら赤くする
-            _previewTurret.SetColor(Maze[row][column].SettableTurret ? Color.green : Color.red);
-
-            // 効果エリアをプレビュー中
-            SetPreviewTurretEffectArea(_settingTurret, new TilePosition(row, column), 5000);
+            
+            // 設置できるか確認
+            if (Maze[row][column].SettableTurret)
+            {
+                // 効果エリアをプレビュー中
+                SetPreviewTurretEffectArea(_settingTurret, new TilePosition(row, column), 5000);
+            }
+            else
+            {
+                // 置けないので下に赤くする
+                SetPreviewProhibitTurretArea(new TilePosition(row, column), 5000);
+            }
 
             // トラップの位置を設定
             _previewTurret.transform.position = new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin;
             _previewTurretAddress = new TilePosition(row, column);
+        }
+
+        private void SetPreviewProhibitTurretArea(TilePosition tilePosition, int i)
+        {
+            // 既存のプレビューを削除
+            foreach (var address in _previewAddresses)
+            {
+                var row = address["row"];
+                var col = address["col"];
+                Maze[row][col].ResetAreaPreview();
+            }
+            
+            // 該当エリアを赤くする
+            Maze[tilePosition.Row][tilePosition.Col].SetProhibitedArea();
+            
+            // プレビューの持続時間を設定
+            var delay = General.DelayCoroutine(
+                i / 1000f,
+                () => 
+                    Maze[tilePosition.Row][tilePosition.Col].ResetProhibitedArea()
+                    );
+            StartCoroutine(delay);
         }
 
         /**
@@ -658,7 +687,14 @@ namespace CreatePhase
 
             // トラップを固定
             if (Maze[_previewTurretAddress.Row][_previewTurretAddress.Col].SettableTurret)
+            {
                 Maze[_previewTurretAddress.Row][_previewTurretAddress.Col].SetTurret(_settingTurret);
+                // タレット情報を設定
+                TurretData.Add(
+                    new TurretData(_previewTurretAddress.Row, _previewTurretAddress.Col, _settingTurret)
+                );
+            }
+
 
             // トラップを設置したのでプレビューを削除
             if (_previewTurret != null)
@@ -676,11 +712,6 @@ namespace CreatePhase
             }
 
             _previewAddresses.Clear();
-
-            // タレット情報を設定
-            TurretData.Add(
-                new TurretData(_previewTurretAddress.Row, _previewTurretAddress.Col, _settingTurret)
-            );
 
             // トラップ設置モードを終了
             _settingTurret = null;

@@ -121,7 +121,7 @@ namespace AClass
                 if (tile == null) throw new Exception("Tile is null");
 
                 // 発火情報を取得
-                var igniteDamage = tile.IgniteDuration;
+                var igniteDamage = tile.IgniteDamage;
                 var igniteDuration = tile.IgniteDuration;
 
                 // ダメージ計算
@@ -130,7 +130,7 @@ namespace AClass
                 // ダメージ処理
                 Damage((int)damage);
 
-                Debug.Log("ignite Damage: " + damage);
+                Debug.Log("ignite Damage: " + igniteDamage + " total damage: " + damage);
             }
 
             switch (_status)
@@ -432,6 +432,9 @@ namespace AClass
          */
         public void SetDestination(TilePosition setPosition)
         {
+            // 同じ目的地の場合は何もしない
+            if (Destination.Equals(setPosition)) return;
+            
             // 目的地を設定
             Destination = setPosition;
             // 現在ルートを消す

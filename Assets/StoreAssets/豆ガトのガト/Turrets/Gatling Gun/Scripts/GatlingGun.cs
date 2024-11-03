@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using AClass;
 using UnityEngine;
 
 public class GatlingGun : MonoBehaviour
@@ -25,17 +27,16 @@ public class GatlingGun : MonoBehaviour
     // Used to start and stop the turret firing
     bool canFire = false;
 
-    
-    void Start()
+    private void Start()
     {
-        // Set the firing range distance
-        this.GetComponent<SphereCollider>().radius = firingRange;
+        muzzelFlash.Stop();
     }
-
-    void Update()
+    
+    private void Update()
     {
         AimAndFire();
     }
+
 
     void OnDrawGizmosSelected()
     {
@@ -45,22 +46,16 @@ public class GatlingGun : MonoBehaviour
     }
 
     // Detect an Enemy, aim and fire
-    void OnTriggerEnter(Collider other)
+    public void SetTarget(AEnemy enemy)
     {
-        if (other.gameObject.tag == "Enemy")
-        {
-            go_target = other.transform;
-            canFire = true;
-        }
+        go_target = enemy.gameObject.transform;
+        canFire = true;
 
     }
     // Stop firing
-    void OnTriggerExit(Collider other)
+    public void StopFiring()
     {
-        if (other.gameObject.tag == "Enemy")
-        {
             canFire = false;
-        }
     }
 
     void AimAndFire()
@@ -73,6 +68,13 @@ public class GatlingGun : MonoBehaviour
         {
             // start rotation
             currentRotationSpeed = barrelRotationSpeed;
+            
+            // 敵の情報が取得できないなら処理を終了
+            if (go_target == null)
+            {
+                canFire = false;
+                return;
+            }
 
             // aim at enemy
             Vector3 baseTargetPostition = new Vector3(go_target.position.x, this.transform.position.y, go_target.position.z);

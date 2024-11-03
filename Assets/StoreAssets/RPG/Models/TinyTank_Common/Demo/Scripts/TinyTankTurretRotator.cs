@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace Pallab.TinyTank
@@ -8,7 +9,9 @@ namespace Pallab.TinyTank
 
         public void Rotate(float angle)
         {
-            turretPivotBone.localRotation *= Quaternion.Euler(0.0f, angle, 0.0f);
+            turretPivotBone.DOLocalRotate(new Vector3(0, angle, 0), 0.5f)
+                .SetEase(Ease.InQuart)
+                .SetRelative(false);
         }
     }
 }
