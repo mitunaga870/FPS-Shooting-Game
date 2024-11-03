@@ -47,15 +47,16 @@ namespace InvasionPhase
          */
         public void SetInvasionTrap(
             string trapName,
+            int trapAngle,
             InvasionController sceneController,
             InvasionMazeController mazeController,
             InvasionEnemyController enemyController
         )
         {
-            var result = SetTrap(mazeController, trapName);
+            var result = SetTrap(mazeController, trapName, trapAngle);
 
             // 侵攻phase用に初期化
-            _trap.InvasionInitialize(sceneController, enemyController);
+            Trap.InvasionInitialize(sceneController, mazeController, enemyController);
         }
 
         public void SetInvasionTurret(

@@ -21,6 +21,12 @@ namespace AClass
          */
         [CanBeNull]
         protected InvasionController sceneController = null;
+        
+        /**
+         * 迷路コントローラー
+         */
+        [CanBeNull]
+        protected InvasionMazeController mazeController = null;
 
         /**
          * 敵をコントロールしてるクラス
@@ -47,13 +53,14 @@ namespace AClass
         {
             // 侵攻phaseじゃないと処理しない
             if (sceneController == null || !IsInvasionReady) return;
+            
+            // 時間処理
+            var currentTime = sceneController.GameTime;
+            _prevTime = currentTime;
+            var timeDiff = currentTime - _prevTime;
 
             // CD中の場合は時間を進める
             if (ChargeTime <= 0) return;
-
-            // 時間処理
-            var currentTime = sceneController.GameTime;
-            var timeDiff = currentTime - _prevTime;
 
             // CD時間を減らす
             ChargeTime -= timeDiff;
@@ -61,7 +68,6 @@ namespace AClass
             // 0以下になったら0にする
             if (ChargeTime < 0) ChargeTime = 0;
 
-            _prevTime = currentTime;
         }
 
         /**
@@ -98,9 +104,13 @@ namespace AClass
         public abstract void SetAngle(int trapAngle);
 
         /** カスタムのコンストラクタ */
-        public void InvasionInitialize(InvasionController sceneController, InvasionEnemyController enemyController)
-        {
+        public void InvasionInitialize(
+            InvasionController sceneController,
+            InvasionMazeController mazeController, 
+            InvasionEnemyController enemyController
+        ) {
             IsInvasionReady = true;
+            this.mazeController = mazeController;
             this.sceneController = sceneController;
             this.enemyController = enemyController;
         }

@@ -1,24 +1,32 @@
 using AClass;
 using DataClass;
+using UnityEngine;
 
 namespace Traps
 {
     public class LandMine : ATrap
     {
         private const int Damage = 10;
-        private const int Height = 1;
+        private const float Height = 0.05f;
         private const int CoolDown = 100;
         private const int SetRange = 1;
+        private const string TrapName = "LandMine";
+        
+        [SerializeField]
+        TrapMine_IgnitionAction trapMineIgnitionAction;
 
         public override void AwakeTrap(TilePosition position)
         {
+            if (enemyController == null) return;
+            
             // クールダウン中は処理しない
             if (ChargeTime > 0) return;
 
             // クールダウン設定
             ChargeTime = CoolDown;
 
-            if (enemyController == null) return;
+            // アニメーション発火
+            trapMineIgnitionAction.StartAction();
 
             // 周囲１マスの敵にダメージ
             enemyController.DamageEnemy(position, Damage);
@@ -44,7 +52,7 @@ namespace Traps
 
         public override string GetTrapName()
         {
-            throw new System.NotImplementedException();
+            return TrapName;
         }
 
         public override int GetTrapAngle()

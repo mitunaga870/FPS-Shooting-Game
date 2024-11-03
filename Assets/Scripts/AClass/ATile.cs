@@ -103,7 +103,7 @@ namespace AClass
         protected int Column;
 
         /** 設置されているトラップ */
-        protected ATrap _trap = null;
+        public ATrap Trap { get; private set; }
 
         /** 設置されているturret */
         protected ATurret _turret = null;
@@ -467,7 +467,7 @@ namespace AClass
         {
             if (hasTrap)
             {
-                Destroy(_trap.gameObject);
+                Destroy(Trap.gameObject);
                 hasTrap = false;
             }
 
@@ -622,10 +622,10 @@ namespace AClass
             foreach (var tile in tiles)
             {
                 tile.hasTrap = true;
-                tile._trap = trap;
+                tile.Trap = trap;
             }
 
-            _trap = trap;
+            Trap = trap;
             hasTrap = true;
 
             return true;
@@ -636,7 +636,7 @@ namespace AClass
          */
         public void AwakeTrap()
         {
-            if (hasTrap) _trap.AwakeTrap(new TilePosition(Row, Column));
+            if (hasTrap) Trap.AwakeTrap(new TilePosition(Row, Column));
         }
 
         /**

@@ -9,7 +9,8 @@ namespace AClass
 {
     public abstract class AEnemy : MonoBehaviour
     {
-        private const float Gravity = 9.8f;
+        // 0.02秒の重力加速度
+        private const float Gravity = 9.8f * 0.02f;
 
         // 敵ごとのパラメータ、多分最終的には別のとこで管理する
         private int HP { get; set; }
@@ -248,17 +249,17 @@ namespace AClass
             Vector3 mazeOrigin
         )
         {
-            // 速度計算
-            var speed = _jumpSpeed - Gravity * timeDiff;
-
             // 移動
             var localTransform = transform;
             var position = localTransform.position;
-            position += new Vector3(0, speed, 0);
+            position += new Vector3(0, _jumpSpeed, 0);
             localTransform.position = position;
 
             // 現在地を更新
             CurrentPosition = new TilePosition(position, mazeOrigin);
+            
+            // 速度を減速
+            _jumpSpeed -= Gravity * timeDiff;
 
             // 地面に着地した場合
             if (position.y <= 0)
@@ -386,26 +387,29 @@ namespace AClass
             // ノックバック距離よりもスタートの方が小さい場合は上書き
             if (CurrentPathIndex.Value < distance)
                 distance = CurrentPathIndex.Value;
+            
+            // knockバック先を初期化
+            _knockBackDestination = CurrentPosition;
 
             // 現在のパスから一直線で戻れる位置を計算
-            do
+            while (distance > 0)
             {
                 // いったん距離分戻す
                 var tmpDestination = Path.Get(
                     CurrentPathIndex.Value - distance
                 );
+                
+                // 距離を減らす
+                distance--;
 
                 if (tmpDestination == null) break;
 
                 // 一直線に戻れるか確認
-                if (CurrentPosition.Col != tmpDestination.Col && CurrentPosition.Row != tmpDestination.Row) break;
+                if (CurrentPosition.Col != tmpDestination.Col && CurrentPosition.Row != tmpDestination.Row) continue;
 
                 // 一直線に戻れる場合は目的地を更新
                 _knockBackDestination = tmpDestination;
-
-                // 距離を減らす
-                distance--;
-            } while (distance > 0);
+            }
         }
 
         public void InfusePoison(int damage, int duration, int level)
@@ -416,7 +420,6 @@ namespace AClass
             // 同レベルの場合は時間を延長
             if (_hasPoison && _poisonLevel == level)
                 _poisonDuration += duration;
-
 
             _hasPoison = true;
             _poisonLevel = level;

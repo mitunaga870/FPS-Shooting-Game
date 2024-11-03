@@ -1,15 +1,20 @@
 using AClass;
 using DataClass;
+using Ignition_action;
+using UnityEngine;
 
 namespace Traps
 {
     public class Alligator : ATrap
     {
-        private const int Damage = 10;
-        private const int Height = 1;
+        private const int Damage = 1;
+        private const float Height = 0.04f;
         private const int CoolDown = 100;
-        private const int KnockBack = 3;
+        private const int KnockBack = 2;
         private const int SetRange = 1;
+        
+        [SerializeField]
+        private CrocTrap_ActionIgnition crocTrapActionIgnition;
 
         public override void AwakeTrap(TilePosition position)
         {
@@ -20,6 +25,9 @@ namespace Traps
             ChargeTime = CoolDown;
 
             if (enemyController == null) return;
+            
+            // アニメーション再生
+            crocTrapActionIgnition.IgnitionAction();
 
             // 周囲1マスの敵にダメージ
             enemyController.DamageEnemy(position, Damage);
@@ -61,7 +69,7 @@ namespace Traps
 
         public override int GetTrapAngle()
         {
-            return 0;
+            return 180;
         }
 
         public override void SetAngle(int trapAngle)

@@ -181,7 +181,7 @@ namespace CreatePhase
                 for (var i = 0; i < TrapData.Length; i++)
                 {
                     var trap = TrapData[i];
-                    Maze[trap.Row][trap.Column].SetTrap(this, trapData[i].Trap);
+                    Maze[trap.Row][trap.Column].SetTrap(this, trapData[i].Trap, trapData[i].Angle);
                 }
             }
             else
@@ -249,9 +249,12 @@ namespace CreatePhase
 
                 // 設置できなかった場合はリストに追加せずに次のトラップへ
                 if (!setTrapResult) continue;
+                
+                // 設置したトラップを取得
+                var setTrap = Maze[row][column].Trap;
 
                 // トラップ情報を格納
-                tempTrapData.Add(new TrapData(row, column, trap));
+                tempTrapData.Add(new TrapData(row, column, setTrap));
             }
 
             // トラップ情報を設定
@@ -565,10 +568,10 @@ namespace CreatePhase
             }
 
             // トラップ情報を設定
-            for (var i = 0;
-                 i < TrapCount;
-                 i++)
+            for (var i = 0; i < TrapCount; i++)
+            {
                 createToInvasionData.TrapData[i] = TrapData[i];
+            }
 
             // タレット情報を設定
             createToInvasionData.TurretData = TurretData.ToArray();

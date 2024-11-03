@@ -1,28 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
+using InvasionPhase;
+using lib;
 using UnityEngine;
-using DG.Tweening;  //DOTweenを使うときはこのusingを入れる
+
+//DOTweenを使うときはこのusingを入れる
 
 
-public class CrocTrap_ActionIgnition : MonoBehaviour
+namespace Ignition_action
 {
-    [SerializeField] private float time = 4;
-    //===== 定義領域 =====
-    private Animator anim;  //Animatorをanimという変数で定義する
-
-    // Start is called before the first frame update
-    void Start()
+    // ReSharper disable once InconsistentNaming
+    public class CrocTrap_ActionIgnition : MonoBehaviour
     {
-        //変数animに、Animatorコンポーネントを設定する
-        anim = gameObject.GetComponent<Animator>();   
-    }
+        [SerializeField] private float time = 4;
+        //===== 定義領域 =====
+        private Animator anim;  //Animatorをanimという変数で定義する
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKey (KeyCode.C)) {
-            //https://qiita.com/sanpeita/items/3864578e852801c15f80
+        // Start is called before the first frame update
+        void Start()
+        {
+            //変数animに、Animatorコンポーネントを設定する
+            anim = gameObject.GetComponent<Animator>();   
+        }
+
+        public void IgnitionAction()
+        {
+            //アニメーションを再生する
             anim.SetBool("RollBool", true);
+            // 少し待ってからアニメーションを止める
+            var delay = General.DelayCoroutine(
+                0.5f
+                , () => { anim.SetBool("RollBool", false); }
+            );
+            StartCoroutine(delay);
         }
     }
 }

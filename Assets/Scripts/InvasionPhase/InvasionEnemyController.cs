@@ -145,8 +145,6 @@ namespace InvasionPhase
          */
         public void DamageEnemy(TilePosition position, int i)
         {
-            Debug.Log("DamageEnemy, position: " + position + ", damage: " + i);
-
             // 敵リストを走査
             foreach (var enemy in _enemies)
                 // 位置が一致したらダメージを与える

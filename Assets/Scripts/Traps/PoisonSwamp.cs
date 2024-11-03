@@ -1,13 +1,14 @@
 using AClass;
 using DataClass;
+using UnityEngine;
 
 namespace Traps
 {
     public class PoisonSwamp : ATrap
     {
-        private const int Damage = 10;
+        private const int Damage = 1;
         private const int Duration = 100;
-        private const int SetRange = 1;
+        private const int SetRange = 3;
         private const float Height = 0.5f;
         private const string TrapName = "PoisonSwamp";
 
@@ -16,6 +17,9 @@ namespace Traps
         public override void AwakeTrap(TilePosition position)
         {
             if (enemyController == null) return;
+            
+            if (ChargeTime < 0) return;
+            ChargeTime = 1;
 
             enemyController.InfusePoison(position, Damage, Duration, _level);
             enemyController.InfusePoison(position.GetUp(), Damage, Duration, _level);

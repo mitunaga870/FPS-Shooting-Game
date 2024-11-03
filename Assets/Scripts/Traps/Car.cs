@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AClass;
 using DataClass;
+using Ignition_action;
 using lib;
 using UnityEngine;
 
@@ -11,10 +12,14 @@ namespace Traps
     {
         private const string TrapName = "Car";
         private const int SetRange = 1;
-        private const float Height = 0.5f;
+        private const float Height = 0.18f;
         private const int Damage = 1;
         private const int CoolDown = 5000;
         private const int AttackRange = 4;
+        
+        [SerializeField]
+        private TrapBeetleIgnitionAction trapBeetleIgnitionAction;
+
 
         private int _angle = -1;
 
@@ -23,7 +28,9 @@ namespace Traps
 
         public override void AwakeTrap(TilePosition position)
         {
-            if (enemyController == null) return;
+            if (enemyController == null || mazeController == null) return;
+            
+            var currentPos = transform.position;
 
             // チャージ中は無効
             if (0 < ChargeTime) return;
@@ -44,20 +51,20 @@ namespace Traps
                 switch (normalizedAngle)
                 {
                     case 0:
-                        targetTiles.Add(targetTiles[^1].GetRight());
+                        targetTiles.Add(targetTiles[^1].GetUp());
                         break;
                     case 90:
-                        targetTiles.Add(targetTiles[^1].GetDown());
+                        targetTiles.Add(targetTiles[^1].GetRight());
                         break;
                     case 180:
-                        targetTiles.Add(targetTiles[^1].GetLeft());
+                        targetTiles.Add(targetTiles[^1].GetDown());
                         break;
                     case 270:
-                        targetTiles.Add(targetTiles[^1].GetUp());
+                        targetTiles.Add(targetTiles[^1].GetLeft());
                         break;
                 }
             }
-
+            
             var firstCoroutine = General.DelayCoroutineByGameTime(
                 sceneController,
                 time,
@@ -72,7 +79,15 @@ namespace Traps
                 time * 3,
                 () => enemyController.DamageEnemy(targetTiles[3], Damage)
             );
+            
+            // 車の最後のタイルの座標を取得
+            var lastTilePosition = targetTiles[^1].ToVector3(mazeController.MazeOrigin);
 
+            Debug.Log("mazeOrigin: " + mazeController.MazeOrigin);
+            Debug.Log("destination: " + lastTilePosition);
+
+            // 車のアニメーション
+            trapBeetleIgnitionAction.IgnitionAction(lastTilePosition, Duration * 0.02f);
 
             enemyController.DamageEnemy(targetTiles[0], Damage);
             StartCoroutine(firstCoroutine);

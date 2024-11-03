@@ -65,6 +65,7 @@ namespace InvasionPhase
             foreach (var trap in trapData)
                 _maze[trap.Row][trap.Column].SetInvasionTrap(
                     trap.Trap,
+                    trap.Angle,
                     sceneController,
                     this,
                     enemyController
