@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
@@ -47,6 +48,25 @@ public static class SaveController
         saveText = saveText.Substring(0, saveText.Length - 1);
 
         PlayerPrefs.SetString("TrapData", saveText);
+    }
+
+    public static void SaveTurretData(List<TurretData> turretData)
+    {
+        // Save trapData like CSV
+        var saveText = "";
+
+        foreach (var turret in turretData) saveText += $"{turret},";
+
+        if (saveText.Length == 0)
+        {
+            PlayerPrefs.SetString("TurretData", "");
+            return;
+        }
+
+        // 最後のカンマを削除
+        saveText = saveText.Substring(0, saveText.Length - 1);
+
+        PlayerPrefs.SetString("TurretData", saveText);
     }
 
     public static void SaveStageData(StageData stageData)
@@ -134,6 +154,28 @@ public static class SaveController
         for (var i = 0; i < traps.Length; i++) trapData[i] = new TrapData(traps[i]);
 
         return trapData;
+    }
+
+    [CanBeNull]
+    public static TurretData[] LoadTurretData()
+    {
+        if (!PlayerPrefs.HasKey("TurretData")) return null;
+
+        var saveText = PlayerPrefs.GetString("TurretData");
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("TurretData");
+        
+        // セーブデータが空文字列の場合は空の配列を返す
+        if (string.IsNullOrEmpty(saveText))
+            return Array.Empty<TurretData>();
+
+        // Load trapData like CSV
+        var turrets = saveText.Split(',');
+        var turretData = new TurretData[turrets.Length];
+
+        for (var i = 0; i < turrets.Length; i++) turretData[i] = new TurretData(turrets[i]);
+
+        return turretData;
     }
 
     [CanBeNull]

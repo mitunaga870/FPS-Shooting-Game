@@ -8,12 +8,14 @@ namespace DataClass
     {
         public readonly int Column;
         public readonly int Row;
+        public readonly int Angle;
         public readonly string Trap;
 
         public TrapData(int row, int column, ATrap trap)
         {
             Row = row;
             Column = column;
+            Angle = trap.GetTrapAngle();
             Trap = trap.GetTrapName();
         }
 
@@ -23,13 +25,14 @@ namespace DataClass
 
             Row = int.Parse(data[0]);
             Column = int.Parse(data[1]);
-            Trap = data[2];
+            Angle = int.Parse(data[2]);
+            Trap = data[3];
         }
 
 
         public override string ToString()
         {
-            return $"{Row}%%{Column}%%{Trap}";
+            return $"{Row}%%{Column}%%{Angle}%%{Trap}";
         }
     }
 }

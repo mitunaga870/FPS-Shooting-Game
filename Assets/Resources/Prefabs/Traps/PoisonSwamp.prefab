@@ -9,8 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3770192918545973774}
+  - component: {fileID: 612367065821591448}
   m_Layer: 0
-  m_Name: Prod_Poison
+  m_Name: PoisonSwamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,6 +34,19 @@ Transform:
   - {fileID: 871478853776796541}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &612367065821591448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2122015592909247222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63005847330e4a459679723f1c1579e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trapObject: {fileID: 11400000, guid: 34421192c5e66e247a425cc0e3094f7a, type: 2}
 --- !u!1001 &871340297792700325
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -7,26 +7,28 @@ public class TrapMine_IgnitionAction : MonoBehaviour
 {
     [SerializeField] private float time = 4;
     private int Check = 0; //ディレイ時間を過ぎているかどうか
-    [SerializeField] GameObject obj;
+    [SerializeField]
+    private GameObject ExplosionEffect;
+    
     // Start is called before the first frame update
     void Start()
     {
-        obj.SetActive(false);   // 無効にする
-        this.gameObject.SetActive(true);
+        gameObject.SetActive(true);
+        ExplosionEffect.SetActive(false);
+        
+        // 角度をつける
+        transform.rotation = Quaternion.Euler(-90, 0, 0);
     }
 
-    // Update is called once per frame
-    void Update()
-    {   
-        if (Input.GetKey (KeyCode.M	)) {
-            Debug.Log(Check);
-            if(Check== 0){
-                obj.SetActive(true);
-                Check = 1;
-                DOTween.Sequence().Append(DOVirtual.DelayedCall(time, () => Check=0));
-                //DOTween.Sequence().Append(DOVirtual.DelayedCall(time, () => this.gameObject.SetActive(false))); //time goni mukou
-            }
-        }
-            
+    public void StartAction(){
+        if (Check == 1) return;
+        
+        Check = 1;
+        ExplosionEffect.SetActive(true);
+        
+        DOTween.Sequence().Append(DOVirtual.DelayedCall(time, () =>
+        {
+            Check = 0;
+        }));
     }
 }

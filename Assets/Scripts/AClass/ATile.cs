@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
 using DataClass;
 using Enums;
 using lib;
+using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -10,70 +13,78 @@ namespace AClass
     {
         /** デフォルトのモデル */
         [SerializeField]
-        protected Mesh defaultModel;
+        protected GameObject defaultModel;
 
         /** どこにもつながっていないモデル */
         [SerializeField]
-        protected Mesh noneModel;
+        protected GameObject noneModel;
 
         /** 行き止まりのモデル */
         [SerializeField]
-        protected Mesh deadEndModel;
+        protected GameObject deadEndModel;
 
         /** 直線のモデル */
         [SerializeField]
-        protected Mesh straightModel;
+        protected GameObject straightModel;
 
         /** コーナーのモデル */
         [SerializeField]
-        protected Mesh cornerModel;
+        protected GameObject cornerModel;
 
         /** T字路のモデル */
         [SerializeField]
-        protected Mesh tJunctionModel;
+        protected GameObject tJunctionModel;
 
         /** 十字路のモデル */
         [SerializeField]
-        protected Mesh crossroadsModel;
+        protected GameObject crossroadsModel;
 
         /** L字壁のモデル */
         [SerializeField]
-        protected Mesh halfOnceModel;
+        protected GameObject halfOnceModel;
 
         /** 太いやつの端っこ */
         [SerializeField]
-        protected Mesh halfRoadModel;
+        protected GameObject halfRoadModel;
 
         /** 太いやつの真ん中 */
         [SerializeField]
-        protected Mesh noWallModel;
+        protected GameObject noWallModel;
 
         /** 三角 */
         [SerializeField]
-        protected Mesh tripleCurve;
+        protected GameObject tripleCurve;
 
         /** ２角　*/
         [SerializeField]
-        protected Mesh doubleCurve;
+        protected GameObject doubleCurve;
 
         /** １角　*/
         [SerializeField]
-        protected Mesh singleCurve;
+        protected GameObject singleCurve;
 
         /** 角と壁 下に壁持ってきたときに右に角 */
         [SerializeField]
-        protected Mesh rightCornerAndBottomWall;
+        protected GameObject rightCornerAndBottomWall;
 
         /** 角と壁 下に壁持ってきたときに左に角 */
         [SerializeField]
-        protected Mesh leftCornerAndBottomWall;
+        protected GameObject leftCornerAndBottomWall;
 
         /** 斜め角 */
         [SerializeField]
-        protected Mesh diagonalCorner;
+        protected GameObject diagonalCorner;
 
         /** 現在のタイルタイプ */
         private TileTypes _tileType = TileTypes.Nothing;
+
+        public bool SettableTurret => !hasTrap && TileType == TileTypes.Nothing && !hasTurret;
+
+        /** トラップのプレビューの色 */
+        private Color _prevColor;
+
+        /** 設置されているturret */
+        protected ATurret Turret;
 
         public TileTypes TileType
         {
@@ -92,11 +103,23 @@ namespace AClass
         protected int Column;
 
         /** 設置されているトラップ */
-        protected ATrap _trap = null;
+        public ATrap Trap { get; private set; }
+
+        /** 設置されているturret */
+        protected ATurret _turret = null;
 
         /** トラップの所持フラグ */
-        private bool hasTrap = false;
+        protected bool hasTrap = false;
 
+        /** turretの所持フラグ */
+        protected bool hasTurret = false;
+
+        /** 色を変えたときの元の色を持たせる */
+        private Dictionary<string, Color> prevColor;
+        
+        /** 禁止エリア・効果エリアの前の色 */
+        private Dictionary<string, Color> _prevPreviewColor;
+        
         /**
          * タイルのステータスの変更
          */
@@ -106,220 +129,337 @@ namespace AClass
         }
 
         /**
-     * タイルを道に設定する
-     * @param roadAdjust 道の形状
-     */
+         * タイルを道に設定する
+         * @param roadAdjust 道の形状
+         */
         public void SetRoad(RoadAdjust roadAdjust)
         {
             // 既に道・トラップが設定されている場合は処理しない
             if (TileType == TileTypes.Road) return;
 
+            // turretが設置されている場合は処理しない
+            if (hasTurret) return;
+
             // タイルの種類を道に設定
-            TileType = TileTypes.Road;
+            if (TileType != TileTypes.Goal && TileType != TileTypes.Start)
+                TileType = TileTypes.Road;
 
             // 道のつながり型を設定
             RoadAdjust = roadAdjust;
 
             // 道の形状によってモデルを変更
             var meshFilter = GetComponent<MeshFilter>();
+            var meshRenderer = GetComponent<MeshRenderer>();
 
             // つながった道の回転を設定
             var rotation = transform.rotation;
+
+            GameObject _model = null;
 
             switch (roadAdjust)
             {
                 // ========== 行き止まり ==========
                 case RoadAdjust.LeftDeadEnd:
-                    meshFilter.mesh = deadEndModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(deadEndModel);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.BottomDeadEnd:
-                    meshFilter.mesh = deadEndModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(deadEndModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.RightDeadEnd:
-                    meshFilter.mesh = deadEndModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(deadEndModel);
+
+                    rotation = Quaternion.Euler(-90, 0, 0);
                     break;
                 case RoadAdjust.TopDeadEnd:
-                    meshFilter.mesh = deadEndModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(deadEndModel);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // ========== 直線 ==========
                 case RoadAdjust.TopBottom:
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(straightModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
-                    meshFilter.mesh = straightModel;
                     break;
                 case RoadAdjust.LeftRight:
-                    meshFilter.mesh = straightModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(straightModel);
                     break;
                 // ========== コーナー ==========
                 case RoadAdjust.TopRight:
                 case RoadAdjust.RightTop:
-                    meshFilter.mesh = cornerModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(cornerModel);
+
                     break;
                 case RoadAdjust.LeftTop:
                 case RoadAdjust.TopLeft:
-                    meshFilter.mesh = cornerModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(cornerModel);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.LeftBottom:
                 case RoadAdjust.BottomLeft:
-                    meshFilter.mesh = cornerModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(cornerModel);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.RightBottom:
                 case RoadAdjust.BottomRight:
-                    meshFilter.mesh = cornerModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(cornerModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 // ========== T字路 ==========
                 case RoadAdjust.TopRightLeft:
-                    meshFilter.mesh = tJunctionModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tJunctionModel);
+
                     break;
                 case RoadAdjust.RightBottomTop:
-                    meshFilter.mesh = tJunctionModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tJunctionModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.LeftTopBottom:
-                    meshFilter.mesh = tJunctionModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tJunctionModel);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.BottomLeftRight:
-                    meshFilter.mesh = tJunctionModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tJunctionModel);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.Cross:
-                    meshFilter.mesh = crossroadsModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(crossroadsModel);
                     break;
                 // ========== 太い道路 ==========
                 // ========== 太い道路の真ん中 ==========
                 case RoadAdjust.BottomLeftDot:
-                    meshFilter.mesh = singleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(singleCurve);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.BottomRightDot:
-                    meshFilter.mesh = singleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(singleCurve);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopLeftDot:
-                    meshFilter.mesh = singleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(singleCurve);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.TopRightDot:
-                    meshFilter.mesh = singleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(singleCurve);
+
                     break;
                 // ２角
                 case RoadAdjust.TopDoubleDot:
-                    meshFilter.mesh = doubleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(doubleCurve);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.BottomDoubleDot:
-                    meshFilter.mesh = doubleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(doubleCurve);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.LeftDoubleDot:
-                    meshFilter.mesh = doubleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(doubleCurve);
+
                     break;
                 case RoadAdjust.RightDoubleDot:
-                    meshFilter.mesh = doubleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(doubleCurve);
+
                     rotation = Quaternion.Euler(-90, -180, 0);
                     break;
                 case RoadAdjust.TopLeftAndBottomRightDot:
-                    meshFilter.mesh = diagonalCorner;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(diagonalCorner);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopRightAndBottomLeftDot:
-                    meshFilter.mesh = diagonalCorner;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(diagonalCorner);
+
                     break;
                 // 三角
                 case RoadAdjust.ExpectBottomLeftDot:
-                    meshFilter.mesh = tripleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tripleCurve);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.ExpectBottomRightDot:
-                    meshFilter.mesh = tripleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tripleCurve);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.ExpectTopLeftDot:
-                    meshFilter.mesh = tripleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tripleCurve);
                     break;
                 case RoadAdjust.ExpectTopRightDot:
-                    meshFilter.mesh = tripleCurve;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(tripleCurve);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.NoWall:
-                    meshFilter.mesh = noWallModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(noWallModel);
                     break;
                 // 壁と角　下に壁持ってきたときに右に角
                 case RoadAdjust.BottomWallWithRightDot:
-                    meshFilter.mesh = rightCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(rightCornerAndBottomWall);
                     break;
                 case RoadAdjust.LeftWallWithBottomDot:
-                    meshFilter.mesh = rightCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(rightCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopWallWithLeftDot:
-                    meshFilter.mesh = rightCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(rightCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.RightWallWithTopDot:
-                    meshFilter.mesh = rightCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(rightCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // 壁と角　下に壁持ってきたときに左に角
                 case RoadAdjust.BottomWallWithLeftDot:
-                    meshFilter.mesh = leftCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(leftCornerAndBottomWall);
+
                     break;
                 case RoadAdjust.LeftWallWithTopDot:
-                    meshFilter.mesh = leftCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(leftCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopWallWithRightDot:
-                    meshFilter.mesh = leftCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(leftCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.RightWallWithBottomDot:
-                    meshFilter.mesh = leftCornerAndBottomWall;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(leftCornerAndBottomWall);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // ========= 壁だけ ==========
                 case RoadAdjust.LeftWall:
-                    meshFilter.mesh = halfRoadModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfRoadModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.RightWall:
-                    meshFilter.mesh = halfRoadModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfRoadModel);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.BottomWall:
-                    meshFilter.mesh = halfRoadModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfRoadModel);
+
                     rotation = Quaternion.Euler(-90, 0, 0);
                     break;
                 case RoadAdjust.TopWall:
-                    meshFilter.mesh = halfRoadModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfRoadModel);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 // ========== L字壁 ==========
                 case RoadAdjust.TopRightHalfOnce:
-                    meshFilter.mesh = halfOnceModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfOnceModel);
+
                     break;
                 case RoadAdjust.BottomRightHalfOnce:
-                    meshFilter.mesh = halfOnceModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfOnceModel);
+
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.BottomLeftHalfOnce:
-                    meshFilter.mesh = halfOnceModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfOnceModel);
+
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.TopLeftHalfOnce:
-                    meshFilter.mesh = halfOnceModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(halfOnceModel);
+
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // つながっていない場合
                 case RoadAdjust.NoAdjust:
-                    meshFilter.mesh = noneModel;
+                    // 読み取り用にインスタンス化
+                    _model = Instantiate(noneModel);
                     break;
             }
+
+            // モデルを変更
+            if (_model != null)
+            {
+                GetComponent<MeshFilter>().mesh = _model.GetComponent<MeshFilter>().sharedMesh;
+                GetComponent<MeshRenderer>().materials = _model.GetComponent<MeshRenderer>().materials;
+
+                Destroy(_model);
+            }
+
+            // ゴール地点の場合は色を変更
+            switch (TileType)
+            {
+                case TileTypes.Goal:
+                    SetGoal();
+                    break;
+                case TileTypes.Start:
+                    SetStart();
+                    break;
+            }
+
 
             // つながった道の回転を設定
             transform.rotation = rotation;
@@ -330,7 +470,7 @@ namespace AClass
         {
             if (hasTrap)
             {
-                Destroy(_trap.gameObject);
+                Destroy(Trap.gameObject);
                 hasTrap = false;
             }
 
@@ -342,12 +482,15 @@ namespace AClass
      */
         public void SetNone()
         {
+            if (TileType is TileTypes.Goal or TileTypes.Start) return;
             // タイルの種類を空に設定
             TileType = TileTypes.Nothing;
 
-            // モデルを変更
-            var meshFilter = GetComponent<MeshFilter>();
-            meshFilter.mesh = defaultModel;
+
+            var model = Instantiate(defaultModel);
+            GetComponent<MeshFilter>().mesh = model.GetComponent<MeshFilter>().sharedMesh;
+            GetComponent<MeshRenderer>().materials = model.GetComponent<MeshRenderer>().materials;
+            Destroy(model);
 
             // アウトラインを消す
             var outline = GetComponent<Outline>();
@@ -363,10 +506,56 @@ namespace AClass
      */
         public void SetColor(Color color)
         {
+            // 既存の色リストを初期化
+            prevColor = new Dictionary<string, Color>();
+
             var meshRenderer = GetComponent<MeshRenderer>();
             var materials = meshRenderer.materials;
 
-            foreach (var material in materials) material.color = color;
+            foreach (var material in materials)
+            {
+                // 色を取得
+                Color? materialColor =
+                    material.HasProperty("_Color") ? material.color : null;
+
+                // 既存の色を保存
+                if (materialColor != null)
+                    prevColor.Add(material.name, materialColor.Value);
+
+                material.color = color;
+            }
+        }
+
+        /**
+         * 既存の色に戻す
+         */
+        public void ResetColor(Dictionary<string, Color> _prevColor = null)
+        {
+            
+            if (prevColor == null ) return;
+
+            if (_prevColor == null)
+            {
+                _prevColor = prevColor;
+                prevColor = null;
+            }
+            
+
+            var meshRenderer = GetComponent<MeshRenderer>();
+            var materials = meshRenderer.materials;
+
+            for (var i = 0; i < materials.Length; i++)
+            {
+                var material = materials[i];
+
+                // 色を取得
+                Color? materialColor =
+                    material.HasProperty("_Color") ? material.color : null;
+
+                // 既存の色を当てる
+                if (materialColor != null)
+                    material.color = _prevColor[material.name];
+            }
         }
 
         /**
@@ -376,6 +565,8 @@ namespace AClass
         {
             // TODO: スタート地点の状態固定と示し方を決める
             SetColor(Color.blue);
+
+            TileType = TileTypes.Start;
         }
 
         /**
@@ -385,27 +576,65 @@ namespace AClass
         {
             // TODO: ゴール地点の状態固定と示し方を決める
             SetColor(Color.red);
+
+            TileType = TileTypes.Goal;
         }
 
         /**
          * 指定されたトラップを設置する
          * 設置出来たらtrueを返す
          */
-        public bool SetTrap(string trapName)
+        public bool SetTrap(AMazeController mazeController, string trapName, int TrapAngle = -1)
         {
+            // 既に道・トラップが設定されている場合は処理しない
+            if (hasTrap) return false;
+
             var tilePosition = transform.position;
 
-            // トラップを生成
-            var trap = TrapGenerator.GenerateTrap(trapName);
+            // トラップを取得
+            var trap = InstanceGenerator.GenerateTrap(trapName);
+
+            // 周囲のタイルを取得
+            var tiles = new List<ATile>();
+            for (var i = 0; i < trap.GetSetRange(); i++)
+            for (var j = 0; j < trap.GetSetRange(); j++)
+            {
+                if (i == 0 && j == 0) continue;
+
+                var tile = mazeController.GetTile(Row + i, Column + j);
+
+                if (tile == null) return false;
+
+                if (tile.hasTrap) return false;
+
+                tiles.Add(tile);
+            }
 
             // トラップの位置を設定
-            trap.transform.position = new Vector3(
-                tilePosition.x,
+            tilePosition = new Vector3(
+                tilePosition.x + Environment.TileSize / 2f * (trap.GetSetRange() - 1),
                 trap.GetHeight(),
-                tilePosition.z
+                tilePosition.z + Environment.TileSize / 2f * (trap.GetSetRange() - 1)
             );
 
-            _trap = trap;
+
+            // トラップを生成
+            trap = Instantiate(trap, tilePosition, Quaternion.identity);
+
+            // トラップの角度を指定
+            if (TrapAngle != -1)
+                trap.SetAngle(TrapAngle);
+
+            trap.transform.rotation = Quaternion.Euler(0, trap.GetTrapAngle(), 0);
+
+            // 周囲タイルにトラップを設置したことにする
+            foreach (var tile in tiles)
+            {
+                tile.hasTrap = true;
+                tile.Trap = trap;
+            }
+
+            Trap = trap;
             hasTrap = true;
 
             return true;
@@ -416,7 +645,120 @@ namespace AClass
          */
         public void AwakeTrap()
         {
-            if (hasTrap) _trap.AwakeTrap(new TilePosition(Row, Column));
+            if (hasTrap) Trap.AwakeTrap(new TilePosition(Row, Column));
+        }
+
+        /**
+         * turretを設置する
+         */
+        public void SetTurret(ATurret settingTurret, int angle = 0)
+        {
+            // 既に道・トラップが設定されている場合は処理しない
+            if (hasTrap) return;
+
+            hasTurret = true;
+
+            // トラップを生成
+            Turret = Instantiate(settingTurret, transform.position, Quaternion.identity);
+
+            Turret.SetAngle(angle);
+
+            // トラップの高さを設定
+            var position = Turret.transform.position;
+            position = new Vector3(position.x, Turret.GetHeight(), position.z);
+            Turret.transform.position = position;
+            
+            // turretの向きを設定
+            Turret.transform.rotation = Quaternion.Euler(0, Turret.Angle, 0);
+        }
+
+        /**
+         * turretを設置する
+         */
+        public void SetTurret(string turretName, int angle = 0)
+        {
+            var turret = InstanceGenerator.GenerateTurret(turretName);
+            SetTurret(turret, angle);
+        }
+
+        /**
+         * 効果エリアを見せる
+         * @return 元の色
+         */
+        public void SetAreaPreview()
+        {
+            if (_prevPreviewColor == null)
+            {
+                _prevPreviewColor = new Dictionary<string, Color>();
+                
+                // マテリアル取得
+                var meshRenderer = GetComponent<MeshRenderer>();
+                var materials = meshRenderer.materials;
+
+                // 既存の色を保存
+                foreach (var material in materials)
+                {
+                    // 色を取得
+                    Color? materialColor =
+                        material.HasProperty("_Color") ? material.color : null;
+
+                    // 既存の色を保存
+                    if (materialColor != null)
+                        _prevPreviewColor.Add(material.name, materialColor.Value);
+                }
+            }
+
+            // とりあえず色を変える
+            SetColor(Color.green);
+        }
+
+        /**
+         * 効果エリアを元に戻す
+         */
+        public void ResetAreaPreview()
+        {
+            ResetColor(_prevPreviewColor);
+            
+            _prevPreviewColor = null;
+        }
+        
+        /**
+         * 禁止エリア処理
+         */
+        public void SetProhibitedArea()
+        {
+            if (_prevPreviewColor == null)
+            {
+                _prevPreviewColor = new Dictionary<string, Color>();
+                
+                // マテリアル取得
+                var meshRenderer = GetComponent<MeshRenderer>();
+                var materials = meshRenderer.materials;
+
+                // 既存の色を保存
+                foreach (var material in materials)
+                {
+                    // 色を取得
+                    Color? materialColor =
+                        material.HasProperty("_Color") ? material.color : null;
+
+                    // 既存の色を保存
+                    if (materialColor != null)
+                        _prevPreviewColor.Add(material.name, materialColor.Value);
+                }
+            }
+            
+            SetColor(Color.red);
+        }
+
+        /**
+         * 禁止エリア処理
+         */
+        public void ResetProhibitedArea()
+        {
+            ResetColor( _prevPreviewColor);
+            
+            _prevPreviewColor = null;
         }
     }
 }

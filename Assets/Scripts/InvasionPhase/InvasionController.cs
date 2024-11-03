@@ -91,6 +91,11 @@ namespace InvasionPhase
          * ステージデータ
          */
         public StageData StageData { get; private set; }
+        
+        /**
+         * ゲーム終了時のフラグ
+         */
+        private bool _isApplicateQuit = false;
 
         // Start is called before the first frame update
         public void Start()
@@ -98,6 +103,7 @@ namespace InvasionPhase
             // セーブデータ読み込み
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();
+            var turretData = SaveController.LoadTurretData();
 
             // ステージデータ読み込み
             StageData = mazeController.StageData;
@@ -105,14 +111,18 @@ namespace InvasionPhase
             if (createToInvasionData.IsInvasion)
             {
                 // シーン間のデータ共有オブジェクトからデータを取得
-                mazeController.Create(createToInvasionData.TileData, createToInvasionData.TrapData);
+                mazeController.Create(
+                    createToInvasionData.TileData,
+                    createToInvasionData.TrapData,
+                    createToInvasionData.TurretData
+                );
                 // 読み込み後はフラグを戻す
                 createToInvasionData.IsInvasion = false;
             }
             else
             {
                 // セーブデータからデータを取得
-                mazeController.Create(tileData, trapData);
+                mazeController.Create(tileData, trapData, turretData);
             }
 
             // プレイヤーデータ読み込み
@@ -157,12 +167,11 @@ namespace InvasionPhase
          */
         private void OnApplicationQuit()
         {
+            // ゲーム終了時のフラグを立てる
+            _isApplicateQuit = true;
+            
             // セーブデータを保存
             SaveController.SavePhase(Phase.Invade);
-            // シーン遷移で読み込んだデータをそのまま保存
-            SaveController.SaveTileData(mazeController.TileData);
-            SaveController.SaveTrapData(mazeController.TrapData);
-            SaveController.SaveStageData(mazeController.StageData);
         }
 
 
@@ -192,6 +201,9 @@ namespace InvasionPhase
         {
             // ゲームオーバー時はクリアしない
             if (GameState == GameState.GameOver) return;
+            
+            // アプリケーション終了処理中はクリアしない
+            if (_isApplicateQuit) return;
 
             Debug.Log("Game Clear!");
             GameState = GameState.Clear;
