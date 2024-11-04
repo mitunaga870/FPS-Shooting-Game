@@ -1,6 +1,8 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using CreatePhase;
+using DataClass;
 using Enums;
 using InvasionPhase;
 using JetBrains.Annotations;
@@ -17,15 +19,11 @@ namespace AClass
         [SerializeField]
         protected TurretObject turretObject;
 
-        private CreationSceneController _creationSceneController;
+        protected InvasionController sceneController;
 
-        private MazeCreationController _mazeCreationController;
+        protected InvasionEnemyController EnemyController;
 
-        private InvasionController _invasionController;
-
-        private InvasionMazeController _invasionMazeController;
-
-        private InvasionEnemyController _invasionEnemyController;
+        protected InvasionMazeController MazeController;
 
         private bool _isInitialized;
 
@@ -33,72 +31,133 @@ namespace AClass
 
         protected Phase Phase;
 
-        protected (CreationSceneController?, InvasionController?) GetControllers()
-        {
-            switch (Phase)
-            {
-                case Phase.Create:
-                    return (_creationSceneController, null);
-                case Phase.Invade:
-                    return (null, _invasionController);
-                default:
-                    throw new Exception("Invalid phase");
-            }
-        }
+        public int Angle { get; protected set; } = 0;
 
-        protected (MazeCreationController?, InvasionMazeController?) GetMazeControllers()
-        {
-            switch (Phase)
-            {
-                case Phase.Create:
-                    return (_mazeCreationController, null);
-                case Phase.Invade:
-                    return (null, _invasionMazeController);
-                default:
-                    throw new Exception("Invalid phase");
-            }
-        }
+        private int chargeTime;
 
-        protected InvasionEnemyController? GetInvasionEnemyController()
+        private int prevTime = 0;
+        
+        private int effectTime = 0;
+        
+        private bool _isFistAwake = true;
+
+        protected TilePosition SetPosition { get; private set; }
+        
+        /**
+         * 初期化処理
+         */
+        private void Start()
         {
-            return _invasionEnemyController;
+            chargeTime = GetInterval();
         }
 
         /**
-         * 制作phase用の初期化処理
+         * 一定期間ごとにAwakeTurretを呼び出す
          */
-        public void InitializeCreationTurret(CreationSceneController sceneController,
-            MazeCreationController mazeController)
+        private void FixedUpdate()
         {
-            if (_isInitialized) throw new Exception("Already initialized");
+            // 侵攻phaseのみ
+            if (Phase != Phase.Invade) return;
 
-            _creationSceneController = sceneController;
-            _mazeCreationController = mazeController;
+            // 字関連処理
+            var currentTime = sceneController.GameTime;
+            var deltaTime = currentTime - prevTime;
+            prevTime = currentTime;
 
-            Phase = Phase.Create;
+            // インターバルの処理
+            chargeTime -= deltaTime;
+            
+            // エフェクト時間の処理
+            effectTime -= deltaTime;
+            
+            // エフェクト時間が終わったらタレットを休眠
+            if (effectTime <= 0)
+            {
+                AsleepTurret();
+                _isFistAwake = true;
+            }
 
-            _isInitialized = true;
+            // 未チャージ状態かつエフェクト時間が終わっている場合は戻す
+            if (chargeTime > 0 && effectTime <= 0) return;
+
+            // 範囲内に敵がいるか確認
+            var effectArea = GetAbsoluteEffectArea(SetPosition);
+
+            // 範囲の敵取得
+            var enemies = EnemyController.GetEnemies(effectArea);
+
+            chargeTime = GetInterval();
+
+            // タレットの処理
+            AwakeTurret(enemies);
+            
+            // エフェクト時間の設定
+            if (_isFistAwake)
+            {
+                _isFistAwake = false;
+                effectTime = GetDuration();
+            }
         }
 
         /**
-         * 侵略phase用の初期化処理
+         * 90度回転させる
          */
-        public void InitializeInvasionTurret(InvasionController invasionController,
-            InvasionMazeController invasionMazeController, InvasionEnemyController invasionEnemyController)
+        public void Rotate()
         {
-            if (_isInitialized) throw new Exception("Already initialized");
-
-            _invasionController = invasionController;
-            _invasionMazeController = invasionMazeController;
-            _invasionEnemyController = invasionEnemyController;
-
-            Phase = Phase.Invade;
-
-            _isInitialized = true;
+            Angle += 90;
+            transform.Rotate(0, 90, 0);
         }
 
         // ================= abstract =================
         public abstract float GetHeight();
-        public abstract void AwakeTurret();
+        protected abstract void AwakeTurret(List<AEnemy> enemies);
+        public abstract List<TilePosition>? GetEffectArea();
+        public abstract string GetTurretName();
+        public abstract int GetInterval();
+
+        public abstract void SetAngle(int angle);
+        protected abstract void AsleepTurret();
+        protected abstract int GetDuration();
+
+        /**
+         * 侵攻phase用の初期化
+         */
+        public void InvasionInitialize(
+            TilePosition setPosition,
+            // ReSharper disable once ParameterHidesMember
+            InvasionController sceneController,
+            InvasionMazeController mazeController,
+            InvasionEnemyController enemyController
+        )
+        {
+            Phase = Phase.Invade;
+
+            SetPosition = setPosition;
+            this.sceneController = sceneController;
+            MazeController = mazeController;
+            EnemyController = enemyController;
+        }
+
+        /**
+         * タレットの絶対位置を取得
+         */
+        public TilePosition[]? GetAbsoluteEffectArea(TilePosition position)
+        {
+            if (Phase != Phase.Invade) throw new Exception("侵攻phase以外では使用できません");
+
+            var relativeArea = GetEffectArea();
+
+            if (relativeArea == null) return null;
+
+            var result = new TilePosition[relativeArea.Count];
+
+            for (var i = 0; i < relativeArea.Count; i++)
+            {
+                var relativePosition = relativeArea[i];
+                result[i] = new TilePosition(position.Row + relativePosition.Row, position.Col + relativePosition.Col);
+            }
+
+            return result;
+        }
     }
 }

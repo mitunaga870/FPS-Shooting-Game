@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using AClass;
 using CreatePhase.UI;
+using DataClass;
 using Enums;
 using JetBrains.Annotations;
-using Map;
-using ScriptableObjects.S2SDataObjects;
+using lib;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 using TrapData = DataClass.TrapData;
@@ -33,10 +34,6 @@ namespace CreatePhase
         /** デッキシステムつなぎこみ */
         [SerializeField]
         private DeckController deck;
-
-        /** マップオブジェクト */
-        [SerializeField]
-        private MapController _mapController;
 
         /** 迷路の原点 */
         private Vector3 _mazeOrigin;
@@ -71,8 +68,16 @@ namespace CreatePhase
         public TrapData[] TrapData { get; private set; }
 
         /** トラップ設置中フラグ */
-        [FormerlySerializedAs("IsSettingTrap")]
-        public bool IsSettingTurret;
+        public bool IsSettingTurret { get; private set; }
+
+        /** 設置中トラップのアクセサ */
+        private ATurret _settingTurret;
+
+        /** プレビューのトラップ */
+        private ATurret _previewTurret;
+
+        /** プレビュー中のトラップのアドレス */
+        private TilePosition _previewTurretAddress;
 
         // Start is called before the first frame update
         private void Start()
@@ -86,9 +91,10 @@ namespace CreatePhase
             // セーブデータ読み込み
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();
+            var turretData = SaveController.LoadTurretData();
 
             // 迷路の生成
-            CreateMaze(tileData, trapData);
+            CreateMaze(tileData, trapData, turretData);
 
             // リロールボタンの表示
             reRollButton.Show(ReRollWaitTime);
@@ -111,7 +117,14 @@ namespace CreatePhase
          * 迷路の生成
          * すべてのタイルを生成し、初期化する
          */
-        private void CreateMaze([CanBeNull] TileData[][] tileData, [CanBeNull] TrapData[] trapData = null)
+        private void CreateMaze(
+            [CanBeNull]
+            TileData[][] tileData,
+            [CanBeNull]
+            TrapData[] trapData = null,
+            [CanBeNull]
+            TurretData[] turretData = null
+        )
         {
             // 原点を設定
             _mazeOrigin = new Vector3(-(MazeColumns - 1) / 2.0f, 0,
@@ -153,6 +166,8 @@ namespace CreatePhase
                 }
             }
 
+            Sync();
+
             // ============== トラップ設置 ================
             if (trapData != null)
             {
@@ -167,7 +182,7 @@ namespace CreatePhase
                 for (var i = 0; i < TrapData.Length; i++)
                 {
                     var trap = TrapData[i];
-                    Maze[trap.Row][trap.Column].SetTrap(trapData[i].Trap);
+                    Maze[trap.Row][trap.Column].SetTrap(this, trapData[i].Trap, trapData[i].Angle);
                 }
             }
             else
@@ -175,26 +190,40 @@ namespace CreatePhase
                 SetRandomTrap();
             }
 
+            // ============== タレット設置 ================
+            if (turretData != null)
+            {
+                // タレット情報を設定
+                TurretData = turretData.ToList();
+
+                // タレットを設置
+                foreach (var turret in TurretData)
+                    Maze[turret.Row][turret.Column].SetTurret(turret.Turret, turret.angle);
+            }
+
             // スタートとゴールを設置
             Maze[StartPosition.Row][StartPosition.Col].SetStart();
             Maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
+
+            // スタート・ゴールを迷路にする
+            var roadData = GetRoadAddresses();
+            var startAdjust = GetRoadAdjust(StartPosition.Col, StartPosition.Row, roadData);
+            var goalAdjust = GetRoadAdjust(GoalPosition.Col, GoalPosition.Row, roadData);
+            Maze[StartPosition.Row][StartPosition.Col].SetRoad(startAdjust);
+            Maze[GoalPosition.Row][GoalPosition.Col].SetRoad(goalAdjust);
         }
 
         /**
          * ランダムにトラップを設置
          */
-        public void SetRandomTrap()
+        private void SetRandomTrap()
         {
             // トラップを取得
             var traps = deck.DrowTraps(TrapCount);
             var i = 0;
 
-            // 取得できたトラップ数はトラップ数と異なる場合があるので書き換え
-            TrapCount = traps.Count;
-
-            // トラップ配列を初期化
-            TrapData = new TrapData[TrapCount];
-            createToInvasionData.TrapData = new TrapData[TrapCount];
+            // 一時トラップリストを作成
+            var tempTrapData = new List<TrapData>();
 
             // トラップの設置数分乱数をもとに場所を決定
             foreach (var trap in traps)
@@ -204,22 +233,37 @@ namespace CreatePhase
                 var column = Random.Range(0, MazeColumns);
 
                 var loopCount = 0;
+                var setTrapResult = false;
+
                 // nullの場合は設置できてないので再度設置
                 while (true)
                 {
                     // トラップを設置
-                    var setTrupResult = Maze[row][column].SetTrap(trap.GetTrapName());
+                    setTrapResult = Maze[row][column].SetTrap(this, trap.GetTrapName());
 
                     // 設置できてたらbreak
-                    if (setTrupResult) break;
+                    if (setTrapResult) break;
 
                     // 設置できるものがない等で無限ループになる場合があるので、10回で終了
-                    if (loopCount++ > 10) throw new Exception("Trap setting failed");
+                    if (loopCount++ > 10) break;
                 }
 
+                // 設置できなかった場合はリストに追加せずに次のトラップへ
+                if (!setTrapResult) continue;
+                
+                // 設置したトラップを取得
+                var setTrap = Maze[row][column].Trap;
+
                 // トラップ情報を格納
-                TrapData[i++] = new TrapData(row, column, trap);
+                tempTrapData.Add(new TrapData(row, column, setTrap));
             }
+
+            // トラップ情報を設定
+            TrapData = tempTrapData.ToArray();
+            createToInvasionData.TrapData = TrapData;
+
+            // 実際に設置できたトラップ数を設定
+            TrapCount = tempTrapData.Count;
         }
 
         /**
@@ -257,8 +301,8 @@ namespace CreatePhase
         }
 
         /**
-     * 道制作モードの終了処理
-     */
+         * 道制作モードの終了処理
+         */
         public void EndRoadEdit()
         {
             // 変数確認
@@ -266,10 +310,9 @@ namespace CreatePhase
 
             // 既存の道を削除
             var roadAddresses = GetRoadAddresses();
-            foreach (var address in roadAddresses) Maze[address["row"]][address["col"]].SetNone();
 
             // プレビューを下げる
-            foreach (var address in _previewAddresses) Maze[address["row"]][address["col"]].ResetPreview();
+            foreach (var address in _previewAddresses) Maze[address["row"]][address["col"]].ResetRoadPreview();
 
             var newRoadAddresses = new List<Dictionary<string, int>>();
 
@@ -293,8 +336,11 @@ namespace CreatePhase
                     // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
                     foreach (var address in roadAddresses)
                     {
-                        if (_previewAddresses.Exists(previewAddress =>
-                                previewAddress["col"] == address["col"] && previewAddress["row"] == address["row"]))
+                        if (
+                            _previewAddresses.Exists(previewAddress =>
+                                previewAddress["col"] == address["col"] && previewAddress["row"] == address["row"]) &&
+                            Maze[address["row"]][address["col"]].TileType == TileTypes.Road // 道のみ削除(スタート・ゴールは削除しない)
+                        )
                             continue;
 
                         newRoadAddresses.Add(address);
@@ -306,10 +352,17 @@ namespace CreatePhase
                     throw new ArgumentOutOfRangeException();
             }
 
+            // 道を削除
+            foreach (var address in roadAddresses) Maze[address["row"]][address["col"]].SetNone();
+
+            // 道のアドレス群からタレット設置済みのアドレスを削除
+            newRoadAddresses = newRoadAddresses.FindAll(address =>
+                Maze[address["row"]][address["col"]].HasTurret == false);
+
             // 道を設置
             foreach (var address in newRoadAddresses)
             {
-                if (address == null || !address.ContainsKey("row") || !address.ContainsKey("col")) continue;
+                if (!address.ContainsKey("row") || !address.ContainsKey("col")) continue;
 
                 // つながり肩を取得
                 var roadAdjust = GetRoadAdjust(address["col"], address["row"], newRoadAddresses);
@@ -356,7 +409,7 @@ namespace CreatePhase
             {
                 if (address == null || !address.ContainsKey("row") || !address.ContainsKey("col")) continue;
 
-                Maze[address["row"]][address["col"]].ResetPreview();
+                Maze[address["row"]][address["col"]].ResetRoadPreview();
             }
 
             _previewAddresses.Clear();
@@ -385,7 +438,7 @@ namespace CreatePhase
                 for (var i = 0; i < Mathf.Abs(endRow - startRow); i++)
                 {
                     // タイルの種類を変更
-                    Maze[currentRow][currentCol].SetPreview();
+                    Maze[currentRow][currentCol].SetRoadPreview();
                     // プレビュー用のタイルを追加
                     _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                     // インクリメント
@@ -396,7 +449,7 @@ namespace CreatePhase
                 for (var i = 0; i < Mathf.Abs(endCol - startCol) + 1; i++)
                 {
                     // タイルの種類を変更
-                    Maze[currentRow][currentCol].SetPreview();
+                    Maze[currentRow][currentCol].SetRoadPreview();
                     // プレビュー用のタイルを追加
                     _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                     // インクリメント
@@ -409,7 +462,7 @@ namespace CreatePhase
                 for (var i = 0; i < Mathf.Abs(endCol - startCol); i++)
                 {
                     // タイルの種類を変更
-                    Maze[currentRow][currentCol].SetPreview();
+                    Maze[currentRow][currentCol].SetRoadPreview();
                     // プレビュー用のタイルを追加
                     _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                     // インクリメント
@@ -420,7 +473,7 @@ namespace CreatePhase
                 for (var i = 0; i < Mathf.Abs(endRow - startRow) + 1; i++)
                 {
                     // タイルの種類を変更
-                    Maze[currentRow][currentCol].SetPreview();
+                    Maze[currentRow][currentCol].SetRoadPreview();
                     // プレビュー用のタイルを追加
                     _previewAddresses.Add(new Dictionary<string, int> { ["col"] = currentCol, ["row"] = currentRow });
                     // インクリメント
@@ -443,20 +496,20 @@ namespace CreatePhase
             if (lastCol != col && lastRow != row)
             {
                 // 中継地点を設定
-                Maze[lastRow][col].SetPreview();
+                Maze[lastRow][col].SetRoadPreview();
                 _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = lastRow });
             }
 
             // プレビュー中のタイルに追加
-            Maze[row][col].SetPreview();
+            Maze[row][col].SetRoadPreview();
             _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
         }
 
         // ==================== プライベート関数 ====================
 
         /**
-     * 道のアドレスを取得
-     */
+         * 道のアドレスを取得
+         */
         private List<Dictionary<string, int>> GetRoadAddresses()
         {
             var roadAddresses = new List<Dictionary<string, int>>();
@@ -466,7 +519,9 @@ namespace CreatePhase
             for (var col = 0;
                  col < MazeColumns;
                  col++)
-                if (Maze[row][col].TileType == TileTypes.Road)
+                if (Maze[row][col].TileType == TileTypes.Road ||
+                    Maze[row][col].TileType == TileTypes.Start ||
+                    Maze[row][col].TileType == TileTypes.Goal)
                     roadAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
 
             return roadAddresses;
@@ -477,7 +532,7 @@ namespace CreatePhase
             // プレビュー中のタイルを削除
             foreach (var address in _previewAddresses.Where(address =>
                          address != null && address.ContainsKey("row") && address.ContainsKey("col")))
-                Maze[address["row"]][address["col"]].ResetPreview();
+                Maze[address["row"]][address["col"]].ResetRoadPreview();
 
             _previewAddresses.Clear();
 
@@ -514,10 +569,13 @@ namespace CreatePhase
             }
 
             // トラップ情報を設定
-            for (var i = 0;
-                 i < TrapCount;
-                 i++)
+            for (var i = 0; i < TrapCount; i++)
+            {
                 createToInvasionData.TrapData[i] = TrapData[i];
+            }
+
+            // タレット情報を設定
+            createToInvasionData.TurretData = TurretData.ToArray();
         }
 
         protected override void Sync()
@@ -530,6 +588,15 @@ namespace CreatePhase
             }
 
             SyncMazeData(maze);
+        }
+
+        [CanBeNull]
+        public override ATile GetTile(int row, int column)
+        {
+            if (row < 0 || row >= MazeRows || column < 0 || column >= MazeColumns)
+                return null;
+
+            return Maze[row][column];
         }
 
         /**
@@ -547,6 +614,191 @@ namespace CreatePhase
             }
 
             return result;
+        }
+
+        /**
+         * トラップ設置モードに変換
+         */
+        public void StartSettingTurret(ATurret turretPrefab)
+        {
+            IsSettingTurret = true;
+            _settingTurret = turretPrefab;
+        }
+
+        public void PreviewTurret(int column, int row)
+        {
+            if (!_settingTurret && _settingTurret == null)
+                return;
+
+            // 半透明のトラップを設置
+            if (_previewTurret == null)
+                _previewTurret = Instantiate(_settingTurret,
+                    new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin,
+                    Quaternion.identity);
+            
+            // 設置できるか確認
+            if (Maze[row][column].SettableTurret)
+            {
+                // 効果エリアをプレビュー中
+                SetPreviewTurretEffectArea(_settingTurret, new TilePosition(row, column), 5000);
+            }
+            else
+            {
+                // 置けないので下に赤くする
+                SetPreviewProhibitTurretArea(new TilePosition(row, column), 5000);
+            }
+
+            // トラップの位置を設定
+            _previewTurret.transform.position = new Vector3(column, 0, row) * Environment.TileSize + _mazeOrigin;
+            _previewTurretAddress = new TilePosition(row, column);
+        }
+
+        private void SetPreviewProhibitTurretArea(TilePosition tilePosition, int i)
+        {
+            // 既存のプレビューを削除
+            foreach (var address in _previewAddresses)
+            {
+                var row = address["row"];
+                var col = address["col"];
+                Maze[row][col].ResetAreaPreview();
+            }
+            
+            // 該当エリアを赤くする
+            Maze[tilePosition.Row][tilePosition.Col].SetProhibitedArea();
+            
+            // プレビューの持続時間を設定
+            var delay = General.DelayCoroutine(
+                i / 1000f,
+                () => 
+                    Maze[tilePosition.Row][tilePosition.Col].ResetProhibitedArea()
+                    );
+            StartCoroutine(delay);
+        }
+
+        /**
+         * トラップ設置モードを終了
+         */
+        public void EndSettingTurret()
+        {
+            if (!_settingTurret && _settingTurret == null)
+                return;
+            // トラップ設置モードを終了
+            IsSettingTurret = false;
+
+            // トラップを固定
+            if (Maze[_previewTurretAddress.Row][_previewTurretAddress.Col].SettableTurret)
+            {
+                Maze[_previewTurretAddress.Row][_previewTurretAddress.Col].SetTurret(_settingTurret);
+                // タレット情報を設定
+                TurretData.Add(
+                    new TurretData(_previewTurretAddress.Row, _previewTurretAddress.Col, _settingTurret)
+                );
+            }
+
+
+            // トラップを設置したのでプレビューを削除
+            if (_previewTurret != null)
+            {
+                Destroy(_previewTurret.gameObject);
+                _previewTurret = null;
+            }
+
+            // プレビュー中のエリアを削除
+            foreach (var address in _previewAddresses)
+            {
+                var row = address["row"];
+                var col = address["col"];
+                Maze[row][col].ResetAreaPreview();
+            }
+
+            _previewAddresses.Clear();
+
+            // トラップ設置モードを終了
+            _settingTurret = null;
+        }
+
+        /**
+         * トラップの効果範囲をプレビュー
+         * @param turret プレビューするトラップ
+         * @param origin プレビューの原点
+         * @param duration プレビューの持続時間(ms)　デフォルトは100
+         */
+        public void SetPreviewTurretEffectArea(ATurret turret, TilePosition origin, float duration)
+        {
+            // トラップの効果範囲を取得
+            var effectArea = turret.GetEffectArea();
+
+
+            // 既存のプレビューを削除
+            foreach (var address in _previewAddresses)
+            {
+                var row = address["row"];
+                var col = address["col"];
+                Maze[row][col].ResetAreaPreview();
+            }
+
+            // 効果範囲がない場合は全エリア
+            if (effectArea == null)
+            {
+                for (var row = 0; row < MazeRows; row++)
+                for (var col = 0; col < MazeColumns; col++)
+                {
+                    // プレビュー中のタイルを取得
+                    var previewTile = Maze[row][col];
+
+                    // プレビュー中のタイルを設定
+                    previewTile.SetAreaPreview();
+
+                    // リストに追加
+                    _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
+
+                    // プレビューの持続時間を設定
+                    var delay = General.DelayCoroutine(duration / 1000f, () => previewTile.ResetAreaPreview());
+                    StartCoroutine(delay);
+                }
+
+                return;
+            }
+
+
+            // トラップの効果範囲をプレビュー
+            foreach (var tilePosition in effectArea)
+            {
+                // 絶対座標を取得
+                var row = origin.Row + tilePosition.Row;
+                var col = origin.Col + tilePosition.Col;
+
+                // 範囲外の場合はスキップ
+                if (row < 0 || row >= MazeRows || col < 0 || col >= MazeColumns) continue;
+
+                // プレビュー中のタイルを取得
+                var previewTile = Maze[row][col];
+
+                // プレビュー中のタイルを設定
+                previewTile.SetAreaPreview();
+
+                // リストに追加
+                _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
+
+                // プレビューの持続時間を設定
+                var delay = General.DelayCoroutine(duration / 1000f, () => previewTile.ResetAreaPreview());
+                StartCoroutine(delay);
+            }
+        }
+
+        /**
+         * turretデータを更新
+         * 同じ場所のやつが合ったら書き換え、そうじゃなきゃついか
+         */
+        public void UpdateTurretData(TurretData turretData)
+        {
+            foreach (var data in TurretData.Where(
+                         data => data.Row == turretData.Row && data.Column == turretData.Column))
+            {
+                TurretData.Remove(data);
+                TurretData.Add(turretData);
+                return;
+            }
         }
     }
 }
