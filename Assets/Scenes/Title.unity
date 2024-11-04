@@ -534,6 +534,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testText: {fileID: 1528415218}
+  up: 0.6
+  randUP: 0.1
+  randDwn: 0.7
+  BiggerD: 80
+  BiggerAU: 70
   tmpInfo: {fileID: 1528415216}
   _seed: 41245
 --- !u!114 &270619235
@@ -2078,6 +2083,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testText: {fileID: 0}
+  up: 0.6
+  randUP: 0.1
+  randDwn: 0.7
+  BiggerD: 80
+  BiggerAU: 70
   tmpInfo: {fileID: 0}
   _seed: 1234
 --- !u!114 &1189043329
@@ -2279,6 +2289,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testText: {fileID: 1711959858}
+  up: 0.6
+  randUP: 0.1
+  randDwn: 0.7
+  BiggerD: 80
+  BiggerAU: 70
   tmpInfo: {fileID: 1711959856}
   _seed: 1234
 --- !u!114 &1387138553
@@ -3098,6 +3113,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testText: {fileID: 752176224}
+  up: 0.6
+  randUP: 0.1
+  randDwn: 0.7
+  BiggerD: 80
+  BiggerAU: 70
   tmpInfo: {fileID: 752176222}
   _seed: 22031
 --- !u!212 &1856307399
@@ -3293,7 +3313,7 @@ GameObject:
   - component: {fileID: 1923380610}
   - component: {fileID: 1923380609}
   m_Layer: 0
-  m_Name: Vol_A
+  m_Name: GlitchEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3526,6 +3546,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testText: {fileID: 276957555}
+  up: 0.6
+  randUP: 0.1
+  randDwn: 0.7
+  BiggerD: 80
+  BiggerAU: 70
   tmpInfo: {fileID: 276957553}
   _seed: 56111
 --- !u!114 &2010590870
