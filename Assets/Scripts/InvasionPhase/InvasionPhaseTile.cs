@@ -18,6 +18,9 @@ namespace InvasionPhase
         private int _prevTime;
 
         // ======== 燃焼床系の処理 =========
+        [SerializeField]
+        private GameObject igniteEffect;
+        private GameObject igniteObject;
         public bool IsIgniteFloor { get; private set; }
         public int IgniteDamage { get; private set; }
         public int IgniteDuration { get; private set; }
@@ -119,8 +122,21 @@ namespace InvasionPhase
             IgniteDamage = igniteDamage;
             IgniteDuration = igniteDuration;
 
-            // とりあえずタイル赤くする
-            SetColor(Color.red);
+            // 燃焼床のエフェクトを生成
+            igniteObject = Instantiate(igniteEffect, transform);
+            igniteObject.transform.localPosition = new Vector3(0, 0, 0.005f);
+            
+            // 時間後に燃焼床を解除
+            var igniteCoroutine = General.DelayCoroutineByGameTime(
+                sceneController,
+                igniteDuration,
+                () =>
+                {
+                    IsIgniteFloor = false;
+                    Destroy(igniteObject);
+                }
+            );
+            StartCoroutine(igniteCoroutine);
         }
 
         private void FixedUpdate()
@@ -168,9 +184,6 @@ namespace InvasionPhase
             IsWarpHole = true;
             WarpHoleDestination = destinationPosition;
             
-            // とりあえずタイルの色を変える
-            SetColor(Color.cyan);
-            
             // 一定時間後にワープホールを解除
             _warpHoleCoroutine = General.DelayCoroutineByGameTime(
                 _sceneController,
@@ -178,7 +191,6 @@ namespace InvasionPhase
                 () =>
                 {
                     IsWarpHole = false;
-                    ResetColor();
                 }
             );
             StartCoroutine(_warpHoleCoroutine);
