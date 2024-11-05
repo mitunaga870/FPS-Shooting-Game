@@ -1,8 +1,12 @@
 using System;
 using AClass;
+using CreatePhase.UI;
+using DataClass;
 using Enums;
 using lib;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 namespace CreatePhase
@@ -22,12 +26,13 @@ namespace CreatePhase
 
         /** プレビュー中フラグ */
         public bool isPreview;
-        
-        /** トラップが設定されているか */
-        private bool _hasTrap = false;
+
+        private IMouseEvent _mouseEventImplementation;
+        public bool HasTurret => hasTurret;
+
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             // 初期状態指定
             _continuousClickFlag = false;
@@ -37,17 +42,60 @@ namespace CreatePhase
             // ゲームオブジェクトとしてトラップを取得
         }
 
-        /**
-     * クリック時にタイルの種類を変更開始・終了する
-     */
         private void OnMouseOver()
         {
-            // トラップ設置中の場合は処理しない
-            if (_mazeCreationController.IsSettingTurret) return;
             // UIでブロックされている場合は処理しない
             if (General.IsPointerOverUIObject()) return;
+
+            // ======== トラップ設置用処理 =========
+
+            // トラップ設置中の場合はトラップのプレビューを表示
+            if (_mazeCreationController.IsSettingTurret)
+            {
+                _mazeCreationController.PreviewTurret(Column, Row);
+
+                return;
+            }
+
+            if (hasTurret && Input.GetMouseButtonDown(0))
+            {
+                // タレットを回転
+                Turret.Rotate();
+
+                // タレット情報を上書き
+                _mazeCreationController.UpdateTurretData(
+                    new TurretData(Row, Column, Turret)
+                );
+
+                // プレビュー
+                _mazeCreationController.SetPreviewTurretEffectArea(
+                    Turret,
+                    new TilePosition(Row, Column),
+                    1000
+                );
+
+                return;
+            }
+            else if (hasTurret && Input.GetMouseButtonDown(1))
+            {
+                // TODO: タレット削除処理
+                _mazeCreationController.SetPreviewTurretEffectArea(
+                    Turret,
+                    new TilePosition(Row, Column),
+                    1000
+                );
+
+                return;
+            }
+
+
+            // ======== 道路設置用処理 =========
+
             // 連続入力を防ぐ
             if (_continuousClickFlag) return;
+
+            // タレットが設置されている場合は処理しない
+            if (hasTurret) return;
 
             // タイルの種類を道と道路でトグル
             if (!_mazeCreationController.IsEditingRoad && Input.GetMouseButton(0))
@@ -92,12 +140,16 @@ namespace CreatePhase
 
 
         /**
-     * プレビュー用
-     */
+         * プレビュー用
+         */
         private void OnMouseEnter()
         {
             // トラップ設置中の場合は処理しない
             if (_mazeCreationController.IsSettingTurret) return;
+
+            // タレットがある時は処理しない
+            if (hasTurret) return;
+
             // UIでブロックされている場合は処理しない
             if (General.IsPointerOverUIObject()) return;
 
@@ -105,13 +157,9 @@ namespace CreatePhase
             if (!_mazeCreationController.IsEditingRoad) return;
 
             if (_mazeCreationController.IsOneStrokeMode)
-            {
                 _mazeCreationController.PreviewOneStrokeMode(Column, Row);
-            }
             else
-            {
                 _mazeCreationController.PreviewRoadEdit(Column, Row);
-            }
 
             // 連続入力を防ぐ
             if (_continuousMouseEnterFlag) return;
@@ -130,11 +178,11 @@ namespace CreatePhase
      */
         public void Initialize(MazeCreationController mazeCreationController, int row, int column)
         {
-            if (this._mazeCreationController != null) throw new Exception("Already initialized.");
+            if (_mazeCreationController != null) throw new Exception("Already initialized.");
 
-            this._mazeCreationController = mazeCreationController;
-            this.Row = row;
-            this.Column = column;
+            _mazeCreationController = mazeCreationController;
+            Row = row;
+            Column = column;
         }
 
         public void Initialize(
@@ -151,6 +199,8 @@ namespace CreatePhase
             switch (tileType)
             {
                 case TileTypes.Road:
+                case TileTypes.Goal:
+                case TileTypes.Start:
                     SetRoad(roadAdjust);
                     break;
             }
@@ -160,7 +210,7 @@ namespace CreatePhase
         /**
      * プレビュー中のフラグを立てる
      */
-        public void SetPreview()
+        public void SetRoadPreview()
         {
             // 既にプレビュー中の場合は処理しない
             if (isPreview) return;
@@ -174,7 +224,7 @@ namespace CreatePhase
         /**
      * プレビュー中のフラグを下ろす
      */
-        public void ResetPreview()
+        public void ResetRoadPreview()
         {
             // プレビュー中でない場合は処理しない
             if (!isPreview) return;
@@ -191,8 +241,8 @@ namespace CreatePhase
         public ATrap SetRandTrap()
         {
             // 既に道・トラップが設定されている場合は処理しない
-            if (_hasTrap) return null;
-            _hasTrap = true;
+            if (hasTrap) return null;
+            hasTrap = true;
 
             var traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
             ATrap trap = null;

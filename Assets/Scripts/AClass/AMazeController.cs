@@ -56,6 +56,9 @@ namespace AClass
 
         private int _placedTrapCount = -1;
 
+        /** 設置したトラップデータ */
+        public List<TurretData> TurretData { get; protected set; } = new();
+
         private void Awake()
         {
             // セーブデータからステージデータをとる
@@ -174,7 +177,13 @@ namespace AClass
 
             // 隣接が道かつ、パスに含まれていない場合のみ追加
             // 上
-            if (tilePosition.Row - 1 >= 0 && Maze[tilePosition.Row - 1][tilePosition.Col].TileType == TileTypes.Road &&
+            if (tilePosition.Row - 1 >= 0 &&
+                (
+                    Maze[tilePosition.Row - 1][tilePosition.Col].TileType == TileTypes.Road ||
+                    Maze[tilePosition.Row - 1][tilePosition.Col].TileType == TileTypes.Start ||
+                    Maze[tilePosition.Row - 1][tilePosition.Col].TileType == TileTypes.Goal
+                )
+                &&
                 !path.Contains(tilePosition.Row - 1, tilePosition.Col))
             {
                 nextTile[index] = new TilePosition(tilePosition.Row - 1, tilePosition.Col);
@@ -183,7 +192,11 @@ namespace AClass
 
             // 下
             if (tilePosition.Row + 1 < MazeRows &&
-                Maze[tilePosition.Row + 1][tilePosition.Col].TileType == TileTypes.Road &&
+                (
+                    Maze[tilePosition.Row + 1][tilePosition.Col].TileType == TileTypes.Road ||
+                    Maze[tilePosition.Row + 1][tilePosition.Col].TileType == TileTypes.Start ||
+                    Maze[tilePosition.Row + 1][tilePosition.Col].TileType == TileTypes.Goal
+                ) &&
                 !path.Contains(tilePosition.Row + 1, tilePosition.Col))
             {
                 nextTile[index] = new TilePosition(tilePosition.Row + 1, tilePosition.Col);
@@ -191,7 +204,12 @@ namespace AClass
             }
 
             // 左
-            if (tilePosition.Col - 1 >= 0 && Maze[tilePosition.Row][tilePosition.Col - 1].TileType == TileTypes.Road &&
+            if (tilePosition.Col - 1 >= 0 &&
+                (
+                    Maze[tilePosition.Row][tilePosition.Col - 1].TileType == TileTypes.Road ||
+                    Maze[tilePosition.Row][tilePosition.Col - 1].TileType == TileTypes.Start ||
+                    Maze[tilePosition.Row][tilePosition.Col - 1].TileType == TileTypes.Goal
+                ) &&
                 !path.Contains(tilePosition.Row, tilePosition.Col - 1))
             {
                 nextTile[index] = new TilePosition(tilePosition.Row, tilePosition.Col - 1);
@@ -200,7 +218,11 @@ namespace AClass
 
             // 右
             if (tilePosition.Col + 1 < MazeColumns &&
-                Maze[tilePosition.Row][tilePosition.Col + 1].TileType == TileTypes.Road &&
+                (
+                    Maze[tilePosition.Row][tilePosition.Col + 1].TileType == TileTypes.Road ||
+                    Maze[tilePosition.Row][tilePosition.Col + 1].TileType == TileTypes.Start ||
+                    Maze[tilePosition.Row][tilePosition.Col + 1].TileType == TileTypes.Goal
+                ) &&
                 !path.Contains(tilePosition.Row, tilePosition.Col + 1))
             {
                 nextTile[index] = new TilePosition(tilePosition.Row, tilePosition.Col + 1);
@@ -353,5 +375,11 @@ namespace AClass
             else
                 return RoadAdjust.NoAdjust;
         }
+
+        /**
+         * 外部からタイルを取得する
+         */
+        [CanBeNull]
+        public abstract ATile GetTile(int row, int column);
     }
 }
