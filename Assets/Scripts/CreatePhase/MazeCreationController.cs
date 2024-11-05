@@ -700,16 +700,10 @@ namespace CreatePhase
             if (_previewTurret != null)
             {
                 Destroy(_previewTurret.gameObject);
-                _previewTurret = null;
             }
 
             // プレビュー中のエリアを削除
-            foreach (var address in _previewAddresses)
-            {
-                var row = address["row"];
-                var col = address["col"];
-                Maze[row][col].ResetAreaPreview();
-            }
+            HideEffectRange();
 
             _previewAddresses.Clear();
 
@@ -726,8 +720,7 @@ namespace CreatePhase
         public void SetPreviewTurretEffectArea(ATurret turret, TilePosition origin, float duration)
         {
             // トラップの効果範囲を取得
-            var effectArea = turret.GetEffectArea();
-
+            var effectArea = turret.GetAbsoluteEffectArea(origin);
 
             // 既存のプレビューを削除
             foreach (var address in _previewAddresses)
@@ -736,54 +729,9 @@ namespace CreatePhase
                 var col = address["col"];
                 Maze[row][col].ResetAreaPreview();
             }
-
-            // 効果範囲がない場合は全エリア
-            if (effectArea == null)
-            {
-                for (var row = 0; row < MazeRows; row++)
-                for (var col = 0; col < MazeColumns; col++)
-                {
-                    // プレビュー中のタイルを取得
-                    var previewTile = Maze[row][col];
-
-                    // プレビュー中のタイルを設定
-                    previewTile.SetAreaPreview();
-
-                    // リストに追加
-                    _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
-
-                    // プレビューの持続時間を設定
-                    var delay = General.DelayCoroutine(duration / 1000f, () => previewTile.ResetAreaPreview());
-                    StartCoroutine(delay);
-                }
-
-                return;
-            }
-
-
-            // トラップの効果範囲をプレビュー
-            foreach (var tilePosition in effectArea)
-            {
-                // 絶対座標を取得
-                var row = origin.Row + tilePosition.Row;
-                var col = origin.Col + tilePosition.Col;
-
-                // 範囲外の場合はスキップ
-                if (row < 0 || row >= MazeRows || col < 0 || col >= MazeColumns) continue;
-
-                // プレビュー中のタイルを取得
-                var previewTile = Maze[row][col];
-
-                // プレビュー中のタイルを設定
-                previewTile.SetAreaPreview();
-
-                // リストに追加
-                _previewAddresses.Add(new Dictionary<string, int> { ["col"] = col, ["row"] = row });
-
-                // プレビューの持続時間を設定
-                var delay = General.DelayCoroutine(duration / 1000f, () => previewTile.ResetAreaPreview());
-                StartCoroutine(delay);
-            }
+            
+            // プレビューを設定
+            ShowEffectRange(effectArea, duration);
         }
 
         /**

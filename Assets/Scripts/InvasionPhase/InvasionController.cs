@@ -74,13 +74,22 @@ namespace InvasionPhase
         /**
          * ゲームの状態
          */
-        // ReSharper disable once MemberCanBePrivate.Global
         public GameState GameState { get; private set; } = GameState.BeforeStart;
 
         /**
          * ゲーム時間
          */
         public int GameTime { get; private set; }
+        
+        /**
+         * スロー用のバッファ
+         */
+        private int _slowBuffer = 0;
+        
+        /**
+         * スロー再生時の減速率
+         */
+        private const int SLOW_SPEED = 2;
 
         /**
          * プレイヤーHP
@@ -96,7 +105,12 @@ namespace InvasionPhase
          * ゲーム終了時のフラグ
          */
         private bool _isApplicateQuit = false;
-
+        
+        // =============== スキル用変数 =====================
+        private bool _isSkillMode;
+        public ASkill Skill;
+        // =================================================
+        
         // Start is called before the first frame update
         public void Start()
         {
@@ -152,6 +166,13 @@ namespace InvasionPhase
                     {
                         GameTime++;
                         delayTimeStack = 0;
+                    }
+                    
+                    // 右クリックでキャンセル
+                    if (Input.GetMouseButtonDown(1))
+                    {
+                        _isSkillMode = false;
+                        GameState = GameState.Playing;
                     }
 
                     break;
@@ -299,9 +320,29 @@ namespace InvasionPhase
             }
         }
 
-        public async void SetSkillMode(ASkill _skill)
+        public void SetSkillMode(ASkill skill)
         {
             GameState = GameState.Selecting;
+            
+            Skill = skill;
+            _isSkillMode = true;
+        }
+        
+        public void UseSkill(TilePosition position)
+        {
+            if (!_isSkillMode) return;
+            
+            mazeController.HideEffectRange();
+            
+            Skill.UseSkill(
+                position, 
+                this,
+                mazeController,
+                invasionEnemyController
+            );
+            
+            _isSkillMode = false;
+            GameState = GameState.Playing;
         }
     }
 }

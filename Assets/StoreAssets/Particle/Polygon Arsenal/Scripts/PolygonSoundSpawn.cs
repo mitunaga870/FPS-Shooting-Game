@@ -15,7 +15,7 @@ namespace PolygonArsenal
         public float pitchRandomMultiplier = 1f;
 
         // Use this for initialization
-        void Start()
+        public void IgnitionAction()
         {
             //Spawn the sound object
             GameObject m_Sound = Instantiate(prefabSound, transform.position, Quaternion.identity);

@@ -102,7 +102,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5000001
   m_Height: 2
@@ -120,5 +120,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd26a5148b9745ee9794a42aca880c29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  c2IData: {fileID: 11400000, guid: 66aec002291057341bcb6f1da637634b, type: 2}
-  mazeController: {fileID: 0}

@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using AClass;
 using DataClass;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Turrets
 {
@@ -17,8 +17,9 @@ namespace Turrets
 
         private bool _isAwaken;
         
+        [FormerlySerializedAs("_trapFanIgnitionAction")]
         [SerializeField]
-        TrapFan_IgnitionAction _trapFanIgnitionAction;
+        TrapFan_IgnitionAction trapFanIgnitionAction;
 
         public override float GetHeight()
         {
@@ -31,12 +32,12 @@ namespace Turrets
             
             foreach (var enemy in enemies) enemy.Slow(SlowPercentage, SlowDuration);
             
-            _trapFanIgnitionAction.IgnitionAction();
+            trapFanIgnitionAction.IgnitionAction();
         }
 
         public override List<TilePosition> GetEffectArea()
         {
-            var BaseList = new List<TilePosition>()
+            var baseList = new List<TilePosition>()
             {
                 new(0, 1),
                 new(0, 2),
@@ -47,7 +48,7 @@ namespace Turrets
             var result = new List<TilePosition>();
 
             // 角度によってエフェクトエリアを変更
-            foreach (var position in BaseList) result.Add(position.Rotate(Angle));
+            foreach (var position in baseList) result.Add(position.Rotate(Angle));
 
             return result;
         }
@@ -72,12 +73,17 @@ namespace Turrets
             if (!_isAwaken) return;
             _isAwaken = false;
             
-            _trapFanIgnitionAction.StopAction();
+            trapFanIgnitionAction.StopAction();
         }
 
         protected override int GetDuration()
         {
             return EffectDuration;
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return 0;
         }
     }
 }

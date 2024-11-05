@@ -28,10 +28,8 @@ namespace Traps
 
         public override void AwakeTrap(TilePosition position)
         {
-            if (enemyController == null || mazeController == null) return;
+            if (EnemyController == null || MazeController == null) return;
             
-            var currentPos = transform.position;
-
             // チャージ中は無効
             if (0 < ChargeTime) return;
 
@@ -65,31 +63,34 @@ namespace Traps
                 }
             }
             
+            // ダメージ取得
+            var damage = GetDamage();
+            
             var firstCoroutine = General.DelayCoroutineByGameTime(
-                sceneController,
+                SceneController,
                 time,
-                () => { enemyController.DamageEnemy(targetTiles[1], Damage); });
+                () => { EnemyController.DamageEnemy(targetTiles[1], damage); });
             var secondCoroutine = General.DelayCoroutineByGameTime(
-                sceneController,
+                SceneController,
                 time * 2,
-                () => enemyController.DamageEnemy(targetTiles[2], Damage)
+                () => EnemyController.DamageEnemy(targetTiles[2], damage)
             );
             var thirdCoroutine = General.DelayCoroutineByGameTime(
-                sceneController,
+                SceneController,
                 time * 3,
-                () => enemyController.DamageEnemy(targetTiles[3], Damage)
+                () => EnemyController.DamageEnemy(targetTiles[3], damage)
             );
             
             // 車の最後のタイルの座標を取得
-            var lastTilePosition = targetTiles[^1].ToVector3(mazeController.MazeOrigin);
+            var lastTilePosition = targetTiles[^1].ToVector3(MazeController.MazeOrigin);
 
-            Debug.Log("mazeOrigin: " + mazeController.MazeOrigin);
+            Debug.Log("mazeOrigin: " + MazeController.MazeOrigin);
             Debug.Log("destination: " + lastTilePosition);
 
             // 車のアニメーション
             trapBeetleIgnitionAction.IgnitionAction(lastTilePosition, Duration * 0.02f);
 
-            enemyController.DamageEnemy(targetTiles[0], Damage);
+            EnemyController.DamageEnemy(targetTiles[0], damage);
             StartCoroutine(firstCoroutine);
             StartCoroutine(secondCoroutine);
             StartCoroutine(thirdCoroutine);
@@ -121,6 +122,11 @@ namespace Traps
         public override void SetAngle(int trapAngle)
         {
             _angle = trapAngle;
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return Damage;
         }
     }
 }

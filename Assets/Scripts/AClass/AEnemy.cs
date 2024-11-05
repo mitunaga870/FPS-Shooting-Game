@@ -49,7 +49,7 @@ namespace AClass
 
         private int _prevTime;
 
-        private EnemyStatus _status;
+        private EnemyCCStatus _ccStatus;
 
         // ============= ジャンプ用変数 =============
         private int _jumpDamage;
@@ -57,21 +57,26 @@ namespace AClass
         // ========================================
 
         // ============= ノックバック用変数 =============
-        private const int _KnockBackSpeed = 10;
+        private const int KnockBackSpeed = 10;
         private TilePosition _knockBackDestination;
+        private int _knockBackStunTime;
         // ============================================
 
         // ============= ポイズン用変数 =============
-        private bool _hasPoison = false;
+        private bool _hasPoison;
         private int _poisonLevel;
         private int _poisonDamage;
-        private int _poisonDuration = 0;
+        private int _poisonDuration;
         // ============================================
 
         // ============= スロー用変数 =============
-        private bool _hasSlow = false;
+        private bool _hasSlow;
         private float _slowPercentage;
         private int _slowDuration;
+        // ============================================
+        
+        // ============= ペラペラ用変数 =============
+        private int _stunDuration;
         // ============================================
 
         /**
@@ -107,7 +112,7 @@ namespace AClass
                 // 効果時間が時間差分より小さい場合は効果時間を使う
                 var damage = _poisonDamage * (timeDiff < _poisonDuration ? timeDiff : _poisonDuration);
                 // ダメージ処理
-                Damage((int)damage);
+                Damage(damage);
                 // 残り時間を減らす
                 _poisonDuration -= timeDiff;
                 // 残り時間が0以下になった場合は解除
@@ -128,21 +133,59 @@ namespace AClass
                 // 効果時間が時間差分より小さい場合は効果時間を使う
                 var damage = igniteDamage * (timeDiff < igniteDuration ? timeDiff : igniteDuration);
                 // ダメージ処理
-                Damage((int)damage);
+                Damage(damage);
+            }
+            
+            // テレポート処理
+            if (_mazeController.IsTeleport(CurrentPosition))
+            {
+                var tile = (InvasionPhaseTile)_mazeController.GetTile(CurrentPosition.Row, CurrentPosition.Col);
+                if (tile == null) throw new Exception("Tile is null");
 
-                Debug.Log("ignite Damage: " + igniteDamage + " total damage: " + damage);
+                // テレポート先を取得
+                var teleportDestination = tile.WarpHoleDestination;
+                // テレポート先がない場合はエラー
+                if (teleportDestination == null) throw new Exception("Teleport destination is null");
+
+                // テレポート先に移動
+                transform.position = teleportDestination.ToVector3(mazeOrigin);
+                // 現在地を更新
+                CurrentPosition = teleportDestination;
+                
+                // ルートを消去
+                Path = null;
+            }
+            
+            // ノックバック床処理
+            if (_mazeController.IsKnockBack(CurrentPosition))
+            {
+                var tile = (InvasionPhaseTile)_mazeController.GetTile(CurrentPosition.Row, CurrentPosition.Col);
+                if (tile == null) throw new Exception("Tile is null");
+
+                // ノックバック情報を取得
+                var knockBackDistance = tile.KnockBackDistance;
+                var knockBackStunTime = tile.KnockBackStunTime;
+
+                // ノックバック処理
+                KnockBack(knockBackDistance, knockBackStunTime);
+                
+                // ノックバック床を解除
+                tile.ReleaseKnockBack();
             }
 
-            switch (_status)
+            switch (_ccStatus)
             {
-                case EnemyStatus.None:
+                case EnemyCCStatus.None:
                     Moving(time, timeDiff, mazeOrigin);
                     break;
-                case EnemyStatus.Jumping:
+                case EnemyCCStatus.Jumping:
                     Jumping(time, timeDiff, mazeOrigin);
                     break;
-                case EnemyStatus.KnockBacking:
-                    KnockBacking(time, timeDiff, mazeOrigin);
+                case EnemyCCStatus.KnockBacking:
+                    KnockBacking(timeDiff, mazeOrigin);
+                    break;
+                case EnemyCCStatus.Stun:
+                    Flipping(timeDiff);
                     break;
             }
 
@@ -166,16 +209,17 @@ namespace AClass
             if (Path == null)
             {
                 Path = _mazeController.GetShortestPath(CurrentPosition, Destination);
+                
+                // 経緯がないときはエラー
+                if (Path == null) throw new ArgumentNullException($"Cant find path from {CurrentPosition} to {Destination}");
 
                 // 位置をタイルの中心に補正
+                // ReSharper disable once InconsistentNaming
                 var _localTransform = transform;
-                var _position = _localTransform.position;
-                _position = Path.Get(0).ToVector3(mazeOrigin);
+                // ReSharper disable once InconsistentNaming
+                var _position = Path.Get(0).ToVector3(mazeOrigin);
                 _localTransform.position = _position;
             }
-
-            // 経路がない場合はエラー
-            if (Path == null) throw new ArgumentNullException($"Cant find path to destination.");
 
             // 現在のパス番号がない場合はエラー
             var pathIndex = CurrentPathIndex ?? throw new ArgumentNullException($"Cant find current path index.");
@@ -184,6 +228,16 @@ namespace AClass
             var currentTileCoordinate = CurrentPosition.ToVector3(mazeOrigin);
             var nextTilePosition = Path.Get(pathIndex + 1);
             var nextTileCoordinate = nextTilePosition.ToVector3(mazeOrigin);
+            
+            // 次のタイルがブロックエリアの時は今のタイルにとどまらせる
+            if (_mazeController.GetTile(nextTilePosition)!.IsBlockArea)
+            {
+                // 現在のタイル位置に強制移動
+                transform.position = currentTileCoordinate;
+                
+                // 移動させない
+                return;
+            }
 
             var localTransform = transform;
 
@@ -204,6 +258,14 @@ namespace AClass
                     _slowDuration = 0;
                     _hasSlow = false;
                 }
+            }
+            // 鈍化タイル上の場合はスロー処理
+            if (_mazeController.IsSlow(CurrentPosition))
+            {
+                // 対象タイルを取得
+                var tile = (InvasionPhaseTile)_mazeController.GetTile(CurrentPosition.Row, CurrentPosition.Col);
+
+                if (tile != null) moveAmount *= 1 - tile.SlowAreaPower;
             }
 
             var position = localTransform.position;
@@ -265,7 +327,7 @@ namespace AClass
             if (position.y <= 0)
             {
                 // ジャンプ中フラグを解除
-                _status = EnemyStatus.None;
+                _ccStatus = EnemyCCStatus.None;
 
                 // ダメージ処理
                 Damage(_jumpDamage);
@@ -276,17 +338,18 @@ namespace AClass
          * ノックバック中処理
          */
         private void KnockBacking(
-            int time,
             int timeDiff,
             Vector3 mazeOrigin)
         {
+            if (CurrentPosition == null) throw new Exception("Current position is null");
+            
             // 現在と目的地のタイル位置を取得
             var startTileCoordinate = CurrentPosition.ToVector3(mazeOrigin);
             var destinationPosition = _knockBackDestination;
             var nextTileCoordinate = destinationPosition.ToVector3(mazeOrigin);
 
             // 目的地まで等速で移動
-            var moveAmount = (nextTileCoordinate - startTileCoordinate) / 1000 * (_KnockBackSpeed * timeDiff);
+            var moveAmount = (nextTileCoordinate - startTileCoordinate) / 1000 * (KnockBackSpeed * timeDiff);
 
             var localTransform = transform;
 
@@ -301,8 +364,29 @@ namespace AClass
                 // 現在地を更新
                 CurrentPosition = destinationPosition;
                 // ノックバック中フラグを解除
-                _status = EnemyStatus.None;
+                _ccStatus = EnemyCCStatus.None;
+                // スタンタイムがある時はスタン
+                if (_knockBackStunTime <= 0) return;
+                Stun(_knockBackStunTime);
+                _knockBackStunTime = 0;
             }
+        }
+
+        /**
+         * ペラペラ中処理
+         */
+        private void Flipping(
+            int timeDiff
+        )
+        {
+            // ペラペラ中は動かない
+            if (CurrentPosition == null) throw new Exception("Current position is null");
+            
+            _stunDuration -= timeDiff;
+            
+            // ペラペラ中フラグを解除
+            if (_stunDuration <= 0)
+                _ccStatus = EnemyCCStatus.None;
         }
 
         /**
@@ -358,10 +442,10 @@ namespace AClass
         public void Jump(int height, int damage)
         {
             // ジャンプ中は何もしない
-            if (_status != EnemyStatus.None) return;
+            if (_ccStatus != EnemyCCStatus.None) return;
 
             // ジャンプ中フラグを立てる
-            _status = EnemyStatus.Jumping;
+            _ccStatus = EnemyCCStatus.Jumping;
 
             // ジャンプ情報を登録
             _jumpDamage = damage;
@@ -370,13 +454,15 @@ namespace AClass
             _jumpSpeed = Mathf.Sqrt(2 * Gravity * height);
         }
 
-        public void KnockBack(int distance)
+        public void KnockBack(int distance, int stunTime)
         {
             // knockバック中は何もしない
-            if (_status != EnemyStatus.None) return;
+            if (_ccStatus != EnemyCCStatus.None) return;
+            
+            _knockBackStunTime = stunTime;
 
             // ノックバック中フラグを立てる
-            _status = EnemyStatus.KnockBacking;
+            _ccStatus = EnemyCCStatus.KnockBacking;
 
             // 現在パスがない場合はエラー
             if (Path == null) throw new Exception("Current path index is null");
@@ -433,7 +519,7 @@ namespace AClass
         public void SetDestination(TilePosition setPosition)
         {
             // 同じ目的地の場合は何もしない
-            if (Destination.Equals(setPosition)) return;
+            if (Destination != null && Destination.Equals(setPosition)) return;
             
             // 目的地を設定
             Destination = setPosition;
@@ -464,6 +550,34 @@ namespace AClass
             _hasSlow = true;
             _slowPercentage = slowPercentage;
             _slowDuration = duration;
+        }
+
+        public void Stun(int duration)
+        {
+            // CCチェインはしない
+            if ( _ccStatus != EnemyCCStatus.None) return;
+            
+            // ペラペラ中フラグを立てる
+            _ccStatus = EnemyCCStatus.Stun;
+            _stunDuration = duration;
+        }
+
+        public void ResetPath()
+        {
+            Path = null;
+        }
+
+        // パスを再計算してあれば更新
+        public void ReCalculationPath()
+        {
+            // パスを再計算
+            var path = _mazeController.GetShortestPath(CurrentPosition, Destination, true);
+            if (path == null) return;
+            
+            // 初期位置に強制移動
+            transform.position = CurrentPosition!.ToVector3(_mazeController.MazeOrigin);
+            
+            Path = path;
         }
     }
 }

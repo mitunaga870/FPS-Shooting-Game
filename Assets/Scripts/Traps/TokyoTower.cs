@@ -21,7 +21,7 @@ namespace Traps
         public override void AwakeTrap(TilePosition position)
         {
             // エネミーコントローラーがない場合は何もしない
-            if (enemyController == null) return;
+            if (EnemyController == null) return;
 
             // クールダウン中は何もしない
             if (ChargeTime > 0) return;
@@ -32,8 +32,10 @@ namespace Traps
             // アニメーションを再生
             IgnitionAction();
 
-            enemyController.DamageEnemy(position, Damage);
-            enemyController.KnockBackEnemy(position, KnockBack);
+            var damage = GetDamage();
+
+            EnemyController.DamageEnemy(position, damage);
+            EnemyController.KnockBackEnemy(position, KnockBack);
         }
 
         private void IgnitionAction()
@@ -86,6 +88,11 @@ namespace Traps
 
         public override void SetAngle(int trapAngle)
         {
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return Damage;
         }
     }
 }

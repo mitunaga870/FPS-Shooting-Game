@@ -1,14 +1,11 @@
 #nullable enable
-using System;
 using System.Collections.Generic;
-using CreatePhase;
 using DataClass;
 using Enums;
 using InvasionPhase;
-using JetBrains.Annotations;
+using lib;
 using ScriptableObjects;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 #pragma warning disable CS8618 // null 非許容のフィールドには、コンストラクターの終了時に null 以外の値が入っていなければなりません。Null 許容として宣言することをご検討ください。
 
@@ -17,9 +14,10 @@ namespace AClass
     public abstract class ATurret : MonoBehaviour
     {
         [SerializeField]
+        // ReSharper disable once NotAccessedField.Global
         protected TurretObject turretObject;
 
-        protected InvasionController sceneController;
+        protected InvasionController SceneController;
 
         protected InvasionEnemyController EnemyController;
 
@@ -31,24 +29,27 @@ namespace AClass
 
         protected Phase Phase;
 
-        public int Angle { get; protected set; } = 0;
+        public int Angle { get; protected set; }
 
-        private int chargeTime;
+        private int _chargeTime;
 
-        private int prevTime = 0;
+        private int _prevTime;
         
-        private int effectTime = 0;
+        private int _effectTime;
         
         private bool _isFistAwake = true;
 
         protected TilePosition SetPosition { get; private set; }
+        
+        /** バフダメージ */
+        protected int AmpDamage { get; private set; }
         
         /**
          * 初期化処理
          */
         private void Start()
         {
-            chargeTime = GetInterval();
+            _chargeTime = GetInterval();
         }
 
         /**
@@ -60,25 +61,25 @@ namespace AClass
             if (Phase != Phase.Invade) return;
 
             // 字関連処理
-            var currentTime = sceneController.GameTime;
-            var deltaTime = currentTime - prevTime;
-            prevTime = currentTime;
+            var currentTime = SceneController.GameTime;
+            var deltaTime = currentTime - _prevTime;
+            _prevTime = currentTime;
 
             // インターバルの処理
-            chargeTime -= deltaTime;
+            _chargeTime -= deltaTime;
             
             // エフェクト時間の処理
-            effectTime -= deltaTime;
+            _effectTime -= deltaTime;
             
             // エフェクト時間が終わったらタレットを休眠
-            if (effectTime <= 0)
+            if (_effectTime <= 0)
             {
                 AsleepTurret();
                 _isFistAwake = true;
             }
 
             // 未チャージ状態かつエフェクト時間が終わっている場合は戻す
-            if (chargeTime > 0 && effectTime <= 0) return;
+            if (_chargeTime > 0 && _effectTime <= 0) return;
 
             // 範囲内に敵がいるか確認
             var effectArea = GetAbsoluteEffectArea(SetPosition);
@@ -86,7 +87,7 @@ namespace AClass
             // 範囲の敵取得
             var enemies = EnemyController.GetEnemies(effectArea);
 
-            chargeTime = GetInterval();
+            _chargeTime = GetInterval();
 
             // タレットの処理
             AwakeTurret(enemies);
@@ -95,7 +96,7 @@ namespace AClass
             if (_isFistAwake)
             {
                 _isFistAwake = false;
-                effectTime = GetDuration();
+                _effectTime = GetDuration();
             }
         }
 
@@ -118,6 +119,8 @@ namespace AClass
         public abstract void SetAngle(int angle);
         protected abstract void AsleepTurret();
         protected abstract int GetDuration();
+        /** バフとか入れる前のデフォダメージ取得 */
+        public abstract int GetDefaultDamage();
 
         /**
          * 侵攻phase用の初期化
@@ -133,7 +136,7 @@ namespace AClass
             Phase = Phase.Invade;
 
             SetPosition = setPosition;
-            this.sceneController = sceneController;
+            this.SceneController = sceneController;
             MazeController = mazeController;
             EnemyController = enemyController;
         }
@@ -143,8 +146,6 @@ namespace AClass
          */
         public TilePosition[]? GetAbsoluteEffectArea(TilePosition position)
         {
-            if (Phase != Phase.Invade) throw new Exception("侵攻phase以外では使用できません");
-
             var relativeArea = GetEffectArea();
 
             if (relativeArea == null) return null;
@@ -158,6 +159,29 @@ namespace AClass
             }
 
             return result;
+        }
+
+        /**
+         * 実際のダメージを取得
+         */
+        public int GetDamage()
+        {
+            return GetDefaultDamage() + AmpDamage;
+        }
+
+        /**
+         * ダメージを追加
+         */
+        public void AddDamage(int addDamage, int duration)
+        {
+            AmpDamage = addDamage;
+
+            var delay = General.DelayCoroutineByGameTime(
+                SceneController,
+                duration,
+                () => AmpDamage = 0
+            );
+            StartCoroutine(delay);
         }
     }
 }

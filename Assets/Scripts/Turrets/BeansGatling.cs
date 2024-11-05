@@ -49,7 +49,7 @@ namespace Turrets
             gatlingGun.SetTarget(target);
 
             // 敵にダメージを与える
-            target.Damage(Damage);
+            target.Damage(GetDamage());
         }
 
         public override List<TilePosition> GetEffectArea()
@@ -78,6 +78,11 @@ namespace Turrets
         protected override int GetDuration()
         {
             return 0;
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return Damage;
         }
     }
 }

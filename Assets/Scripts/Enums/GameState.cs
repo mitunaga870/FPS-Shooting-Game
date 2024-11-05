@@ -5,6 +5,7 @@ namespace Enums
         BeforeStart,
         Playing,
         FastPlaying,
+        SlowPlaying,
         Pause,
         Clear,
         GameOver,

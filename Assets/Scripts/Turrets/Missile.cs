@@ -17,19 +17,11 @@ namespace Turrets
         private const int Interval = 500;
         private const string TurretName = "Missile";
         
-        // Missileの向いてる方
-        private float missileAngle = 0;
-        
         [SerializeField]
         TinyTankAnimController animController;
         [SerializeField]
         TinyTankTurretRotator turretRotator;
         
-        private void Start()
-        {
-            missileAngle = Angle;
-        }
-
         public override float GetHeight()
         {
             return Height;
@@ -57,26 +49,29 @@ namespace Turrets
 
             // 発射物系なのでディレイをかける
             var delay = General.DelayCoroutineByGameTime(
-                sceneController,
+                SceneController,
                 ObjectDuration,
                 () =>
                 {
                     // 敵にダメージを与える
-                    target.Damage(Damage);
+                    target.Damage(GetDamage());
 
                     var targetPosition = target.CurrentPosition;
                     if (targetPosition == null) return;
+                    
+                    // 燃焼床のダメージもバフする
+                    var igniteDamage = IgniteDamage + AmpDamage;
 
                     // 燃焼床生成
-                    MazeController.IgniteFloor(targetPosition, IgniteDamage, IgniteDuration);
-                    MazeController.IgniteFloor(targetPosition.GetUp(), IgniteDamage, IgniteDuration);
-                    MazeController.IgniteFloor(targetPosition.GetDown(), IgniteDamage, IgniteDuration);
-                    MazeController.IgniteFloor(targetPosition.GetLeft(), IgniteDamage, IgniteDuration);
-                    MazeController.IgniteFloor(targetPosition.GetRight(), IgniteDamage, IgniteDuration);
-                    MazeController.IgniteFloor(targetPosition.GetLeftUp(), IgniteDamage, IgniteDuration);
-                    MazeController.IgniteFloor(targetPosition.GetLeftDown(), IgniteDamage, IgniteDuration);
-                    MazeController.IgniteFloor(targetPosition.GetRightUp(), IgniteDamage, IgniteDuration);
-                    MazeController.IgniteFloor(targetPosition.GetRightDown(), IgniteDamage, IgniteDuration);
+                    MazeController.IgniteFloor(targetPosition, igniteDamage, IgniteDuration);
+                    MazeController.IgniteFloor(targetPosition.GetUp(), igniteDamage, IgniteDuration);
+                    MazeController.IgniteFloor(targetPosition.GetDown(), igniteDamage, IgniteDuration);
+                    MazeController.IgniteFloor(targetPosition.GetLeft(), igniteDamage, IgniteDuration);
+                    MazeController.IgniteFloor(targetPosition.GetRight(), igniteDamage, IgniteDuration);
+                    MazeController.IgniteFloor(targetPosition.GetLeftUp(), igniteDamage, IgniteDuration);
+                    MazeController.IgniteFloor(targetPosition.GetLeftDown(), igniteDamage, IgniteDuration);
+                    MazeController.IgniteFloor(targetPosition.GetRightUp(), igniteDamage, IgniteDuration);
+                    MazeController.IgniteFloor(targetPosition.GetRightDown(), igniteDamage, IgniteDuration);
                 });
             
             // 敵との角度を計算
@@ -127,6 +122,11 @@ namespace Turrets
         protected override int GetDuration()
         {
             return 0;
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return Damage;
         }
     }
 }
