@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
+using lib;
 using Map;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
@@ -30,12 +32,22 @@ namespace AClass
         private MapController mapController;
 
         /** 迷路タイル配列 */
-        protected ATile[][] Maze { get; set; }
+        public ATile[][] Maze { get; private set; }
 
         /**
          * 全体を同期する
          */
         protected abstract void Sync();
+        
+        /**
+         * プレビュー中のアドレス
+         */
+        private readonly List<TilePosition> _previewAddresses = new();
+        
+        /**
+         * プレビュー中の子ルーチン
+         */
+        private readonly List<IEnumerator> _previewCoroutines = new();
 
         // TODO: 進捗と選択状況からステージデータをとる。いったんノーマルを取っておく
         public StageData StageData { get; private set; }
@@ -121,7 +133,7 @@ namespace AClass
          * ないときはnull
          */
         [CanBeNull]
-        public Path GetShortestPath(TilePosition start, TilePosition destination)
+        public Path GetShortestPath(TilePosition start, TilePosition destination, bool considerBlockTile = false)
         {
             Sync();
 
@@ -142,7 +154,7 @@ namespace AClass
                 foreach (var path in pathList)
                 {
                     // 次のステップのパスを取得
-                    var paths = GetNextStepPaths(path);
+                    var paths = GetNextStepPaths(path, considerBlockTile);
 
                     // 次のステップのパスがない場合別を当たる
                     if (paths == null) continue;
@@ -168,7 +180,7 @@ namespace AClass
      * 隣接した道を取得する
      */
         [CanBeNull]
-        private Path[] GetNextStepPaths(Path path)
+        private Path[] GetNextStepPaths(Path path , bool considerBlockTile = false)
         {
             var tilePosition = path.GetLast();
 
@@ -184,8 +196,10 @@ namespace AClass
                     Maze[tilePosition.Row - 1][tilePosition.Col].TileType == TileTypes.Goal
                 )
                 &&
-                !path.Contains(tilePosition.Row - 1, tilePosition.Col))
-            {
+                !path.Contains(tilePosition.Row - 1, tilePosition.Col)
+                &&
+                !(considerBlockTile && Maze[tilePosition.Row - 1][tilePosition.Col].IsBlockArea)
+            ) {
                 nextTile[index] = new TilePosition(tilePosition.Row - 1, tilePosition.Col);
                 index++;
             }
@@ -197,8 +211,10 @@ namespace AClass
                     Maze[tilePosition.Row + 1][tilePosition.Col].TileType == TileTypes.Start ||
                     Maze[tilePosition.Row + 1][tilePosition.Col].TileType == TileTypes.Goal
                 ) &&
-                !path.Contains(tilePosition.Row + 1, tilePosition.Col))
-            {
+                !path.Contains(tilePosition.Row + 1, tilePosition.Col)
+                &&
+                !(considerBlockTile && Maze[tilePosition.Row + 1][tilePosition.Col].IsBlockArea)
+            ) {
                 nextTile[index] = new TilePosition(tilePosition.Row + 1, tilePosition.Col);
                 index++;
             }
@@ -210,8 +226,10 @@ namespace AClass
                     Maze[tilePosition.Row][tilePosition.Col - 1].TileType == TileTypes.Start ||
                     Maze[tilePosition.Row][tilePosition.Col - 1].TileType == TileTypes.Goal
                 ) &&
-                !path.Contains(tilePosition.Row, tilePosition.Col - 1))
-            {
+                !path.Contains(tilePosition.Row, tilePosition.Col - 1)
+                &&
+                !(considerBlockTile && Maze[tilePosition.Row][tilePosition.Col - 1].IsBlockArea)
+            ) {
                 nextTile[index] = new TilePosition(tilePosition.Row, tilePosition.Col - 1);
                 index++;
             }
@@ -223,8 +241,10 @@ namespace AClass
                     Maze[tilePosition.Row][tilePosition.Col + 1].TileType == TileTypes.Start ||
                     Maze[tilePosition.Row][tilePosition.Col + 1].TileType == TileTypes.Goal
                 ) &&
-                !path.Contains(tilePosition.Row, tilePosition.Col + 1))
-            {
+                !path.Contains(tilePosition.Row, tilePosition.Col + 1)
+                &&
+                !(considerBlockTile && Maze[tilePosition.Row][tilePosition.Col + 1].IsBlockArea)
+            ) {
                 nextTile[index] = new TilePosition(tilePosition.Row, tilePosition.Col + 1);
                 index++;
             }
@@ -381,5 +401,94 @@ namespace AClass
          */
         [CanBeNull]
         public abstract ATile GetTile(int row, int column);
+        
+        /**
+         * 外部からタイルを取得する
+         */
+        [CanBeNull]
+        public ATile GetTile(TilePosition tilePosition)
+        {
+            return GetTile(tilePosition.Row, tilePosition.Col);
+        }
+        
+        /**
+         * 効果範囲プレビュー
+         */
+        protected void ShowEffectRange([CanBeNull] TilePosition[] effectRange, float duration)
+        {
+            HideEffectRange();
+        
+            // 効果範囲がない場合は全エリア
+            if (effectRange == null)
+            {
+                for (var row = 0; row < MazeRows; row++)
+                for (var col = 0; col < MazeColumns; col++)
+                {
+                    // プレビュー中のタイルを取得
+                    var previewTile = Maze[row][col];
+
+                    // プレビュー中のタイルを設定
+                    previewTile.SetAreaPreview();
+
+                    // リストに追加
+                    _previewAddresses.Add(new TilePosition(row, col));
+
+                    // プレビューの持続時間を設定
+                    var delay = General.DelayCoroutine(duration / 1000f, () => previewTile.ResetAreaPreview());
+                    StartCoroutine(delay);
+                }
+            }
+            else
+            {
+
+                // トラップの効果範囲をプレビュー
+                foreach (var tilePosition in effectRange)
+                {
+                    var row = tilePosition.Row;
+                    var col = tilePosition.Col;
+
+                    // 範囲外の場合はスキップ
+                    if (row < 0 || row >= MazeRows || col < 0 || col >= MazeColumns) continue;
+
+                    // プレビュー中のタイルを取得
+                    var previewTile = Maze[row][col];
+
+                    // プレビュー中のタイルを設定
+                    previewTile.SetAreaPreview();
+
+                    // リストに追加
+                    _previewAddresses.Add(new TilePosition(row, col));
+
+                    // プレビューの持続時間を設定
+                    var delay = General.DelayCoroutine(
+                        duration / 1000f,
+                        () => previewTile.ResetAreaPreview()
+                    );
+                    StartCoroutine(delay);
+                    _previewCoroutines.Add(delay);
+                }
+            }
+        }
+
+        /**
+         * 効果範囲プレビューを下げる
+         */
+        public void HideEffectRange()
+        {
+            // プレビュー子ルーチンを停止
+            foreach (var coroutine in _previewCoroutines) StopCoroutine(coroutine);
+            _previewCoroutines.Clear();
+            
+            // 既存のプレビューを削除
+            foreach (var address in _previewAddresses)
+            {
+                var row = address.Row;
+                var col = address.Col;
+                
+                Maze[row][col].ResetAreaPreview();
+            }
+            
+            _previewAddresses.Clear();
+        }
     }
 }

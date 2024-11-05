@@ -22,18 +22,20 @@ namespace Traps
             // クールダウン設定
             ChargeTime = CoolDown;
 
-            if (enemyController == null) return;
+            if (EnemyController == null) return;
+
+            var damage = GetDamage();
 
             // 周囲１マスの敵を跳ね飛ばす
-            enemyController.JumpEnemy(position, JumpHeight, Damage);
-            enemyController.JumpEnemy(position.GetUp(), JumpHeight, Damage);
-            enemyController.JumpEnemy(position.GetDown(), JumpHeight, Damage);
-            enemyController.JumpEnemy(position.GetLeft(), JumpHeight, Damage);
-            enemyController.JumpEnemy(position.GetRight(), JumpHeight, Damage);
-            enemyController.JumpEnemy(position.GetRightUp(), JumpHeight, Damage);
-            enemyController.JumpEnemy(position.GetRightDown(), JumpHeight, Damage);
-            enemyController.JumpEnemy(position.GetLeftUp(), JumpHeight, Damage);
-            enemyController.JumpEnemy(position.GetLeftDown(), JumpHeight, Damage);
+            EnemyController.JumpEnemy(position, JumpHeight, damage);
+            EnemyController.JumpEnemy(position.GetUp(), JumpHeight, damage);
+            EnemyController.JumpEnemy(position.GetDown(), JumpHeight, damage);
+            EnemyController.JumpEnemy(position.GetLeft(), JumpHeight, damage);
+            EnemyController.JumpEnemy(position.GetRight(), JumpHeight, damage);
+            EnemyController.JumpEnemy(position.GetRightUp(), JumpHeight, damage);
+            EnemyController.JumpEnemy(position.GetRightDown(), JumpHeight, damage);
+            EnemyController.JumpEnemy(position.GetLeftUp(), JumpHeight, damage);
+            EnemyController.JumpEnemy(position.GetLeftDown(), JumpHeight, damage);
         }
 
         public override float GetHeight()
@@ -58,6 +60,11 @@ namespace Traps
 
         public override void SetAngle(int trapAngle)
         {
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return Damage;
         }
     }
 }

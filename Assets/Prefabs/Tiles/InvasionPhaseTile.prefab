@@ -105,7 +105,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.02, y: 0.02, z: 0.02}
   m_Center: {x: 0, y: 0, z: 0}
@@ -137,3 +137,4 @@ MonoBehaviour:
   rightCornerAndBottomWall: {fileID: 919132149155446097, guid: 86fff8aae12d1f94fb839ce608a80ac0, type: 3}
   leftCornerAndBottomWall: {fileID: 919132149155446097, guid: 3763412239bf63c4d880c03ad0b82452, type: 3}
   diagonalCorner: {fileID: 919132149155446097, guid: 054bc7f471dfd50498d0f397436b7957, type: 3}
+  igniteEffect: {fileID: 107076, guid: 1048366b48a8cc3429168da2a8224d7d, type: 3}

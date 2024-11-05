@@ -72,5 +72,10 @@ namespace Turrets
         {
             return Duration;
         }
+        
+        public override int GetDefaultDamage()
+        {
+            return 0;
+        }
     }
 }

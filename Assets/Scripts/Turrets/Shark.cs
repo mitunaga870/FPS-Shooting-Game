@@ -74,11 +74,11 @@ namespace Turrets
             if (isFired) return;
 
             // 確率で敵にダメージを与える
-            var possibility = GetPossibility(sceneController.GameTime);
+            var possibility = GetPossibility(SceneController.GameTime);
             var random = UnityEngine.Random.value;
             if (possibility < random) return;
 
-            foreach (var enemy in enemies) enemy.Damage(Damage);
+            foreach (var enemy in enemies) enemy.Damage(GetDamage());
 
             isFired = true;
             
@@ -125,6 +125,11 @@ namespace Turrets
         protected override int GetDuration()
         {
             return 0;
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return Damage;
         }
     }
 }
