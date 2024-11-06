@@ -24,32 +24,35 @@ namespace Traps
             // クールダウン設定
             ChargeTime = CoolDown;
 
-            if (enemyController == null) return;
+            if (EnemyController == null) return;
             
             // アニメーション再生
             crocTrapActionIgnition.IgnitionAction();
+            
+            // ダメージ取得
+            var damage = GetDamage();
 
             // 周囲1マスの敵にダメージ
-            enemyController.DamageEnemy(position, Damage);
-            enemyController.DamageEnemy(position.GetUp(), Damage);
-            enemyController.DamageEnemy(position.GetDown(), Damage);
-            enemyController.DamageEnemy(position.GetLeft(), Damage);
-            enemyController.DamageEnemy(position.GetRight(), Damage);
-            enemyController.DamageEnemy(position.GetRightUp(), Damage);
-            enemyController.DamageEnemy(position.GetRightDown(), Damage);
-            enemyController.DamageEnemy(position.GetLeftUp(), Damage);
-            enemyController.DamageEnemy(position.GetLeftDown(), Damage);
+            EnemyController.DamageEnemy(position, damage);
+            EnemyController.DamageEnemy(position.GetUp(), damage);
+            EnemyController.DamageEnemy(position.GetDown(), damage);
+            EnemyController.DamageEnemy(position.GetLeft(), damage);
+            EnemyController.DamageEnemy(position.GetRight(), damage);
+            EnemyController.DamageEnemy(position.GetRightUp(), damage);
+            EnemyController.DamageEnemy(position.GetRightDown(), damage);
+            EnemyController.DamageEnemy(position.GetLeftUp(), damage);
+            EnemyController.DamageEnemy(position.GetLeftDown(), damage);
 
             // 周囲1マスの敵を跳ね飛ばす
-            enemyController.KnockBackEnemy(position, KnockBack);
-            enemyController.KnockBackEnemy(position.GetUp(), KnockBack);
-            enemyController.KnockBackEnemy(position.GetDown(), KnockBack);
-            enemyController.KnockBackEnemy(position.GetLeft(), KnockBack);
-            enemyController.KnockBackEnemy(position.GetRight(), KnockBack);
-            enemyController.KnockBackEnemy(position.GetRightUp(), KnockBack);
-            enemyController.KnockBackEnemy(position.GetRightDown(), KnockBack);
-            enemyController.KnockBackEnemy(position.GetLeftUp(), KnockBack);
-            enemyController.KnockBackEnemy(position.GetLeftDown(), KnockBack);
+            EnemyController.KnockBackEnemy(position, KnockBack);
+            EnemyController.KnockBackEnemy(position.GetUp(), KnockBack);
+            EnemyController.KnockBackEnemy(position.GetDown(), KnockBack);
+            EnemyController.KnockBackEnemy(position.GetLeft(), KnockBack);
+            EnemyController.KnockBackEnemy(position.GetRight(), KnockBack);
+            EnemyController.KnockBackEnemy(position.GetRightUp(), KnockBack);
+            EnemyController.KnockBackEnemy(position.GetRightDown(), KnockBack);
+            EnemyController.KnockBackEnemy(position.GetLeftUp(), KnockBack);
+            EnemyController.KnockBackEnemy(position.GetLeftDown(), KnockBack);
         }
 
         public override float GetHeight()
@@ -74,6 +77,11 @@ namespace Traps
 
         public override void SetAngle(int trapAngle)
         {
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return Damage;
         }
     }
 }

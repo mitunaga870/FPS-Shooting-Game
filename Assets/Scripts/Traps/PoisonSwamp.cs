@@ -1,6 +1,5 @@
 using AClass;
 using DataClass;
-using UnityEngine;
 
 namespace Traps
 {
@@ -16,20 +15,22 @@ namespace Traps
 
         public override void AwakeTrap(TilePosition position)
         {
-            if (enemyController == null) return;
+            if (EnemyController == null) return;
             
             if (ChargeTime < 0) return;
             ChargeTime = 1;
 
-            enemyController.InfusePoison(position, Damage, Duration, _level);
-            enemyController.InfusePoison(position.GetUp(), Damage, Duration, _level);
-            enemyController.InfusePoison(position.GetDown(), Damage, Duration, _level);
-            enemyController.InfusePoison(position.GetLeft(), Damage, Duration, _level);
-            enemyController.InfusePoison(position.GetRight(), Damage, Duration, _level);
-            enemyController.InfusePoison(position.GetRightUp(), Damage, Duration, _level);
-            enemyController.InfusePoison(position.GetRightDown(), Damage, Duration, _level);
-            enemyController.InfusePoison(position.GetLeftUp(), Damage, Duration, _level);
-            enemyController.InfusePoison(position.GetLeftDown(), Damage, Duration, _level);
+            var damage = GetDamage();
+
+            EnemyController.InfusePoison(position, damage, Duration, _level);
+            EnemyController.InfusePoison(position.GetUp(), damage, Duration, _level);
+            EnemyController.InfusePoison(position.GetDown(), damage, Duration, _level);
+            EnemyController.InfusePoison(position.GetLeft(), damage, Duration, _level);
+            EnemyController.InfusePoison(position.GetRight(), damage, Duration, _level);
+            EnemyController.InfusePoison(position.GetRightUp(), damage, Duration, _level);
+            EnemyController.InfusePoison(position.GetRightDown(), damage, Duration, _level);
+            EnemyController.InfusePoison(position.GetLeftUp(), damage, Duration, _level);
+            EnemyController.InfusePoison(position.GetLeftDown(), damage, Duration, _level);
         }
 
         public override float GetHeight()
@@ -54,6 +55,11 @@ namespace Traps
 
         public override void SetAngle(int trapAngle)
         {
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return Damage;
         }
     }
 }

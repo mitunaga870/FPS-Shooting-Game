@@ -2,6 +2,7 @@ using System;
 using DataClass;
 using InvasionPhase;
 using JetBrains.Annotations;
+using lib;
 using ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -13,6 +14,7 @@ namespace AClass
         /** トラップ用のデータ用スクリプタブルオブジェクト */
         [FormerlySerializedAs("trapData")]
         [SerializeField]
+        // ReSharper disable once NotAccessedField.Global
         protected TrapObject trapObject;
 
         /**
@@ -20,42 +22,45 @@ namespace AClass
          * 時刻取得
          */
         [CanBeNull]
-        protected InvasionController sceneController = null;
+        protected InvasionController SceneController;
         
         /**
          * 迷路コントローラー
          */
         [CanBeNull]
-        protected InvasionMazeController mazeController = null;
+        protected InvasionMazeController MazeController;
 
         /**
          * 敵をコントロールしてるクラス
          * これにアクセスして敵に影響を与える
          */
         [CanBeNull]
-        protected InvasionEnemyController enemyController = null;
+        protected InvasionEnemyController EnemyController;
 
         /**
          * 侵攻準備ができているか
          */
-        protected bool IsInvasionReady = false;
+        private bool _isInvasionReady;
 
         /**
          * チャージ時間
          * 0の場合は即発火
          */
-        protected int ChargeTime = 0;
+        protected int ChargeTime;
 
         /** 前読み込んだ時のゲーム内時間 */
         private int _prevTime;
+        
+        /** ダメージの増加量 */
+        private int _ampDamage = 0;
 
         private void Update()
         {
             // 侵攻phaseじゃないと処理しない
-            if (sceneController == null || !IsInvasionReady) return;
+            if (SceneController == null || !_isInvasionReady) return;
             
             // 時間処理
-            var currentTime = sceneController.GameTime;
+            var currentTime = SceneController.GameTime;
             _prevTime = currentTime;
             var timeDiff = currentTime - _prevTime;
 
@@ -102,6 +107,7 @@ namespace AClass
 
         public abstract int GetTrapAngle();
         public abstract void SetAngle(int trapAngle);
+        public abstract int GetDefaultDamage();
 
         /** カスタムのコンストラクタ */
         public void InvasionInitialize(
@@ -109,15 +115,36 @@ namespace AClass
             InvasionMazeController mazeController, 
             InvasionEnemyController enemyController
         ) {
-            IsInvasionReady = true;
-            this.mazeController = mazeController;
-            this.sceneController = sceneController;
-            this.enemyController = enemyController;
+            _isInvasionReady = true;
+            this.MazeController = mazeController;
+            this.SceneController = sceneController;
+            this.EnemyController = enemyController;
         }
 
         public void Destroy()
         {
             Destroy(gameObject);
+        }
+        
+        public int GetDamage()
+        {
+            return GetDefaultDamage() + _ampDamage;
+        }
+        
+        /**
+         * ダメージを追加する
+         */
+        public void AddDamage(int addDamage, int duration)
+        {
+            _ampDamage += addDamage;
+            
+            // 一定時間後にダメージを元に戻す
+            var delay = General.DelayCoroutineByGameTime(
+                SceneController,
+                duration,
+                () => _ampDamage -= addDamage
+            );
+            StartCoroutine(delay);
         }
     }
 }

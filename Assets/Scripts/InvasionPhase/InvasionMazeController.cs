@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using AClass;
 using DataClass;
 using Enums;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -28,8 +27,8 @@ namespace InvasionPhase
         private InvasionPhaseTile[][] _maze;
 
         public Vector3 MazeOrigin { private set; get; }
-        public TileData[][] TileData { get; private set; }
-        public TrapData[] TrapData { get; private set; }
+        private TileData[][] TileData { get; set; }
+        private TrapData[] TrapData { get; set; }
 
         public void Create(TileData[][] tiles, TrapData[] trapData, TurretData[] turretData)
         {
@@ -55,7 +54,13 @@ namespace InvasionPhase
                     var tileRotation = Quaternion.Euler(-90, 0, 0);
                     // タイルを生成し、初期化する
                     var newTile = Instantiate(createPhaseTilePrefab, tilePosition, tileRotation);
-                    newTile.Initialize(row, column, tileData.TileType, tileData.RoadAdjust, sceneController);
+                    newTile.Initialize(
+                        row, column,
+                        tileData.TileType,
+                        tileData.RoadAdjust,
+                        sceneController,
+                        this
+                    );
 
                     // タイルを迷路に追加する
                     _maze[row][column] = newTile;
@@ -104,7 +109,6 @@ namespace InvasionPhase
             SyncMazeData(syncTiles);
         }
 
-        [CanBeNull]
         public override ATile GetTile(int row, int column)
         {
             if (row < 0 || row >= MazeRows || column < 0 || column >= MazeColumns) return null;
@@ -135,7 +139,7 @@ namespace InvasionPhase
                 // 道路でない場合はスキップ
                 if (tile.TileType != TileTypes.Road) continue;
 
-                var tilePosition = tile.getPosition();
+                var tilePosition = tile.GetPosition();
 
                 // 距離を計算
                 var distance = TilePosition.GetDistance(
@@ -181,6 +185,124 @@ namespace InvasionPhase
             SaveController.SaveTrapData(TrapData);
             SaveController.SaveStageData(StageData);
             SaveController.SaveTurretData(TurretData);
+        }
+
+        public void PreviewSkillEffectArea(TilePosition tilePosition, ASkill skill, float duration)
+        {
+            // スキルの効果範囲を取得
+            var effectArea = skill.GetSkillEffectArea(this, tilePosition);
+            
+            ShowEffectRange(effectArea?.ToArray(), duration);
+        }
+
+        public void SetWarpHole(TilePosition sourcePosition, TilePosition destinationPosition, int duration)
+        {
+            _maze[sourcePosition.Row][sourcePosition.Col].SetWarpHoleSource(destinationPosition, duration);
+            _maze[destinationPosition.Row][destinationPosition.Col].SetWarpHoleDestination(sourcePosition, duration);
+        }
+
+        public bool IsTeleport(TilePosition currentPosition)
+        {
+            return _maze[currentPosition.Row][currentPosition.Col].IsWarpHole;
+        }
+
+        /**
+         * 指定範囲のturret・トラップにダメージを追加
+         */
+        public void AddDamage(List<TilePosition> effectArea, int addDamage, int duration)
+        {
+            foreach (var position in effectArea)
+            {
+                if (position.Row < 0 || position.Row >= MazeRows ||
+                    position.Col < 0 || position.Col >= MazeColumns) continue;
+
+                var tile = _maze[position.Row][position.Col];
+
+                tile.AddDamage(addDamage, duration);
+            }
+        }
+
+        public void OverrideSkillTime(List<TilePosition> effectArea, int duration)
+        {
+            foreach (var position in effectArea)
+            {
+                if (position.Row < 0 || position.Row >= MazeRows ||
+                    position.Col < 0 || position.Col >= MazeColumns) continue;
+
+                var tile = _maze[position.Row][position.Col];
+
+                tile.OverrideSkillTime(duration);
+            }
+        }
+
+        public void SetSlowArea(
+            List<TilePosition> targetPosition,
+            int duration,
+            float slowRate
+        ) {
+            // タイルを走査
+            foreach (var position in targetPosition)
+            {
+                if (position.Row < 0 || position.Row >= MazeRows ||
+                    position.Col < 0 || position.Col >= MazeColumns) continue;
+
+                var tile = _maze[position.Row][position.Col];
+
+                tile.SetSlowArea(duration, slowRate);
+            }
+        }
+
+        public bool IsSlow(TilePosition currentPosition)
+        {
+            if (currentPosition.Row < 0 || currentPosition.Row >= MazeRows ||
+                currentPosition.Col < 0 || currentPosition.Col >= MazeColumns) return false;
+
+            var tile = _maze[currentPosition.Row][currentPosition.Col];
+
+            return tile.IsSlowArea;
+        }
+
+        public void SetBlockArea(List<TilePosition> target, int duration, bool reCalculationPath)
+        {
+            // タイルを走査
+            foreach (var position in target)
+            {
+                // 範囲外の場合はスキップ
+                if (position.Row < 0 || position.Row >= MazeRows ||
+                    position.Col < 0 || position.Col >= MazeColumns) continue;
+
+                var tile = _maze[position.Row][position.Col];
+
+                tile.SetBlockArea(duration);
+            }
+            
+            // パスの再計算
+            if (reCalculationPath) enemyController.ReCalculationPath();
+        }
+
+        public void SetNockBackArea(List<TilePosition> targetTiles, int distance, int stunTime, Action callback)
+        {
+            // タイルを走査
+            foreach (var position in targetTiles)
+            {
+                // 範囲外の場合はスキップ
+                if (position.Row < 0 || position.Row >= MazeRows ||
+                    position.Col < 0 || position.Col >= MazeColumns) continue;
+
+                var tile = _maze[position.Row][position.Col];
+
+                tile.SetNockBackArea(distance, stunTime, callback);
+            }
+        }
+
+        public bool IsKnockBack(TilePosition currentPosition)
+        {
+            if (currentPosition.Row < 0 || currentPosition.Row >= MazeRows ||
+                currentPosition.Col < 0 || currentPosition.Col >= MazeColumns) return false;
+
+            var tile = _maze[currentPosition.Row][currentPosition.Col];
+
+            return tile.IsKnockBackArea;
         }
     }
 }

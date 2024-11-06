@@ -17,7 +17,7 @@ namespace Traps
 
         public override void AwakeTrap(TilePosition position)
         {
-            if (enemyController == null) return;
+            if (EnemyController == null) return;
             
             // クールダウン中は処理しない
             if (ChargeTime > 0) return;
@@ -28,16 +28,18 @@ namespace Traps
             // アニメーション発火
             trapMineIgnitionAction.StartAction();
 
+            var damage = GetDamage();
+
             // 周囲１マスの敵にダメージ
-            enemyController.DamageEnemy(position, Damage);
-            enemyController.DamageEnemy(position.GetUp(), Damage);
-            enemyController.DamageEnemy(position.GetDown(), Damage);
-            enemyController.DamageEnemy(position.GetLeft(), Damage);
-            enemyController.DamageEnemy(position.GetRight(), Damage);
-            enemyController.DamageEnemy(position.GetRightUp(), Damage);
-            enemyController.DamageEnemy(position.GetRightDown(), Damage);
-            enemyController.DamageEnemy(position.GetLeftUp(), Damage);
-            enemyController.DamageEnemy(position.GetLeftDown(), Damage);
+            EnemyController.DamageEnemy(position, damage);
+            EnemyController.DamageEnemy(position.GetUp(), damage);
+            EnemyController.DamageEnemy(position.GetDown(), damage);
+            EnemyController.DamageEnemy(position.GetLeft(), damage);
+            EnemyController.DamageEnemy(position.GetRight(), damage);
+            EnemyController.DamageEnemy(position.GetRightUp(), damage);
+            EnemyController.DamageEnemy(position.GetRightDown(), damage);
+            EnemyController.DamageEnemy(position.GetLeftUp(), damage);
+            EnemyController.DamageEnemy(position.GetLeftDown(), damage);
         }
 
         public override float GetHeight()
@@ -62,6 +64,11 @@ namespace Traps
 
         public override void SetAngle(int trapAngle)
         {
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return Damage;
         }
     }
 }

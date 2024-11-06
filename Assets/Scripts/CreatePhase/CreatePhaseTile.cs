@@ -241,8 +241,8 @@ namespace CreatePhase
         public ATrap SetRandTrap()
         {
             // 既に道・トラップが設定されている場合は処理しない
-            if (hasTrap) return null;
-            hasTrap = true;
+            if (HasTrap) return null;
+            HasTrap = true;
 
             var traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
             ATrap trap = null;

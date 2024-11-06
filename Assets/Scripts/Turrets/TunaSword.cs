@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using AClass;
 using DataClass;
 using Enums;
-using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 
 namespace Turrets
@@ -33,7 +32,7 @@ namespace Turrets
 
         protected override void AwakeTurret(List<AEnemy> enemies)
         {
-            foreach (var enemy in enemies) enemy.Damage(Damage);
+            foreach (var enemy in enemies) enemy.Damage(GetDamage());
         }
 
         public override List<TilePosition> GetEffectArea()
@@ -72,6 +71,11 @@ namespace Turrets
         protected override int GetDuration()
         {
             return 0;
+        }
+
+        public override int GetDefaultDamage()
+        {
+            return Damage;
         }
     }
 }

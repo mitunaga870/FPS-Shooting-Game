@@ -1,5 +1,7 @@
-﻿using DataClass;
+﻿using System.Collections.Generic;
+using DataClass;
 using InvasionPhase;
+using JetBrains.Annotations;
 using ScriptableObjects;
 using UnityEngine;
 
@@ -7,17 +9,43 @@ namespace AClass
 {
     public abstract class ASkill : MonoBehaviour
     {
-        [SerializeField] protected InvasionEnemyController _enemyController;
-        [SerializeField] protected SkillObject _skillObject;
+        [SerializeField]
+        protected GameObject skillObject;
+        
+        public abstract void UseSkill(
+            TilePosition targetPosition,
+            InvasionController sceneController,
+            InvasionMazeController mazeController,
+            InvasionEnemyController enemyController
+        );
         
         /**
-         * 対象タイルを指定してスキルを利用、クールダウンはアイコン側で処理予定
+         * スキルの相対効果範囲を取得する
          */
-        public abstract void AwakeSkill(TilePosition tilePosition);
-
+        [CanBeNull]
+        protected abstract List<TilePosition> GetSkillRelativeEffectArea(InvasionMazeController mazeController);
+        
         /**
-         *  クールダウンタイムを取得
+         * スキルの効果範囲を取得する
          */
-        public abstract int GetCd();
+        [CanBeNull]
+        public virtual List<TilePosition> GetSkillEffectArea(InvasionMazeController mazeController, TilePosition originPosition)
+        {
+            var relativeEffectArea = GetSkillRelativeEffectArea(mazeController);
+            if (relativeEffectArea == null)
+            {
+                return null;
+            }
+
+            var effectArea = new List<TilePosition>();
+            foreach (var relativePosition in relativeEffectArea)
+            {
+                effectArea.Add(
+                    new TilePosition(relativePosition.Row + originPosition.Row, relativePosition.Col + originPosition.Col)
+                );
+            }
+
+            return effectArea;
+        }
     }
 }

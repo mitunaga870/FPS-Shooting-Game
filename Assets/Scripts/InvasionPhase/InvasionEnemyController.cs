@@ -2,10 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AClass;
 using DataClass;
-using Enums;
 using JetBrains.Annotations;
-using ScriptableObjects;
-using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -13,10 +10,6 @@ namespace InvasionPhase
 {
     public class InvasionEnemyController : MonoBehaviour
     {
-        [FormerlySerializedAs("_stageObject")]
-        [SerializeField]
-        private StageObject stageObject;
-
         [FormerlySerializedAs("_invasionController")]
         [SerializeField]
         private InvasionController invasionController;
@@ -192,14 +185,14 @@ namespace InvasionPhase
                 }
         }
 
-        public void KnockBackEnemy(TilePosition position, int distance)
+        public void KnockBackEnemy(TilePosition position, int distance, int stunTime = -1)
         {
             // 敵リストを走査
             foreach (var enemy in _enemies)
                 // 位置が一致したらダメージを与える
                 if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
                 {
-                    enemy.KnockBack(distance);
+                    enemy.KnockBack(distance, stunTime);
                     break;
                 }
         }
@@ -214,6 +207,26 @@ namespace InvasionPhase
                     enemy.InfusePoison(damage, duration, level);
                     break;
                 }
+        }
+
+        public void FlipEnemy(TilePosition position, int damage, int duration)
+        {
+            // 敵リストを走査
+            foreach (var enemy in _enemies)
+                // 位置が一致したらダメージを与えペラペラにする
+                if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
+                {
+                    enemy.Damage(damage);
+                    enemy.Stun(duration);
+                    
+                    break;
+                }
+        }
+
+        public void ReCalculationPath()
+        {
+            // 敵リストを走査
+            foreach (var enemy in _enemies) enemy.ReCalculationPath();
         }
     }
 }

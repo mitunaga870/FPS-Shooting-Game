@@ -1,16 +1,16 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using DataClass;
 using Enums;
 using lib;
-using ScriptableObjects;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace AClass
 {
     public abstract class ATile : MonoBehaviour
     {
+        public TilePosition Position => new TilePosition(Row, Column);
+        
         /** デフォルトのモデル */
         [SerializeField]
         protected GameObject defaultModel;
@@ -78,7 +78,7 @@ namespace AClass
         /** 現在のタイルタイプ */
         private TileTypes _tileType = TileTypes.Nothing;
 
-        public bool SettableTurret => !hasTrap && TileType == TileTypes.Nothing && !hasTurret;
+        public bool SettableTurret => !HasTrap && TileType == TileTypes.Nothing && !hasTurret;
 
         /** トラップのプレビューの色 */
         private Color _prevColor;
@@ -105,16 +105,15 @@ namespace AClass
         /** 設置されているトラップ */
         public ATrap Trap { get; private set; }
 
-        /** 設置されているturret */
-        protected ATurret _turret = null;
-
         /** トラップの所持フラグ */
-        protected bool hasTrap = false;
+        protected bool HasTrap;
 
         /** turretの所持フラグ */
-        protected bool hasTurret = false;
+        // ReSharper disable once InconsistentNaming
+        protected bool hasTurret;
 
         /** 色を変えたときの元の色を持たせる */
+        // ReSharper disable once InconsistentNaming
         private Dictionary<string, Color> prevColor;
         
         /** 禁止エリア・効果エリアの前の色 */
@@ -127,6 +126,12 @@ namespace AClass
         {
             // タイルのステータスが変わった時の処理
         }
+        
+        // ============= 阻害エリアの処理 ==============================
+        public bool IsBlockArea { get; protected set; }
+        protected IEnumerator BlockAreaCoroutine;
+        // ==========================================================
+
 
         /**
          * タイルを道に設定する
@@ -147,306 +152,302 @@ namespace AClass
             // 道のつながり型を設定
             RoadAdjust = roadAdjust;
 
-            // 道の形状によってモデルを変更
-            var meshFilter = GetComponent<MeshFilter>();
-            var meshRenderer = GetComponent<MeshRenderer>();
-
             // つながった道の回転を設定
             var rotation = transform.rotation;
 
-            GameObject _model = null;
+            GameObject model = null;
 
             switch (roadAdjust)
             {
                 // ========== 行き止まり ==========
                 case RoadAdjust.LeftDeadEnd:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(deadEndModel);
+                    model = Instantiate(deadEndModel);
 
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.BottomDeadEnd:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(deadEndModel);
+                    model = Instantiate(deadEndModel);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.RightDeadEnd:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(deadEndModel);
+                    model = Instantiate(deadEndModel);
 
                     rotation = Quaternion.Euler(-90, 0, 0);
                     break;
                 case RoadAdjust.TopDeadEnd:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(deadEndModel);
+                    model = Instantiate(deadEndModel);
 
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // ========== 直線 ==========
                 case RoadAdjust.TopBottom:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(straightModel);
+                    model = Instantiate(straightModel);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.LeftRight:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(straightModel);
+                    model = Instantiate(straightModel);
                     break;
                 // ========== コーナー ==========
                 case RoadAdjust.TopRight:
                 case RoadAdjust.RightTop:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(cornerModel);
+                    model = Instantiate(cornerModel);
 
                     break;
                 case RoadAdjust.LeftTop:
                 case RoadAdjust.TopLeft:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(cornerModel);
+                    model = Instantiate(cornerModel);
 
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.LeftBottom:
                 case RoadAdjust.BottomLeft:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(cornerModel);
+                    model = Instantiate(cornerModel);
 
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.RightBottom:
                 case RoadAdjust.BottomRight:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(cornerModel);
+                    model = Instantiate(cornerModel);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 // ========== T字路 ==========
                 case RoadAdjust.TopRightLeft:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(tJunctionModel);
+                    model = Instantiate(tJunctionModel);
 
                     break;
                 case RoadAdjust.RightBottomTop:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(tJunctionModel);
+                    model = Instantiate(tJunctionModel);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.LeftTopBottom:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(tJunctionModel);
+                    model = Instantiate(tJunctionModel);
 
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.BottomLeftRight:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(tJunctionModel);
+                    model = Instantiate(tJunctionModel);
 
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.Cross:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(crossroadsModel);
+                    model = Instantiate(crossroadsModel);
                     break;
                 // ========== 太い道路 ==========
                 // ========== 太い道路の真ん中 ==========
                 case RoadAdjust.BottomLeftDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(singleCurve);
+                    model = Instantiate(singleCurve);
 
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.BottomRightDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(singleCurve);
+                    model = Instantiate(singleCurve);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopLeftDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(singleCurve);
+                    model = Instantiate(singleCurve);
 
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.TopRightDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(singleCurve);
+                    model = Instantiate(singleCurve);
 
                     break;
                 // ２角
                 case RoadAdjust.TopDoubleDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(doubleCurve);
+                    model = Instantiate(doubleCurve);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.BottomDoubleDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(doubleCurve);
+                    model = Instantiate(doubleCurve);
 
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.LeftDoubleDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(doubleCurve);
+                    model = Instantiate(doubleCurve);
 
                     break;
                 case RoadAdjust.RightDoubleDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(doubleCurve);
+                    model = Instantiate(doubleCurve);
 
                     rotation = Quaternion.Euler(-90, -180, 0);
                     break;
                 case RoadAdjust.TopLeftAndBottomRightDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(diagonalCorner);
+                    model = Instantiate(diagonalCorner);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopRightAndBottomLeftDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(diagonalCorner);
+                    model = Instantiate(diagonalCorner);
 
                     break;
                 // 三角
                 case RoadAdjust.ExpectBottomLeftDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(tripleCurve);
+                    model = Instantiate(tripleCurve);
 
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.ExpectBottomRightDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(tripleCurve);
+                    model = Instantiate(tripleCurve);
 
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.ExpectTopLeftDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(tripleCurve);
+                    model = Instantiate(tripleCurve);
                     break;
                 case RoadAdjust.ExpectTopRightDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(tripleCurve);
+                    model = Instantiate(tripleCurve);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.NoWall:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(noWallModel);
+                    model = Instantiate(noWallModel);
                     break;
                 // 壁と角　下に壁持ってきたときに右に角
                 case RoadAdjust.BottomWallWithRightDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(rightCornerAndBottomWall);
+                    model = Instantiate(rightCornerAndBottomWall);
                     break;
                 case RoadAdjust.LeftWallWithBottomDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(rightCornerAndBottomWall);
+                    model = Instantiate(rightCornerAndBottomWall);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopWallWithLeftDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(rightCornerAndBottomWall);
+                    model = Instantiate(rightCornerAndBottomWall);
 
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.RightWallWithTopDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(rightCornerAndBottomWall);
+                    model = Instantiate(rightCornerAndBottomWall);
 
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // 壁と角　下に壁持ってきたときに左に角
                 case RoadAdjust.BottomWallWithLeftDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(leftCornerAndBottomWall);
+                    model = Instantiate(leftCornerAndBottomWall);
 
                     break;
                 case RoadAdjust.LeftWallWithTopDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(leftCornerAndBottomWall);
+                    model = Instantiate(leftCornerAndBottomWall);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.TopWallWithRightDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(leftCornerAndBottomWall);
+                    model = Instantiate(leftCornerAndBottomWall);
 
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.RightWallWithBottomDot:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(leftCornerAndBottomWall);
+                    model = Instantiate(leftCornerAndBottomWall);
 
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // ========= 壁だけ ==========
                 case RoadAdjust.LeftWall:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(halfRoadModel);
+                    model = Instantiate(halfRoadModel);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.RightWall:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(halfRoadModel);
+                    model = Instantiate(halfRoadModel);
 
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 case RoadAdjust.BottomWall:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(halfRoadModel);
+                    model = Instantiate(halfRoadModel);
 
                     rotation = Quaternion.Euler(-90, 0, 0);
                     break;
                 case RoadAdjust.TopWall:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(halfRoadModel);
+                    model = Instantiate(halfRoadModel);
 
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 // ========== L字壁 ==========
                 case RoadAdjust.TopRightHalfOnce:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(halfOnceModel);
+                    model = Instantiate(halfOnceModel);
 
                     break;
                 case RoadAdjust.BottomRightHalfOnce:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(halfOnceModel);
+                    model = Instantiate(halfOnceModel);
 
                     rotation = Quaternion.Euler(-90, 90, 0);
                     break;
                 case RoadAdjust.BottomLeftHalfOnce:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(halfOnceModel);
+                    model = Instantiate(halfOnceModel);
 
                     rotation = Quaternion.Euler(-90, 180, 0);
                     break;
                 case RoadAdjust.TopLeftHalfOnce:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(halfOnceModel);
+                    model = Instantiate(halfOnceModel);
 
                     rotation = Quaternion.Euler(-90, -90, 0);
                     break;
                 // つながっていない場合
                 case RoadAdjust.NoAdjust:
                     // 読み取り用にインスタンス化
-                    _model = Instantiate(noneModel);
+                    model = Instantiate(noneModel);
                     break;
             }
 
             // モデルを変更
-            if (_model != null)
+            if (model != null)
             {
-                GetComponent<MeshFilter>().mesh = _model.GetComponent<MeshFilter>().sharedMesh;
-                GetComponent<MeshRenderer>().materials = _model.GetComponent<MeshRenderer>().materials;
+                GetComponent<MeshFilter>().mesh = model.GetComponent<MeshFilter>().sharedMesh;
+                GetComponent<MeshRenderer>().materials = model.GetComponent<MeshRenderer>().materials;
 
-                Destroy(_model);
+                Destroy(model);
             }
 
             // ゴール地点の場合は色を変更
@@ -468,10 +469,10 @@ namespace AClass
 
         public void ResetTile()
         {
-            if (hasTrap)
+            if (HasTrap)
             {
                 Destroy(Trap.gameObject);
-                hasTrap = false;
+                HasTrap = false;
             }
 
             Destroy(gameObject);
@@ -529,6 +530,8 @@ namespace AClass
         /**
          * 既存の色に戻す
          */
+        // ReSharper disable once ParameterHidesMember
+        // ReSharper disable once InconsistentNaming
         public void ResetColor(Dictionary<string, Color> _prevColor = null)
         {
             
@@ -584,10 +587,10 @@ namespace AClass
          * 指定されたトラップを設置する
          * 設置出来たらtrueを返す
          */
-        public bool SetTrap(AMazeController mazeController, string trapName, int TrapAngle = -1)
+        public bool SetTrap(AMazeController mazeController, string trapName, int trapAngle = -1)
         {
             // 既に道・トラップが設定されている場合は処理しない
-            if (hasTrap) return false;
+            if (HasTrap) return false;
 
             var tilePosition = transform.position;
 
@@ -605,7 +608,7 @@ namespace AClass
 
                 if (tile == null) return false;
 
-                if (tile.hasTrap) return false;
+                if (tile.HasTrap) return false;
 
                 tiles.Add(tile);
             }
@@ -622,20 +625,20 @@ namespace AClass
             trap = Instantiate(trap, tilePosition, Quaternion.identity);
 
             // トラップの角度を指定
-            if (TrapAngle != -1)
-                trap.SetAngle(TrapAngle);
+            if (trapAngle != -1)
+                trap.SetAngle(trapAngle);
 
             trap.transform.rotation = Quaternion.Euler(0, trap.GetTrapAngle(), 0);
 
             // 周囲タイルにトラップを設置したことにする
             foreach (var tile in tiles)
             {
-                tile.hasTrap = true;
+                tile.HasTrap = true;
                 tile.Trap = trap;
             }
 
             Trap = trap;
-            hasTrap = true;
+            HasTrap = true;
 
             return true;
         }
@@ -645,7 +648,7 @@ namespace AClass
          */
         public void AwakeTrap()
         {
-            if (hasTrap) Trap.AwakeTrap(new TilePosition(Row, Column));
+            if (HasTrap) Trap.AwakeTrap(new TilePosition(Row, Column));
         }
 
         /**
@@ -654,7 +657,7 @@ namespace AClass
         public void SetTurret(ATurret settingTurret, int angle = 0)
         {
             // 既に道・トラップが設定されている場合は処理しない
-            if (hasTrap) return;
+            if (HasTrap) return;
 
             hasTurret = true;
 
