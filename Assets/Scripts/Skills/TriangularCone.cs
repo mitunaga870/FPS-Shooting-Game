@@ -1,17 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Numerics;
 using AClass;
 using DataClass;
 using InvasionPhase;
 using lib;
-using UnityEngine;
-using Vector3 = UnityEngine.Vector3;
 
 namespace Skills
 {
     public class TriangularCone : ASkill
     {
-        private const int Duration = 500;
+        private int Duration => SkillDataObject.TriangularConeDuration;
         
         public override void UseSkill(
             TilePosition targetPosition,

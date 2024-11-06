@@ -8,8 +8,8 @@ namespace Skills
 {
     public class Flag : ASkill
     {
-        private const int Duration = 500;
-        private const int AddDamage = 2;
+        private int Duration => SkillDataObject.FlagDuration;
+        private int AddDamage => SkillDataObject.FlagAddDamage;
         
         public override void UseSkill(
             TilePosition targetPosition,
