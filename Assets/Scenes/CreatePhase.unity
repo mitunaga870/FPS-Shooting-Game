@@ -394,7 +394,7 @@ Canvas:
   m_GameObject: {fileID: 348158059}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 68495759}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -402,10 +402,10 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: -2102511813
+  m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &348158063
@@ -1522,6 +1522,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3102938908063855413, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -235.90002
+      objectReference: {fileID: 0}
     - target: {fileID: 3199319828786520102, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1538,6 +1542,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5053266220468037178, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -28.507996
+      objectReference: {fileID: 0}
+    - target: {fileID: 5053266220468037178, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -2.7000008
+      objectReference: {fileID: 0}
     - target: {fileID: 5073131737565984606, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
       propertyPath: m_Type
       value: 1
@@ -1546,6 +1558,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 3c8b538ac329ab14f8f1bae6b99b9e13, type: 3}
+    - target: {fileID: 6095259572356001483, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 18.699997
+      objectReference: {fileID: 0}
     - target: {fileID: 6156060549370339836, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
       propertyPath: m_SizeDelta.x
       value: 478.55
@@ -1568,7 +1584,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6156060549370339836, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 26.9
+      value: 26.900002
       objectReference: {fileID: 0}
     - target: {fileID: 6156060549370339836, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -3920,7 +3936,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5046633151013713676, guid: 811e465921da7004594e4054a32b3d1f, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5046633151013713676, guid: 811e465921da7004594e4054a32b3d1f, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3928,7 +3944,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5046633151013713676, guid: 811e465921da7004594e4054a32b3d1f, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5046633151013713676, guid: 811e465921da7004594e4054a32b3d1f, type: 3}
       propertyPath: m_AnchorMin.y
@@ -3972,7 +3988,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5046633151013713676, guid: 811e465921da7004594e4054a32b3d1f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -194
+      value: -389
       objectReference: {fileID: 0}
     - target: {fileID: 5046633151013713676, guid: 811e465921da7004594e4054a32b3d1f, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -4264,7 +4280,8 @@ PrefabInstance:
       value: -50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 133378759619653556, guid: fba33cf6932e2ce49bb202a8563c2114, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fba33cf6932e2ce49bb202a8563c2114, type: 3}
