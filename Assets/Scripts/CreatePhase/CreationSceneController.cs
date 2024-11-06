@@ -1,4 +1,6 @@
+using System;
 using Enums;
+using Map;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -19,11 +21,46 @@ namespace CreatePhase
         /** 迷路作成コントローラ */
         [SerializeField]
         private MazeCreationController mazeCreationController;
+        
+        /** マップコントローラ */
+        [SerializeField]
+        private MapController mapController;
 
         /** ステージ情報 */
         [FormerlySerializedAs("stageData")]
         [SerializeField]
         private StageObject stageObject;
+        
+        // かくしゅUI 
+        [SerializeField]
+        private GameObject skillUI;
+        [SerializeField]
+        private GameObject turretUI;
+
+        private void Start()
+        {
+            // ステージデータを取得
+            var stageData = mazeCreationController.StageData;
+
+            // カスタムデータがないなら何もしない
+            if (stageData.StageCustomData == null) return;
+                
+            // スキルとタレットが禁止されている場合はUIを非表示にする
+            if (!stageData.StageCustomData.IsAllowedToUseSkill)
+            {
+                skillUI.SetActive(false);
+            }
+            if (!stageData.StageCustomData.IsAllowedToSetTurret)
+            {
+                turretUI.SetActive(false);
+            }
+            
+            // スキップの場合はもうマップを開く
+            if (stageData.StageCustomData.IsSkip)
+            {
+                mapController.ShowMap( false, true);
+            }
+        }
 
         /**
          * やめるときの保存処理

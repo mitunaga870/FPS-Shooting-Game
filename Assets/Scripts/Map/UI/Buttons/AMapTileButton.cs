@@ -13,20 +13,30 @@ namespace Map.UI.Buttons
         private TextMeshProUGUI label;
 
         [SerializeField]
-        private GeneralS2SData generalS2SData;
+        protected GeneralS2SData generalS2SData;
 
         [SerializeField]
         private CreateToInvasionData c2IData;
 
         private MapWrapper _mapWrapper;
-        private MapTile _mapTile;
+        protected MapTile MapTile;
         private bool _isCurrent;
         private Phase _currentPhase;
+        
+        protected MapController MapController;
+        protected MapUIController MapUIController;
 
-        public void Init(MapWrapper mapWrapper, MapTile mapTile)
+        public void Init(
+            MapWrapper mapWrapper,
+            MapTile mapTile,
+            MapController mapController,
+            MapUIController mapUIController
+            )
         {
             _mapWrapper = mapWrapper;
-            _mapTile = mapTile;
+            MapTile = mapTile;
+            MapController = mapController;
+            MapUIController = mapUIController;
 
             // タイプでラベルを変える
             label.text = mapTile.ToLabelString();
@@ -42,45 +52,30 @@ namespace Map.UI.Buttons
             gameObject.GetComponent<Button>().interactable = false;
 
             // 現在シーンによって表示形式を変える
-            switch (SceneManager.GetActiveScene().name)
-            {
-                case "CreatePhase":
-                    _currentPhase = Phase.Create;
-                    break;
-                case "InvasionPhase":
-                    _currentPhase = Phase.Invade;
-
-                    // 隣接しているマップのみクリック可能
-                    if (_mapWrapper.IsNextToCurrentMap(
-                            generalS2SData.CurrentMapRow,
-                            generalS2SData.CurrentMapColumn,
-                            _mapTile.Row,
-                            _mapTile.Column
-                        ))
-                        gameObject.GetComponent<Button>().interactable = true;
-                    break;
-            }
+            // 隣接しているマップのみクリック可能
+            if ( MapController.IsMoveMap &&
+                _mapWrapper.IsNextToCurrentMap(
+                    generalS2SData.CurrentMapRow,
+                    generalS2SData.CurrentMapColumn,
+                    MapTile.Row,
+                    MapTile.Column
+                ))
+                gameObject.GetComponent<Button>().interactable = true;
         }
 
         public void HandleClickButton()
         {
-            switch (_currentPhase)
-            {
-                case Phase.Create:
-                    break;
-                case Phase.Invade:
-                    MoveNextMap();
-                    break;
-            }
+            if (MapController.IsMoveMap)
+                MoveNextMap();
         }
 
         /**
          * 次のマップへの移動を行う
          */
-        private void MoveNextMap()
+        protected virtual void MoveNextMap()
         {
-            generalS2SData.CurrentMapRow = _mapTile.Row;
-            generalS2SData.CurrentMapColumn = _mapTile.Column;
+            generalS2SData.CurrentMapRow = MapTile.Row;
+            generalS2SData.CurrentMapColumn = MapTile.Column;
 
             c2IData.Reset();
 

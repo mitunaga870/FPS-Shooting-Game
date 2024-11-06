@@ -1,3 +1,4 @@
+using System;
 using AClass;
 using DataClass;
 using Enums;
@@ -6,8 +7,10 @@ using Map.UI;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace InvasionPhase
 {
@@ -57,14 +60,18 @@ namespace InvasionPhase
         [SerializeField]
         private GeneralS2SData generalS2SData;
 
-        [SerializeField]
-        private MapUIController mapUIController;
-
         /**
          * デッキ
          */
         [SerializeField]
         private DeckController deckController;
+        
+        [SerializeField]
+        private MapController mapController;
+        
+        // =============== ショップ系 =====================
+        [SerializeField]
+        private ShopController _shopUI;
 
         /**
          * 減速時の時刻スタック（１を超えたら０にして時刻を進める）
@@ -108,6 +115,7 @@ namespace InvasionPhase
         
         // =============== スキル用変数 =====================
         private bool _isSkillMode;
+        [NonSerialized]
         public ASkill Skill;
         // =================================================
         
@@ -118,9 +126,27 @@ namespace InvasionPhase
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();
             var turretData = SaveController.LoadTurretData();
+            var openShop = SaveController.LoadShopFlag();
 
             // ステージデータ読み込み
             StageData = mazeController.StageData;
+            
+            // ショップならショップを開いて終わり
+            if (openShop)
+            {
+                // 次に遷移する変わりにショップを開く
+                var shop = Instantiate(_shopUI);
+                shop.Initialize(deckController, walletController);
+                
+                // ショップが閉じられた時の処理を追加
+                shop.SetOnClose(() =>
+                {
+                    // マップを開く
+                    mapController.ShowMap(false, true);
+                });
+                
+                return;
+            }
 
             if (createToInvasionData.IsInvasion)
             {
@@ -295,13 +321,15 @@ namespace InvasionPhase
                 // ポジション
                 generalS2SData.CurrentMapRow = 0;
                 generalS2SData.CurrentMapColumn = 0;
+                // 迷路データをリセット
+                createToInvasionData.Reset();
+
                 // 作成フェーズに移行    
                 SceneManager.LoadScene("CreatePhase");
             }
             else
             {
-                // マップを開く
-                mapUIController.ShowCurrentMap();
+                mapController.ShowMap( false, true);
             }
         }
 

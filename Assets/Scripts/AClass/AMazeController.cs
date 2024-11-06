@@ -98,7 +98,7 @@ namespace AClass
                 MapTileType.Boss => stageObject.getBossStageData(),
                 MapTileType.Elite => stageObject.getEliteStageData(),
                 MapTileType.Event => stageObject.getEventStageData(),
-                MapTileType.Shop => stageObject.getShopStageData(),
+                MapTileType.Shop => null,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }

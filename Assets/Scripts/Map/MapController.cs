@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
+using Map.UI;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Map
 {
@@ -19,22 +17,26 @@ namespace Map
 
         [SerializeField]
         private GeneralS2SData generalS2SData;
+        
+        [SerializeField]
+        private MapUIController mapUIController;
 
+        [SerializeField]
+        private DeckController deckController;
+        
+        [SerializeField]
+        private WalletController walletController;
+        
         /**
          * マップのラッパー
          * ステージごとに配列要素とする
          */
         [NonSerialized]
         private MapWrapper[] _mapWrappers;
-
-        [NonSerialized]
-        private MapWrapper test;
-
-        public override string ToString()
-        {
-            throw new NotImplementedException();
-        }
-
+        
+        /** 移動用マップかどうか */
+        public bool IsMoveMap { get; private set; }
+        
         private void Awake()
         {
             if (generalS2SData.Maps != null)
@@ -85,6 +87,22 @@ namespace Map
             SaveController.SaveCurrentMapNumber(generalS2SData.MapNumber);
             SaveController.SaveCurrentMapRow(generalS2SData.CurrentMapRow);
             SaveController.SaveCurrentMapColumn(generalS2SData.CurrentMapColumn);
+        }
+
+        public void ShowMap()
+        {
+            ShowMap(true, false);
+        }
+
+        public void ShowMap(bool isClosable , bool isMoveToNextMap)
+        {
+                IsMoveMap = isMoveToNextMap;
+            
+                // マップを開く
+                var mapInstance = Instantiate(mapUIController);
+                
+                // マップをロードさせる
+                mapInstance.Load(this, deckController, walletController, isClosable);
         }
 
         private void OnApplicationQuit()

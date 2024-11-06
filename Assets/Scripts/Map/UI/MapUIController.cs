@@ -9,9 +9,6 @@ namespace Map.UI
     public class MapUIController : MonoBehaviour
     {
         [SerializeField]
-        private MapController mapController;
-
-        [SerializeField]
         private MapBossTileButton mapBossTileButton;
 
         [SerializeField]
@@ -34,12 +31,16 @@ namespace Map.UI
 
         [SerializeField]
         private GameObject mapUIWrapper;
+        
+        private bool _isClosable;
+        private DeckController _deckController;
 
-        private void Start()
+        /** マップを表示する */
+        public void Load(MapController mapController, DeckController deckController, WalletController walletController, bool isClosable)
         {
-            // 現在のマップUIを削除
-            foreach (Transform child in mapUIWrapper.transform) Destroy(child.gameObject);
-
+            _isClosable = isClosable;
+            _deckController = deckController;
+            
             // 現在のマップを
             var map = mapController.GetCurrentMap();
 
@@ -76,6 +77,7 @@ namespace Map.UI
                             break;
                         case MapTileType.Shop:
                             button = Instantiate(mapShopTileButton, mapRow.transform);
+                            ((MapShopTileButton)button).Initialize(deckController, walletController);
                             break;
                         default:
                             throw new Exception("Invalid MapTileType");
@@ -84,25 +86,17 @@ namespace Map.UI
                     // 列の子に追加
                     button.transform.SetParent(mapRow.transform);
                     // ボタンの初期化
-                    button.Init(map, mapTile);
+                    button.Init(map, mapTile, mapController, this);
                 }
             }
-
-            // マップを非表示にする
-            gameObject.SetActive(false);
-        }
-
-        /** 現在のマップを表示する */
-        public void ShowCurrentMap()
-        {
-            // マップを表示する
-            gameObject.SetActive(true);
         }
 
         /** マップを非表示にする */
         public void HideMap()
         {
-            gameObject.SetActive(false);
+            if (!_isClosable) return; 
+            
+            Destroy(gameObject);
         }
     }
 }

@@ -128,6 +128,9 @@ namespace AClass
         
         public int GetDamage()
         {
+            if (_isInvasionReady)
+                return (int)(GetDefaultDamage() * MazeController!.StageData.StageCustomData.PlayerAttackScale) + _ampDamage;
+                
             return GetDefaultDamage() + _ampDamage;
         }
         

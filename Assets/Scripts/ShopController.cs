@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using AClass;
 using CreatePhase.UI;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -14,12 +16,6 @@ public class ShopController : MonoBehaviour
     public const int TRAP_COST = 50;
     public const int SKILL_COST = 100;
     public const int REROLL_COST = 20;
-
-    [SerializeField] private WalletController wallet;
-    [SerializeField] private DeckController deck;
-
-    // ショップを開くボタン
-    [SerializeField] private Button openShopButton;
 
     // ショップを閉じるボタン
     [SerializeField] private Button closeShopButton;
@@ -41,7 +37,7 @@ public class ShopController : MonoBehaviour
     {
         get => skillButtons.Count;
     }
-
+    
     //　ショップに並びうるものの一覧
     private List<ATrap> allTraps = new List<ATrap>();
     private List<ASkill> allSkills = new List<ASkill>();
@@ -52,34 +48,33 @@ public class ShopController : MonoBehaviour
 
     /** リロール回数 */
     private int reRollCount = 0;
+    
+    private DeckController deck;
+    private WalletController wallet;
 
-    public void Start()
+    public void Initialize(DeckController deckController, WalletController walletController)
     {
+        // ショップフラグを立てる
+        SaveController.SaveShopFlag(true);
+            
+        deck = deckController;
+        wallet = walletController;
+        
         // リソースフォルダから全てのトラップ、タレット、スキルを取得
         allTraps.AddRange(Resources.LoadAll<ATrap>("Prefabs/Traps"));
         allSkills.AddRange(Resources.LoadAll<ASkill>("Prefabs/Skills"));
 
-        SetItems();
-
-        // ショップを開くボタンに処理を追加
-        openShopButton.onClick.AddListener(() =>
-        {
-            gameObject.SetActive(true);
-            Debug.Log("VAR");
-        });
+        // SetItems();
 
         // ショップを閉じるボタンに処理を追加
         closeShopButton.onClick.AddListener(() =>
         {
-            // ショップを閉じる
-            gameObject.SetActive(false);
+            // ショップフラグを下げる
+            SaveController.SaveShopFlag(false);
         });
 
         // リロールボタンに処理を追加
         ReRollButton.onClick.AddListener(() => { SetItems(true); });
-
-        // ウィンドウを非表示
-        gameObject.SetActive(false);
     }
 
     /**
@@ -167,5 +162,11 @@ public class ShopController : MonoBehaviour
                 deck.AddSkill(skills[i]);
             });
         }
+    }
+    
+    // ReSharper disable once InconsistentNaming
+    public void SetOnClose(Action _onCloseAction)
+    {
+        closeShopButton.onClick.AddListener(_onCloseAction.Invoke);
     }
 }

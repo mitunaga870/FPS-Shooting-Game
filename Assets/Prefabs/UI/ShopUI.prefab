@@ -266,6 +266,7 @@ GameObject:
   - component: {fileID: 8941414319309263965}
   - component: {fileID: 7353300113369541905}
   - component: {fileID: 3324958574979841616}
+  - component: {fileID: 7798519001121184098}
   m_Layer: 5
   m_Name: ShopUI
   m_TagString: Untagged
@@ -356,6 +357,24 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &7798519001121184098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 168493528438974628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36ed8446ae6478d45adada5c00868c54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallet: {fileID: 0}
+  deck: {fileID: 0}
+  closeShopButton: {fileID: 901512121742073460}
+  ReRollButton: {fileID: 7241617955926061030}
+  trapButtons: []
+  skillButtons: []
 --- !u!1 &661687254354213917
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,7 +982,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallet: {fileID: 0}
   deck: {fileID: 0}
-  openShopButton: {fileID: 0}
   closeShopButton: {fileID: 901512121742073460}
   ReRollButton: {fileID: 7241617955926061030}
   trapButtons:

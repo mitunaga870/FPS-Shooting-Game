@@ -166,6 +166,9 @@ namespace AClass
          */
         public int GetDamage()
         {
+            if (Phase == Phase.Invade)
+                return (int)(GetDefaultDamage() * SceneController.StageData.StageCustomData.PlayerAttackScale) + AmpDamage;
+                
             return GetDefaultDamage() + AmpDamage;
         }
 
