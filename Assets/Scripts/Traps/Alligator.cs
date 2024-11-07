@@ -7,11 +7,11 @@ namespace Traps
 {
     public class Alligator : ATrap
     {
-        private const int Damage = 1;
-        private const float Height = 0.04f;
-        private const int CoolDown = 100;
-        private const int KnockBack = 2;
-        private const int SetRange = 1;
+        private int Damage => trapObject.AlligatorDamage;
+        private float Height => trapObject.AlligatorHeight;
+        private int CoolDown => trapObject.AlligatorCoolDown;
+        private int KnockBack => trapObject.AlligatorKnockBack;
+        private int SetRange => trapObject.AlligatorSetRange;
         
         [SerializeField]
         private CrocTrap_ActionIgnition crocTrapActionIgnition;

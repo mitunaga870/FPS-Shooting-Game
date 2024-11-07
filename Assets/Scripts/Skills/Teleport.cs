@@ -9,8 +9,8 @@ namespace Skills
 {
     public class Teleport : ASkill
     {
-        private const int Duration = 500;
-
+        private int Duration => SkillDataObject.TeleportDuration;
+        
         protected override void UseSkillMain(
             TilePosition targetPosition,
             InvasionController sceneController,

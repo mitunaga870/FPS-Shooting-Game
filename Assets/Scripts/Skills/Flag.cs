@@ -8,10 +8,10 @@ namespace Skills
 {
     public class Flag : ASkill
     {
-        private const int Duration = 500;
-        private const int AddDamage = 2;
-
-        protected override void UseSkillMain(
+        private int Duration => SkillDataObject.FlagDuration;
+        private int AddDamage => SkillDataObject.FlagAddDamage;
+        
+        public override void UseSkillMain(
             TilePosition targetPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,

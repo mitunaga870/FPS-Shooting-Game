@@ -8,8 +8,8 @@ namespace Skills
 {
     public class Banana : ASkill
     {
-        private const int Distance = 2;
-        private const int StunTime = 100;
+        private int Distance => SkillDataObject.BananaDistance;
+        private int StunTime => SkillDataObject.BananaStunTime;
         
         [SerializeField]
         private BananaActiveSklill_IgnitionAction anctionController;

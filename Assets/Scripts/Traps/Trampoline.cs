@@ -7,12 +7,13 @@ namespace Traps
 {
     public class Trampoline : ATrap
     {
-        private const float Height = 0.04f;
-        private const int JumpHeight = 10;
-        private const int Damage = 10;
-        private const int CoolDown = 100;
         private const string TrapName = "Trampoline";
-        private const int SetRange = 1;
+        
+        private int JumpHeight => trapObject.TrampolineJumpHeight;
+        private int Damage => trapObject.TrampolineDamage;
+        private int CoolDown => trapObject.TrampolineCoolDown;
+        private int SetRange => trapObject.TrampolineSetRange;
+        private float Height => trapObject.TrampolineHeight;
         
         public override void AwakeTrap(TilePosition position)
         {

@@ -9,14 +9,15 @@ namespace Traps
 {
     public class TokyoTower : ATrap
     {
-        private const int SetRange = 2;
-        private const int Damage = 1;
-        private const int KnockBack = 5;
-        private const float CreateHeight = 0.15f;
-        private const float InvadeHeight = -2.7f;
-        private const float MovedHeight = 0.15f;
-        private const int CoolDown = 500;
         private const string TrapName = "Tokyo Tower";
+        
+        private int Damage => trapObject.TokyoTowerDamage;
+        private float InvadeHeight => trapObject.TokyoTowerInvadeHeight;
+        private float MovedHeight => trapObject.TokyoTowerMovedHeight;
+        private int KnockBack => trapObject.TokyoTowerKnockBack;
+        private int CoolDown => trapObject.TokyoTowerCoolDown;
+        private int SetRange => trapObject.TokyoTowerSetRange;
+        private float CreateCreateHeight => trapObject.TokyoTowerCreateHeight;
 
         public override void AwakeTrap(TilePosition position)
         {
@@ -68,7 +69,7 @@ namespace Traps
                 return InvadeHeight;
             }
             
-            return CreateHeight;
+            return CreateCreateHeight;
         }
 
         public override int GetSetRange()
