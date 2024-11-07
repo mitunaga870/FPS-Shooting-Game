@@ -110,6 +110,12 @@ public static class SaveController
     {
         PlayerPrefs.SetInt("OpenShop", openShop ? 1 : 0);
     }
+    
+    public static void SaveWallet(int wallet)
+    {
+        PlayerPrefs.SetInt("Wallet", wallet);
+    }
+    
     public static void SaveDeckData(
         ATrap[] deckTraps, ATrap[] handTraps, ATrap[] discardTraps,
         ASkill[] aSkills, ATurret[] aTurrets)
@@ -318,6 +324,8 @@ public static class SaveController
         var saveText = PlayerPrefs.GetString("DeckData");
         PlayerPrefs.DeleteKey("DeckData");
         
+        if (saveText == "") return null;
+        
         // セーブデータを行ごとに分ける
         var rows = saveText.Split('\n');
         
@@ -347,5 +355,10 @@ public static class SaveController
         for (var i = 0; i < turrets.Length; i++) turretData[i] = InstanceGenerator.GenerateTurret(turrets[i]);
         
         return (trapData, handTrapData, discardTrapData, turretData, skillData);
+    }
+
+    public static int LoadWallet()
+    {
+        return PlayerPrefs.GetInt("Wallet", -1);
     }
 }

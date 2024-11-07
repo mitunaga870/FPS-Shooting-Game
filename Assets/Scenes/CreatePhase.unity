@@ -172,11 +172,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultValueObject: {fileID: 11400000, guid: 3549d10a6eb93c949a824afa92722d0c, type: 2}
+  generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
+  walletText: {fileID: 292093900}
 --- !u!224 &281306546 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8653648143871527678, guid: 46ecaf7c3fe5630499f621d9027f0317, type: 3}
   m_PrefabInstance: {fileID: 3433257199990784366}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &292093900 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6727669345974728395, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
+  m_PrefabInstance: {fileID: 1894363419}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &299312857
 GameObject:
   m_ObjectHideFlags: 0

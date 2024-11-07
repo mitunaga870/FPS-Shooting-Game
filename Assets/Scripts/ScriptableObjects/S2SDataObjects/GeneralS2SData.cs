@@ -13,6 +13,9 @@ namespace ScriptableObjects.S2SDataObjects
     [CreateAssetMenu(fileName = "GeneralS2SData", menuName = "S2SData/GeneralS2SData")]
     public class GeneralS2SData : AS2SData
     {
+        [SerializeField]
+        private DefaultValueObject defaultValueObject;
+        
         [NonSerialized]
         private int mapNumber = -1;
 
@@ -24,7 +27,7 @@ namespace ScriptableObjects.S2SDataObjects
 
         [NonSerialized]
         private int playerHp = 10;
-
+        
         [NonSerialized]
         public int MapNumber;
 
@@ -36,6 +39,9 @@ namespace ScriptableObjects.S2SDataObjects
 
         [NonSerialized]
         public int PlayerHp;
+        
+        [NonSerialized]
+        public int Wallet;
 
         [NonSerialized]
         [AllowNull]
@@ -112,6 +118,7 @@ namespace ScriptableObjects.S2SDataObjects
             CurrentMapRow = currentMapRow;
             CurrentMapColumn = currentMapColumn;
             Maps = null;
+            Wallet = defaultValueObject.defaultWallet;
             _deckTraps = new List<ATrap>();
             _deckSkills = new List<ASkill>();
             _deckTurrets = new List<ATurret>();
