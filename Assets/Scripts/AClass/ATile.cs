@@ -591,6 +591,8 @@ namespace AClass
         {
             // 既に道・トラップが設定されている場合は処理しない
             if (HasTrap) return false;
+            // スタート・ゴールは設置しない
+            if (TileType == TileTypes.Start || TileType == TileTypes.Goal) return false;
 
             var tilePosition = transform.position;
 
@@ -609,6 +611,8 @@ namespace AClass
                 if (tile == null) return false;
 
                 if (tile.HasTrap) return false;
+                
+                if (tile._tileType == TileTypes.Goal || tile._tileType == TileTypes.Start) return false;
 
                 tiles.Add(tile);
             }
