@@ -846,6 +846,7 @@ GameObject:
   - component: {fileID: 765495451846073838}
   - component: {fileID: 2986912405702792914}
   - component: {fileID: 236018528735012146}
+  - component: {fileID: 2242798954313869036}
   m_Layer: 5
   m_Name: DeckUI
   m_TagString: Untagged
@@ -936,3 +937,16 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &2242798954313869036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9066007781022698958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81f8bee9dba338e4aad4bd444e1e4e61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deckListWrapper: {fileID: 8608385885913501427}

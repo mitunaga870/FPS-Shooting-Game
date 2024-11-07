@@ -29,5 +29,10 @@ namespace Skills
                 new(0, 0), new(0, 1), new(0, 2)
             };
         }
+
+        public override string GetSkillName()
+        {
+            return "RailwayCrossing";
+        }
     }
 }
