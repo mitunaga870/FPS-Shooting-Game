@@ -73,6 +73,7 @@ public static class SaveController
     {
         PlayerPrefs.SetString("StageName", stageData.stageName);
         PlayerPrefs.SetInt("StageType", (int)stageData.StageType);
+        PlayerPrefs.SetString("CustomData", stageData.StageCustomData.ToString());
     }
 
     public static void SaveMap(MapWrapper[] mapWrappers)
@@ -100,6 +101,11 @@ public static class SaveController
     public static void SaveCurrentMapColumn(int currentMapColumn)
     {
         PlayerPrefs.SetInt("CurrentMapColumn", currentMapColumn);
+    }
+    
+    public static void SaveShopFlag(bool openShop)
+    {
+        PlayerPrefs.SetInt("OpenShop", openShop ? 1 : 0);
     }
 
     // =======　読み込み処理　=======
@@ -190,10 +196,15 @@ public static class SaveController
 
         // ステージタイプを読み込む
         result.StageType = (StageType)PlayerPrefs.GetInt("StageType", 0);
+        
+        // カスタムデータを読み込む
+        var customData = PlayerPrefs.GetString("CustomData", null);
+        if (customData != null) result.StageCustomData = new StageCustomData(customData);
 
         // 読み込んだやつを消す
         PlayerPrefs.DeleteKey("StageName");
         PlayerPrefs.DeleteKey("StageType");
+        PlayerPrefs.DeleteKey("CustomData");
 
         return result;
     }
@@ -243,6 +254,14 @@ public static class SaveController
         // 読み込んだやつを消す
         PlayerPrefs.DeleteKey("CurrentMapColumn");
         return currentMapColumn;
+    }
+    
+    public static bool LoadShopFlag()
+    {
+        var openShop = PlayerPrefs.GetInt("OpenShop", 0);
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("OpenShop");
+        return openShop == 1;
     }
 
     /**
