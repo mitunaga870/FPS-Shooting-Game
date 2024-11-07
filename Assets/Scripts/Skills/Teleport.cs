@@ -9,7 +9,7 @@ namespace Skills
 {
     public class Teleport : ASkill
     {
-        private const int Duration = 500;
+        private int Duration => SkillDataObject.TeleportDuration;
         
         public override void UseSkill(
             TilePosition targetPosition,

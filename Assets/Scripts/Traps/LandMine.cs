@@ -6,11 +6,12 @@ namespace Traps
 {
     public class LandMine : ATrap
     {
-        private const int Damage = 10;
-        private const float Height = 0.05f;
-        private const int CoolDown = 100;
-        private const int SetRange = 1;
         private const string TrapName = "LandMine";
+        
+        private int Damage => trapObject.LandMineDamage;
+        private float Height => trapObject.LandMineHeight;
+        private int CoolDown => trapObject.LandMineCoolDown;
+        private int SetRange => trapObject.LandMineSetRange;
         
         [SerializeField]
         TrapMine_IgnitionAction trapMineIgnitionAction;

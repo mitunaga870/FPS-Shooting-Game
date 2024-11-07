@@ -5,11 +5,12 @@ namespace Traps
 {
     public class PoisonSwamp : ATrap
     {
-        private const int Damage = 1;
-        private const int Duration = 100;
-        private const int SetRange = 3;
-        private const float Height = 0.5f;
         private const string TrapName = "PoisonSwamp";
+        
+        private int Damage => trapObject.PoisonSwampDamage;
+        private float Height => trapObject.PoisonSwampHeight;
+        private int Duration => trapObject.PoisonSwampDuration;
+        private int SetRange => trapObject.PoisonSwampSetRange;
 
         private int _level = 1;
 
