@@ -16,7 +16,10 @@ public class DeckController : MonoBehaviour
     private DeckObject deckObject;
 
     [SerializeField]
-    private GeneralS2SData _generalS2SData;
+    private GeneralS2SData generalS2SData;
+    
+    [SerializeField]
+    private DeckUIController deckUIController;
     
     private List<ATrap> DefaultTraps => deckObject.DefaultTraps;
     private List<ASkill> DefaultSkills => deckObject.DefaultSkills;
@@ -39,7 +42,7 @@ public class DeckController : MonoBehaviour
         var saveDataTuple = SaveController.LoadDeckData();
         
         // S2SData読み込み
-        var s2SData = _generalS2SData.GetDeckData();
+        var s2SData = generalS2SData.GetDeckData();
 
         // デッキを初期化
         if (saveDataTuple != null)
@@ -89,7 +92,7 @@ public class DeckController : MonoBehaviour
     private void OnDestroy()
     {
         // s2sDataにデッキデータを保存
-        _generalS2SData.SetDeckData(
+        generalS2SData.SetDeckData(
             _deckTraps.ToArray(), _handTraps.ToArray(), _discardTraps.ToArray(),
             _deckSkills.ToArray(), _deckTurrets.ToArray());
     }
@@ -240,5 +243,13 @@ public class DeckController : MonoBehaviour
     public List<ATurret> DrawTurrets()
     {
         return _deckTurrets;
+    }
+
+    /**
+     * デッキUIを表示する
+     */
+    public void ShowDeckUI()
+    {
+        deckUIController.ShowDeckUI(_deckTraps, _handTraps, _deckSkills, _deckTurrets);
     }
 }
