@@ -39,7 +39,7 @@ namespace Turrets
                 else
                 {
                     var icon = _turretIconGenerator.getIcon(turretName);
-                    icon = Instantiate(icon, turretUIWrapper.transform, true);
+                    icon = Instantiate(icon, turretUIWrapper.transform, false);
                     
                     // タレットを追加
                     _addedTurrets[turretName] = icon;
