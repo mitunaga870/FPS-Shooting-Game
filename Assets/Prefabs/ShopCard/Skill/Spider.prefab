@@ -594,6 +594,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8119272896714181698}
+  - component: {fileID: -4338830424808874613}
   m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
@@ -621,6 +622,19 @@ Transform:
   - {fileID: 7573385228137340330}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-4338830424808874613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5821181087644162005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b260a774c4142b59742a9087b21f1bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trapPrefab: {fileID: -984468382352934420, guid: 73b959710d5bfba4da13b92fa5abdf0a, type: 3}
 --- !u!1 &5893906707375765624
 GameObject:
   m_ObjectHideFlags: 0

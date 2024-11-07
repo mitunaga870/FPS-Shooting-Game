@@ -12,8 +12,8 @@ namespace Skills
     public class TriangularCone : ASkill
     {
         private const int Duration = 500;
-        
-        public override void UseSkill(
+
+        protected override void UseSkillMain(
             TilePosition targetPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
@@ -40,6 +40,11 @@ namespace Skills
         protected override List<TilePosition> GetSkillRelativeEffectArea(InvasionMazeController mazeController)
         {
             return new List<TilePosition>{ new(0, 0) };
+        }
+
+        public override string GetSkillName()
+        {
+            return "TriangularCone";
         }
     }
 }

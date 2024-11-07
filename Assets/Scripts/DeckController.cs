@@ -1,33 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AClass;
 using lib;
+using ScriptableObjects;
+using ScriptableObjects.S2SDataObjects;
 using Unity.VisualScripting;
 using UnityEngine;
 using ATrap = AClass.ATrap;
+using Random = UnityEngine.Random;
 
 public class DeckController : MonoBehaviour
 {
     [SerializeField]
-    private List<ATrap> defaultTraps;
+    private DeckObject deckObject;
 
     [SerializeField]
-    private List<ASkill> defaultSkills;
-
-    [SerializeField]
-    private List<ATurret> defaultTurrets;
+    private GeneralS2SData _generalS2SData;
+    
+    private List<ATrap> DefaultTraps => deckObject.DefaultTraps;
+    private List<ASkill> DefaultSkills => deckObject.DefaultSkills;
+    private List<ATurret> DefaultTurrets => deckObject.DefaultTurrets;
 
     private List<ATrap> _deckTraps = new();
     private List<ASkill> _deckSkills = new();
     private List<ATurret> _deckTurrets = new();
 
     private List<ATrap> _discardTraps = new();
-    private List<ASkill> _discardSkills = new();
-    private List<ATurret> _discardTurrets = new();
 
     private List<ATrap> _handTraps = new();
-    private List<ASkill> _handSkills = new();
-    private List<ATurret> _handTurrets = new();
 
     public int TrapDeckCount => _deckTraps.Count;
 
@@ -36,6 +37,9 @@ public class DeckController : MonoBehaviour
     {
         // セーブ読み込み
         var saveDataTuple = SaveController.LoadDeckData();
+        
+        // S2SData読み込み
+        var s2SData = _generalS2SData.GetDeckData();
 
         // デッキを初期化
         if (saveDataTuple != null)
@@ -43,21 +47,59 @@ public class DeckController : MonoBehaviour
             //セーブデータがある時
             var saveData = saveDataTuple.Value;
 
+            // デッキトラップ
+            foreach (var trap in saveData.DeckTraps) _deckTraps.Add(trap);
+            // ハンドトラップ
+            foreach (var trap in saveData.HandTraps) _handTraps.Add(trap);
+            // 捨てたトラップ
+            foreach (var trap in saveData.DiscardTraps) _discardTraps.Add(trap);
+            // スキル
+            foreach (var skill in saveData.Skills) _deckSkills.Add(skill);
+            // タレット
+            foreach (var turret in saveData.Turrets) _deckTurrets.Add(turret);
+        }
+        else if (s2SData != null)
+        {
+            // S2SDataがある時
+            var s2SDataValue = s2SData.Value;
+
             // トラップ
-            foreach (var trap in saveData.Traps) _deckTraps.Add(InstanceGenerator.GenerateTrap(trap.Trap));
+            foreach (var trap in s2SDataValue.deckTraps) _deckTraps.Add(trap);
+            foreach (var trap in s2SDataValue.handTraps) _handTraps.Add(trap);
+            foreach (var trap in s2SDataValue.discardTraps) _discardTraps.Add(trap);
+            // スキル
+            foreach (var skill in s2SDataValue.skills) _deckSkills.Add(skill);
+            // タレット
+            foreach (var turret in s2SDataValue.turrets) _deckTurrets.Add(turret);
         }
         else
         {
             // セーブデータがないとき
             _deckTraps.Clear();
-            _deckTraps.AddRange(defaultTraps);
+            _deckTraps.AddRange(DefaultTraps);
 
             _deckSkills.Clear();
-            _deckSkills.AddRange(defaultSkills);
+            _deckSkills.AddRange(DefaultSkills);
 
             _deckTurrets.Clear();
-            _deckTurrets.AddRange(defaultTurrets);
+            _deckTurrets.AddRange(DefaultTurrets);
         }
+    }
+    
+    private void OnDestroy()
+    {
+        // s2sDataにデッキデータを保存
+        _generalS2SData.SetDeckData(
+            _deckTraps.ToArray(), _handTraps.ToArray(), _discardTraps.ToArray(),
+            _deckSkills.ToArray(), _deckTurrets.ToArray());
+    }
+
+    private void OnApplicationQuit()
+    {
+        // セーブ
+        SaveController.SaveDeckData(
+            _deckTraps.ToArray(), _handTraps.ToArray(), _discardTraps.ToArray(),
+            _deckSkills.ToArray(), _deckTurrets.ToArray());
     }
 
     public List<ATrap> DrowTraps(int amount = 1)
@@ -172,5 +214,31 @@ public class DeckController : MonoBehaviour
     public void AddSkillRange(List<ASkill> selectedSkill)
     {
         _deckSkills.AddRange(selectedSkill);
+    }
+
+    /**
+     * スキルを取得
+     */
+    public List<ASkill> DrawSkills()
+    {
+        return _deckSkills;
+    }
+
+    public void UseSkill(string skillName)
+    {
+        // 使用したスキルを捨てる
+        var skill = _deckSkills.FirstOrDefault(s => s.GetSkillName() == skillName);
+        
+        if (skill == null) return;
+        
+        _deckSkills.Remove(skill);
+    }
+
+    /**
+     * タレットを取得
+     */
+    public List<ATurret> DrawTurrets()
+    {
+        return _deckTurrets;
     }
 }

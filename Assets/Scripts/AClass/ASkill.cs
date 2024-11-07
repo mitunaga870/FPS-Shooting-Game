@@ -3,6 +3,7 @@ using DataClass;
 using InvasionPhase;
 using JetBrains.Annotations;
 using ScriptableObjects;
+using Skills;
 using UnityEngine;
 
 namespace AClass
@@ -12,7 +13,20 @@ namespace AClass
         [SerializeField]
         protected GameObject skillObject;
         
-        public abstract void UseSkill(
+        private SkillController _skillController;
+        
+        public void UseSkill(
+            TilePosition targetPosition,
+            InvasionController sceneController,
+            InvasionMazeController mazeController,
+            InvasionEnemyController enemyController
+        )
+        {
+            _skillController.Use(this);
+            UseSkillMain(targetPosition, sceneController, mazeController, enemyController);
+        }
+
+        protected abstract void UseSkillMain(
             TilePosition targetPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
@@ -46,6 +60,14 @@ namespace AClass
             }
 
             return effectArea;
+        }
+        
+        /** スキルの名前を取得する */
+        public abstract string GetSkillName();
+
+        public void Init(SkillController skillController)
+        {
+            _skillController = skillController;
         }
     }
 }

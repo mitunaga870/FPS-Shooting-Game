@@ -87,6 +87,9 @@ namespace CreatePhase
             _mazeOrigin = new Vector3(0, 0, 0);
             _previewAddresses = new List<Dictionary<string, int>>();
             _lastEditVertical = false;
+            
+            // デッキの初期化
+            deck.DiscardHandTrap();
 
             // セーブデータ読み込み
             var tileData = SaveController.LoadTileData();

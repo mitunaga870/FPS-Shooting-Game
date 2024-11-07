@@ -185,7 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _skill: {fileID: 7279784000243881811}
-  _sceneController: {fileID: 0}
+  _skillRemainingCountText: {fileID: 176794409242089575}
 --- !u!114 &7279784000243881811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4650fb3cab664653b5a664990d294bb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillObject: {fileID: 0}
+  skillObject: {fileID: 4066365261962900034, guid: 5b027a5e3b47e8a42bd7e0ca794087a9, type: 3}
 --- !u!1 &4049055578340644905
 GameObject:
   m_ObjectHideFlags: 0
