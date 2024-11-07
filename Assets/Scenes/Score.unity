@@ -502,6 +502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4495f1803b025d14d9d28a5af012fe53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
   prefabObj: {fileID: 2685570924336315078, guid: 3f18bf6984f05f74c86f104a7120f3ad, type: 3}
 --- !u!1 &93302790
 GameObject:
@@ -879,8 +880,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   time: 1
-  BUNSHO: 3
   text: {fileID: 251044050}
+  generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
 --- !u!114 &251044050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1888,8 +1889,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   time: 1
-  BUNSHO: 999999
   text: {fileID: 395893937}
+  generalS2SData: {fileID: 0}
 --- !u!1 &395933083 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c72287d7aba293b49a23c896b8308e54, type: 3}
@@ -2269,8 +2270,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   time: 1
-  BUNSHO: 3
   text: {fileID: 438470528}
+  generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
 --- !u!1001 &469737512
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3210,8 +3211,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   time: 1
-  BUNSHO: 3
   text: {fileID: 735781186}
+  generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
 --- !u!114 &735781186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6941,8 +6942,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   time: 1
-  BUNSHO: 3000
   text: {fileID: 1911150112}
+  generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
 --- !u!1 &1928491770
 GameObject:
   m_ObjectHideFlags: 0

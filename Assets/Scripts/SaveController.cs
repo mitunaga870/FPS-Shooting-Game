@@ -159,6 +159,11 @@ public static class SaveController
     {
         PlayerPrefs.SetInt("PlayerHP", hp);
     }
+    
+    public static void SaveScore(int score)
+    {
+        PlayerPrefs.SetInt("Score", score);
+    }
 
     // =======　読み込み処理　=======
     [CanBeNull]
@@ -375,5 +380,10 @@ public static class SaveController
     public static int LoadPlayerHP()
     {
         return PlayerPrefs.GetInt("PlayerHP", -1);
+    }
+    
+    public static int LoadScore()
+    {
+        return PlayerPrefs.GetInt("Score", -1);
     }
 }
