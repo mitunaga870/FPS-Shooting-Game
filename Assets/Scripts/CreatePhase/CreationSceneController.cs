@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Enums;
 using Map;
 using ScriptableObjects;
@@ -32,9 +33,17 @@ namespace CreatePhase
         [SerializeField]
         private StageObject stageObject;
         
+        [SerializeField]
+        private GeneralS2SData generalS2SData;
+        
+        
         // かくしゅUI 
         [SerializeField]
         private GameObject turretUI;
+        
+        // 仮のメッセージボックス
+        [SerializeField]
+        private MessageBoxController messageBox;
 
         private void Start()
         {
@@ -55,6 +64,13 @@ namespace CreatePhase
             {
                 mapController.ShowMap( false, true);
             }
+            
+            // メッセージを表示
+            var messages = new System.Collections.Generic.List<string>();
+            messages.Add(generalS2SData.MapNumber + " - (" + generalS2SData.CurrentMapColumn+", "+generalS2SData.CurrentMapRow + ")");
+            messages.Add("ステージ"+ stageData.stageName+"を開始します。\n 通路を作成してください");
+            
+            messageBox.SetMessages(messages.ToArray());
         }
 
         /**
@@ -79,8 +95,8 @@ namespace CreatePhase
             var shortestPath = mazeCreationController.GetShortestS2GPath();
             if (shortestPath == null)
             {
-                // TODO: 迷路が不通のダイアログを出す。
-                Debug.Log("迷路がつながってないよ");
+                messageBox.SetMessage("通路がつながっていません");
+                
                 return;
             }
 
