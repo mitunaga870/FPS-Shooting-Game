@@ -124,30 +124,40 @@ public static class SaveController
         var saveText = "";
         
         // トラップ山札
-        foreach (var trap in deckTraps) saveText += $"{trap},";
-        saveText = saveText.Substring(0, saveText.Length - 1);
-        saveText += "\n";
+        var deckTrapsText = "";
+        foreach (var trap in deckTraps) deckTrapsText += $"{trap},";
+        if (deckTrapsText.Length != 0)
+            deckTrapsText = deckTrapsText.Substring(0, deckTrapsText.Length - 1);
+        saveText += deckTrapsText + "\n";
         
         // トラップ手札
-        foreach (var trap in handTraps) saveText += $"{trap},";
-        saveText = saveText.Substring(0, saveText.Length - 1);
-        saveText += "\n";
+        var handTrapsText = "";
+        foreach (var trap in handTraps) handTrapsText += $"{trap},";
+        if (handTrapsText.Length != 0)
+            handTrapsText = handTrapsText.Substring(0, handTrapsText.Length - 1);
+        saveText += handTrapsText + "\n";
         
         // トラップ捨て場
-        foreach (var trap in discardTraps) saveText += $"{trap},";
-        saveText = saveText.Substring(0, saveText.Length - 1);
-        saveText += "\n";
+        var discardTrapsText = "";
+        foreach (var trap in discardTraps) discardTrapsText += $"{trap},";
+        if (discardTrapsText.Length != 0)
+            discardTrapsText = discardTrapsText.Substring(0, discardTrapsText.Length - 1);
+        saveText += discardTrapsText + "\n";
         
         // スキル
-        foreach (var skill in aSkills) saveText += $"{skill},";
-        saveText = saveText.Substring(0, saveText.Length - 1);
-        saveText += "\n";
+        var skillsText = "";
+        foreach (var skill in aSkills) skillsText += $"{skill},";
+        if (skillsText.Length != 0)
+            skillsText = skillsText.Substring(0, skillsText.Length - 1);
+        saveText += skillsText + "\n";
         
-        // タレット
-        foreach (var turret in aTurrets) saveText += $"{turret},";
-        saveText = saveText.Substring(0, saveText.Length - 1);
         
         PlayerPrefs.SetString("DeckData", saveText);
+    }
+    
+    public static void SavePlayerHP(int hp)
+    {
+        PlayerPrefs.SetInt("PlayerHP", hp);
     }
 
     // =======　読み込み処理　=======
@@ -360,5 +370,10 @@ public static class SaveController
     public static int LoadWallet()
     {
         return PlayerPrefs.GetInt("Wallet", -1);
+    }
+    
+    public static int LoadPlayerHP()
+    {
+        return PlayerPrefs.GetInt("PlayerHP", -1);
     }
 }

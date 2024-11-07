@@ -26,7 +26,10 @@ namespace ScriptableObjects.S2SDataObjects
         private int currentMapColumn = -1;
 
         [NonSerialized]
-        private int playerHp = 10;
+        private int playerHp = -1;
+        
+        [NonSerialized]
+        private int wallet = -1;
         
         [NonSerialized]
         public int MapNumber;
@@ -117,8 +120,8 @@ namespace ScriptableObjects.S2SDataObjects
             MapNumber = mapNumber;
             CurrentMapRow = currentMapRow;
             CurrentMapColumn = currentMapColumn;
+            Wallet = wallet;
             Maps = null;
-            Wallet = defaultValueObject.defaultWallet;
             _deckTraps = new List<ATrap>();
             _deckSkills = new List<ASkill>();
             _deckTurrets = new List<ATurret>();
