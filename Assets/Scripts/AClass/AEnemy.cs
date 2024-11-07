@@ -3,12 +3,16 @@ using DataClass;
 using Enums;
 using InvasionPhase;
 using JetBrains.Annotations;
+using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 
 namespace AClass
 {
     public abstract class AEnemy : MonoBehaviour
     {
+        [SerializeField]
+        GeneralS2SData generalS2SData;
+        
         // 0.02秒の重力加速度
         private const float Gravity = 9.8f * 0.02f;
 
@@ -461,6 +465,8 @@ namespace AClass
 
         private void OnDestroy()
         {
+            generalS2SData.Score += 1;
+            
             // 敵の削除処理
             _enemyController.EnemyDestroyed(GetInstanceID());
         }

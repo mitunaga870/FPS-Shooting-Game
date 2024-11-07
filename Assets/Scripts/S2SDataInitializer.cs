@@ -1,3 +1,4 @@
+using System;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
@@ -36,5 +37,18 @@ public class S2SDataInitializer : MonoBehaviour
             if (generalS2SData.Wallet == -1)
                 generalS2SData.Wallet = defaultValueObject.defaultWallet;
         }
+
+        if (generalS2SData.Score == -1)
+        {
+            generalS2SData.Score = SaveController.LoadScore();
+            
+            if (generalS2SData.Score == -1)
+                generalS2SData.Score = 0;
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveController.SaveScore(generalS2SData.Score);
     }
 }

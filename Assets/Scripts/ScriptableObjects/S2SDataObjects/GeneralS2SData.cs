@@ -32,6 +32,9 @@ namespace ScriptableObjects.S2SDataObjects
         private int wallet = -1;
         
         [NonSerialized]
+        private int score = -1;
+        
+        [NonSerialized]
         public int MapNumber;
 
         [NonSerialized]
@@ -45,6 +48,9 @@ namespace ScriptableObjects.S2SDataObjects
         
         [NonSerialized]
         public int Wallet;
+        
+        [NonSerialized]
+        public int Score;
 
         [NonSerialized]
         [AllowNull]

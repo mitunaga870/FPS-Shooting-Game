@@ -1,22 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 
 public class EnemyPrefab : MonoBehaviour
-{   
+{
+    [SerializeField]
+    private GeneralS2SData generalS2SData;
 
     public GameObject prefabObj;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    
+    private int enemyCount = 0;
 
     // Update is called once per frame
     void Update()
     {
-         if (Input.GetKey (KeyCode.A)) {
+        if (enemyCount <= generalS2SData.Score)
+        {
             CreateObject();
+            enemyCount++;
         }
     }
 

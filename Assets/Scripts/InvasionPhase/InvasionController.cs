@@ -314,7 +314,7 @@ namespace InvasionPhase
                 if (generalS2SData.MapNumber == 3)
                 {
                     // 最終マップならクリア
-                    Debug.Log("All Clear!");
+                    SceneManager.LoadScene("Score");
                     return;
                 }
 
@@ -347,6 +347,9 @@ namespace InvasionPhase
             {
                 Debug.Log("Game Over!");
                 GameState = GameState.GameOver;
+                
+                // シーン遷移
+                SceneManager.LoadScene("Score");
             }
         }
 
