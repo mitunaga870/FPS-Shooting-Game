@@ -126,6 +126,9 @@ namespace ScriptableObjects
             // イベント情報を付与
             stageData.StageCustomData = eventData.StageCustomData;
             
+            // ステージ名を改変
+            stageData.stageName += "/" + eventData.EventName;
+            
             return stageData;
         }
     }
