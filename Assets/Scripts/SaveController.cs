@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using AClass;
 using DataClass;
 using Enums;
 using JetBrains.Annotations;
+using lib;
 using Map;
 using ScriptableObjects;
 using UnityEngine;
+using UnityEngine.XR;
 
 public static class SaveController
 {
@@ -73,6 +76,7 @@ public static class SaveController
     {
         PlayerPrefs.SetString("StageName", stageData.stageName);
         PlayerPrefs.SetInt("StageType", (int)stageData.StageType);
+        PlayerPrefs.SetString("CustomData", stageData.StageCustomData.ToString());
     }
 
     public static void SaveMap(MapWrapper[] mapWrappers)
@@ -100,6 +104,60 @@ public static class SaveController
     public static void SaveCurrentMapColumn(int currentMapColumn)
     {
         PlayerPrefs.SetInt("CurrentMapColumn", currentMapColumn);
+    }
+    
+    public static void SaveShopFlag(bool openShop)
+    {
+        PlayerPrefs.SetInt("OpenShop", openShop ? 1 : 0);
+    }
+    
+    public static void SaveWallet(int wallet)
+    {
+        PlayerPrefs.SetInt("Wallet", wallet);
+    }
+    
+    public static void SaveDeckData(
+        ATrap[] deckTraps, ATrap[] handTraps, ATrap[] discardTraps,
+        ASkill[] aSkills, ATurret[] aTurrets)
+    {
+        // 名前で行ごとに分ける
+        var saveText = "";
+        
+        // トラップ山札
+        var deckTrapsText = "";
+        foreach (var trap in deckTraps) deckTrapsText += $"{trap},";
+        if (deckTrapsText.Length != 0)
+            deckTrapsText = deckTrapsText.Substring(0, deckTrapsText.Length - 1);
+        saveText += deckTrapsText + "\n";
+        
+        // トラップ手札
+        var handTrapsText = "";
+        foreach (var trap in handTraps) handTrapsText += $"{trap},";
+        if (handTrapsText.Length != 0)
+            handTrapsText = handTrapsText.Substring(0, handTrapsText.Length - 1);
+        saveText += handTrapsText + "\n";
+        
+        // トラップ捨て場
+        var discardTrapsText = "";
+        foreach (var trap in discardTraps) discardTrapsText += $"{trap},";
+        if (discardTrapsText.Length != 0)
+            discardTrapsText = discardTrapsText.Substring(0, discardTrapsText.Length - 1);
+        saveText += discardTrapsText + "\n";
+        
+        // スキル
+        var skillsText = "";
+        foreach (var skill in aSkills) skillsText += $"{skill},";
+        if (skillsText.Length != 0)
+            skillsText = skillsText.Substring(0, skillsText.Length - 1);
+        saveText += skillsText + "\n";
+        
+        
+        PlayerPrefs.SetString("DeckData", saveText);
+    }
+    
+    public static void SavePlayerHP(int hp)
+    {
+        PlayerPrefs.SetInt("PlayerHP", hp);
     }
 
     // =======　読み込み処理　=======
@@ -190,10 +248,15 @@ public static class SaveController
 
         // ステージタイプを読み込む
         result.StageType = (StageType)PlayerPrefs.GetInt("StageType", 0);
+        
+        // カスタムデータを読み込む
+        var customData = PlayerPrefs.GetString("CustomData", null);
+        if (customData != null) result.StageCustomData = new StageCustomData(customData);
 
         // 読み込んだやつを消す
         PlayerPrefs.DeleteKey("StageName");
         PlayerPrefs.DeleteKey("StageType");
+        PlayerPrefs.DeleteKey("CustomData");
 
         return result;
     }
@@ -244,6 +307,14 @@ public static class SaveController
         PlayerPrefs.DeleteKey("CurrentMapColumn");
         return currentMapColumn;
     }
+    
+    public static bool LoadShopFlag()
+    {
+        var openShop = PlayerPrefs.GetInt("OpenShop", 0);
+        // 読み込んだやつを消す
+        PlayerPrefs.DeleteKey("OpenShop");
+        return openShop == 1;
+    }
 
     /**
      * セーブデータを削除する
@@ -253,9 +324,56 @@ public static class SaveController
         PlayerPrefs.DeleteAll();
     }
 
-    public static (TrapData[] Traps, TurretData[] Turrets, SkillData[] Skills)? LoadDeckData()
+    public static (
+        ATrap[] DeckTraps, ATrap[] HandTraps, ATrap[] DiscardTraps,
+        ATurret[] Turrets, ASkill[] Skills)? LoadDeckData()
     {
-        // TODO: 保存フォーマットを決めたらロード処理を書く（とりあえずnullを返す）
-        return null;
+        if (!PlayerPrefs.HasKey("DeckData")) return null;
+        
+        // セーブデータを読み込んで消す
+        var saveText = PlayerPrefs.GetString("DeckData");
+        PlayerPrefs.DeleteKey("DeckData");
+        
+        if (saveText == "") return null;
+        
+        // セーブデータを行ごとに分ける
+        var rows = saveText.Split('\n');
+        
+        // 山札トラップ
+        var traps = rows[0].Split(',');
+        var trapData = new ATrap[traps.Length];
+        for (var i = 0; i < traps.Length; i++) trapData[i] = InstanceGenerator.GenerateTrap(traps[i]);
+        
+        // 手札トラップ
+        traps = rows[1].Split(',');
+        var handTrapData = new ATrap[traps.Length];
+        for (var i = 0; i < traps.Length; i++) handTrapData[i] = InstanceGenerator.GenerateTrap(traps[i]);
+        
+        // 捨て場トラップ
+        traps = rows[2].Split(',');
+        var discardTrapData = new ATrap[traps.Length];
+        for (var i = 0; i < traps.Length; i++) discardTrapData[i] = InstanceGenerator.GenerateTrap(traps[i]);
+        
+        // スキル
+        var skills = rows[3].Split(',');
+        var skillData = new ASkill[skills.Length];
+        for (var i = 0; i < skills.Length; i++) skillData[i] = InstanceGenerator.GenerateSkill(skills[i]);
+        
+        // タレット
+        var turrets = rows[4].Split(',');
+        var turretData = new ATurret[turrets.Length];
+        for (var i = 0; i < turrets.Length; i++) turretData[i] = InstanceGenerator.GenerateTurret(turrets[i]);
+        
+        return (trapData, handTrapData, discardTrapData, turretData, skillData);
+    }
+
+    public static int LoadWallet()
+    {
+        return PlayerPrefs.GetInt("Wallet", -1);
+    }
+    
+    public static int LoadPlayerHP()
+    {
+        return PlayerPrefs.GetInt("PlayerHP", -1);
     }
 }

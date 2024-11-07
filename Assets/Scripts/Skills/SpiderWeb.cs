@@ -11,11 +11,11 @@ namespace Skills
 {
     public class SpiderWeb : ASkill
     {
-        private const int SkillRange = 5;
-        private const int Duration = 500;
-        private const float SlowPower = 0.6f;
+        private int SkillRange => SkillDataObject.SpiderWebRange;
+        private int Duration => SkillDataObject.SpiderWebDuration;
+        private float SlowPower => SkillDataObject.SpiderWebSlowPower;
         
-        public override void UseSkill(
+        protected override void UseSkillMain(
             TilePosition targetPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
@@ -98,6 +98,11 @@ namespace Skills
             }
             
             return effectArea;
+        }
+        
+        public override string GetSkillName()
+        {
+            return "SpiderWeb";
         }
     }
 }

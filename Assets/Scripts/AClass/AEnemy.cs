@@ -15,6 +15,8 @@ namespace AClass
         // 敵ごとのパラメータ、多分最終的には別のとこで管理する
         private int HP { get; set; }
         private int Attack { get; set; }
+        private int MaxHP { get; set; }
+        private int RemainingLives { get; set; }
 
         /**
          * 移動速度、mTile/frame
@@ -243,6 +245,8 @@ namespace AClass
 
             // 移動
             var moveAmount = (nextTileCoordinate - currentTileCoordinate) / 1000 * (Speed * timeDiff);
+            // ステージデータで移動量をスケール
+            moveAmount *= _sceneController.StageData.StageCustomData.MoveSpeedScale;
             // スロー状態の場合はスロー処理
             if (_hasSlow)
             {
@@ -294,7 +298,11 @@ namespace AClass
             // ゴールに到達した場合
             if (CurrentPosition.Equals(_mazeController.GoalPosition))
             {
-                _sceneController.EnterEnemy(Attack);
+                // 攻撃力をスケール
+                var attack = (int)(_sceneController.StageData.StageCustomData.EnemyAttackScale * Attack);
+                
+                // シーンコントローラーにゴール到達を通知
+                _sceneController.EnterEnemy(attack);
 
                 // ゲームオブジェクトを削除
                 Destroy(gameObject);
@@ -398,8 +406,21 @@ namespace AClass
 
             // HPが0以下になった場合
             if (HP <= 0)
-                // ゲームオブジェクトを削除
-                Destroy(gameObject);
+            {
+                // 残機がある場合は復活
+                if (RemainingLives > 0)
+                {
+                    // 残機を減らす
+                    RemainingLives--;
+                    // HPを回復
+                    HP = MaxHP;
+                }
+                else
+                {
+                    // ゲームオブジェクトを削除
+                    Destroy(gameObject);
+                }
+            }
         }
 
         /**
@@ -411,7 +432,9 @@ namespace AClass
         public void Initialize(int hp, int speed, int attack, TilePosition startPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
-            InvasionEnemyController enemyController)
+            InvasionEnemyController enemyController,
+            int remainingLives = 0
+            )
         {
             // 初期化済みはエラー
             if (Initialized) throw new Exception("This enemy is already initialized.");
@@ -423,12 +446,15 @@ namespace AClass
 
             // 初期情報登録
             CurrentPosition = startPosition;
-            HP = hp;
+            HP = (int)(hp * sceneController.StageData.StageCustomData.EnemyHpScale); // ステージデータでHPをスケール
+            MaxHP = HP;
             Speed = speed;
             Attack = attack;
             _sceneController = sceneController;
             _mazeController = mazeController;
             _enemyController = enemyController;
+            
+            RemainingLives = remainingLives + sceneController.StageData.StageCustomData.EnemyRemainingLivesScale;
 
             Initialized = true;
         }

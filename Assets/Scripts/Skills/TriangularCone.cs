@@ -1,19 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Numerics;
 using AClass;
 using DataClass;
 using InvasionPhase;
 using lib;
-using UnityEngine;
-using Vector3 = UnityEngine.Vector3;
 
 namespace Skills
 {
     public class TriangularCone : ASkill
     {
-        private const int Duration = 500;
+        private int Duration => SkillDataObject.TriangularConeDuration;
         
-        public override void UseSkill(
+        protected override void UseSkillMain(
             TilePosition targetPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
@@ -40,6 +37,11 @@ namespace Skills
         protected override List<TilePosition> GetSkillRelativeEffectArea(InvasionMazeController mazeController)
         {
             return new List<TilePosition>{ new(0, 0) };
+        }
+
+        public override string GetSkillName()
+        {
+            return "TriangularCone";
         }
     }
 }

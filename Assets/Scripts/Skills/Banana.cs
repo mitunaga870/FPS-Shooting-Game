@@ -8,13 +8,13 @@ namespace Skills
 {
     public class Banana : ASkill
     {
-        private const int Distance = 2;
-        private const int StunTime = 100;
+        private int Distance => SkillDataObject.BananaDistance;
+        private int StunTime => SkillDataObject.BananaStunTime;
         
         [SerializeField]
         private BananaActiveSklill_IgnitionAction anctionController;
-        
-        public override void UseSkill(TilePosition targetPosition, InvasionController sceneController, InvasionMazeController mazeController,
+
+        protected override void UseSkillMain(TilePosition targetPosition, InvasionController sceneController, InvasionMazeController mazeController,
             InvasionEnemyController enemyController)
         {
             // 対象を取得
@@ -42,6 +42,11 @@ namespace Skills
         protected override List<TilePosition> GetSkillRelativeEffectArea(InvasionMazeController mazeController)
         {
             return new List<TilePosition>{ new(0, 0) };
+        }
+
+        public override string GetSkillName()
+        {
+            return "Banana";
         }
     }
 }

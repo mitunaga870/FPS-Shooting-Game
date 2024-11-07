@@ -7,10 +7,11 @@ namespace Turrets
 {
     public class BeansGatling : ATurret
     {
-        private const int Damage = 0;
-        private const int Height = 1;
-        private const int Interval = 1;
         private const string TurretName = "BeansGatling";
+        
+        private int Damage => turretObject.BeansGatlingDamage;
+        private float Height => turretObject.BeansGatlingHeight;
+        private int Interval => turretObject.BeansGatlingInterval;
         
         [SerializeField]
         private GatlingGun gatlingGun;

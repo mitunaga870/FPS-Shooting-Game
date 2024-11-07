@@ -22,6 +22,9 @@ namespace ScriptableObjects
 
         [SerializeField]
         private LevelData bossLevelData;
+        
+        [SerializeField]
+        private EventObject eventObject;
 
 
         /**
@@ -54,6 +57,9 @@ namespace ScriptableObjects
             // ステージタイプをエリートに変更
             var result = eliteLevelData.StageDataList[stageNum];
             result.StageType = Enums.StageType.Elite;
+            
+            // カスタムをつける
+            result.StageCustomData = new StageCustomData();
 
             return result;
         }
@@ -71,6 +77,9 @@ namespace ScriptableObjects
             // ステージタイプをボスに変更
             var result = bossLevelData.StageDataList[stageNum];
             result.StageType = Enums.StageType.Boss;
+            
+            // カスタムを当てる
+            result.StageCustomData = new StageCustomData();
 
             return result;
         }
@@ -108,12 +117,19 @@ namespace ScriptableObjects
 
         public StageData getEventStageData()
         {
-            throw new NotImplementedException();
-        }
-
-        public StageData getShopStageData()
-        {
-            throw new NotImplementedException();
+            // ノーマルステージデータを取得
+            var stageData = getNormalStageData();
+            
+            // イベント情報を取得
+            var eventData = eventObject.GetRandomEventData();
+            
+            // イベント情報を付与
+            stageData.StageCustomData = eventData.StageCustomData;
+            
+            // ステージ名を改変
+            stageData.stageName += "/" + eventData.EventName;
+            
+            return stageData;
         }
     }
 }

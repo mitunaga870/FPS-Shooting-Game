@@ -7,9 +7,9 @@ namespace Skills
 {
     public class RailwayCrossing : ASkill
     {
-        private const int Duration = 500;
+        private int Duration => SkillDataObject.RailwayCrossingDuration;
         
-        public override void UseSkill(
+        protected override void UseSkillMain(
             TilePosition targetPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
@@ -28,6 +28,11 @@ namespace Skills
             {
                 new(0, 0), new(0, 1), new(0, 2)
             };
+        }
+
+        public override string GetSkillName()
+        {
+            return "RailwayCrossing";
         }
     }
 }

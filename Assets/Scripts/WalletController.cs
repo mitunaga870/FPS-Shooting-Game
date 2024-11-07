@@ -1,18 +1,53 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using ScriptableObjects;
+using ScriptableObjects.S2SDataObjects;
+using TMPro;
 using UnityEngine;
 
 public class WalletController : MonoBehaviour
 {
     [SerializeField] private DefaultValueObject defaultValueObject;
 
+    [SerializeField]
+    private GeneralS2SData generalS2SData;
+    
+    [SerializeField]
+    private TextMeshProUGUI walletText;
+
     public int Wallet { get; private set; }
 
     public void Start()
     {
-        Wallet = defaultValueObject.defaultWallet;
+        var saveData = SaveController.LoadWallet();
+        var s2SData = generalS2SData.Wallet;
+        
+        if (saveData != -1)
+        {
+            Wallet = saveData;
+        }
+        else if (s2SData != -1)
+        {
+            Wallet = s2SData;
+        }
+        else
+        {
+            Wallet = defaultValueObject.defaultWallet;
+        }
+    }
+    
+    public void Update()
+    {
+        walletText.text = Wallet.ToString();
+    }
+
+    private void OnDestroy()
+    {
+        generalS2SData.Wallet = Wallet;
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveController.SaveWallet(Wallet);
     }
 
     /**

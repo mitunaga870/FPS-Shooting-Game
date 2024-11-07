@@ -1,13 +1,15 @@
+using System;
 using AClass;
 using DataClass;
 using Enums;
 using Map;
-using Map.UI;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
+using Shop;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace InvasionPhase
 {
@@ -56,20 +58,29 @@ namespace InvasionPhase
 
         [SerializeField]
         private GeneralS2SData generalS2SData;
-
+        
+        // スキルのUI
         [SerializeField]
-        private MapUIController mapUIController;
+        private GameObject skillUI;
 
         /**
          * デッキ
          */
         [SerializeField]
         private DeckController deckController;
+        
+        [SerializeField]
+        private MapController mapController;
+        
+        // =============== ショップ系 =====================
+        [FormerlySerializedAs("_shopUI")]
+        [SerializeField]
+        private ShopController shopUI;
 
         /**
          * 減速時の時刻スタック（１を超えたら０にして時刻を進める）
          */
-        private float delayTimeStack;
+        private float _delayTimeStack;
 
         /**
          * ゲームの状態
@@ -80,16 +91,6 @@ namespace InvasionPhase
          * ゲーム時間
          */
         public int GameTime { get; private set; }
-        
-        /**
-         * スロー用のバッファ
-         */
-        private int _slowBuffer = 0;
-        
-        /**
-         * スロー再生時の減速率
-         */
-        private const int SLOW_SPEED = 2;
 
         /**
          * プレイヤーHP
@@ -104,10 +105,11 @@ namespace InvasionPhase
         /**
          * ゲーム終了時のフラグ
          */
-        private bool _isApplicateQuit = false;
+        private bool _isApplicateQuit;
         
         // =============== スキル用変数 =====================
         private bool _isSkillMode;
+        [NonSerialized]
         public ASkill Skill;
         // =================================================
         
@@ -118,9 +120,34 @@ namespace InvasionPhase
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();
             var turretData = SaveController.LoadTurretData();
+            var openShop = SaveController.LoadShopFlag();
 
             // ステージデータ読み込み
             StageData = mazeController.StageData;
+            
+            // スキル禁止処理
+            if (!StageData.StageCustomData.IsAllowedToUseSkill)
+            {
+                // スキルを使えないようにする
+                skillUI.SetActive(false);
+            }
+            
+            // ショップならショップを開いて終わり
+            if (openShop)
+            {
+                // 次に遷移する変わりにショップを開く
+                var shop = Instantiate(shopUI);
+                shop.Initialize(deckController, walletController);
+                
+                // ショップが閉じられた時の処理を追加
+                shop.SetOnClose(() =>
+                {
+                    // マップを開く
+                    mapController.ShowMap(false, true);
+                });
+                
+                return;
+            }
 
             if (createToInvasionData.IsInvasion)
             {
@@ -161,11 +188,11 @@ namespace InvasionPhase
                     break;
                 case GameState.Selecting:
                     // 選択状態
-                    delayTimeStack += SELECTING_SPEED;
-                    if (delayTimeStack >= 1)
+                    _delayTimeStack += SELECTING_SPEED;
+                    if (_delayTimeStack >= 1)
                     {
                         GameTime++;
-                        delayTimeStack = 0;
+                        _delayTimeStack = 0;
                     }
                     
                     // 右クリックでキャンセル
@@ -263,12 +290,13 @@ namespace InvasionPhase
 
             // 指定タレット
             var selectedTurret = reward.selectedTurret;
+            deckController.AddTurretRange(selectedTurret);
 
             // スキル
             for (var i = 0; i < reward.randomSkill; i++)
             {
                 // ランダムなスキルを取得
-                var all = Resources.LoadAll<ASkill>("Prefabs/Skills");
+                var all = Resources.LoadAll<ASkill>("Prefabs/Skill");
                 var skill = all[Random.Range(0, all.Length)];
 
                 // デッキに追加
@@ -295,13 +323,15 @@ namespace InvasionPhase
                 // ポジション
                 generalS2SData.CurrentMapRow = 0;
                 generalS2SData.CurrentMapColumn = 0;
+                // 迷路データをリセット
+                createToInvasionData.Reset();
+
                 // 作成フェーズに移行    
                 SceneManager.LoadScene("CreatePhase");
             }
             else
             {
-                // マップを開く
-                mapUIController.ShowCurrentMap();
+                mapController.ShowMap( false, true);
             }
         }
 
@@ -343,6 +373,13 @@ namespace InvasionPhase
             
             _isSkillMode = false;
             GameState = GameState.Playing;
+        }
+
+        // このシーンを抜ける時の処理
+        private void OnDestroy()
+        {
+            // HPを保存
+            generalS2SData.PlayerHp = PlayerHp;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using Enums;
 using ScriptableObjects;
-using UnityEngine;
 
 namespace DataClass
 {
@@ -53,6 +52,10 @@ namespace DataClass
          * セーブロードでの情報取得に利用
          */
         public string stageName;
+        
+        // ================= イベントやマップ侵攻によるスケール情報 =================
+        [NonSerialized]
+        public StageCustomData StageCustomData = new();
 
         /**
          * ノーマル・エリート・ボスのどれか

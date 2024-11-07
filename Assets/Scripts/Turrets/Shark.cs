@@ -10,16 +10,16 @@ namespace Turrets
 {
     public class Shark : ATurret
     {
-        private const int InvasionDataAnalysisTimeSpan = 10;
-
-        private int Height = 3;
-        private int Interval = 1;
-        private int Damage = 9999;
         private string TurretName = "Shark";
+        
+        private int Damage => turretObject.SharkDamage;
+        private int Height => turretObject.SharkHeight;
+        private int Interval => turretObject.SharkInterval;
 
         // ======= 発火確率計算用のパラメータ =======
+        private int InvasionDataAnalysisTimeSpan => turretObject.SharkInvasionDataAnalysisTimeSpan;
+        private int SpawnPossibilityDistribution => turretObject.SpawnPossibilityDistribution;
         private int maxSpawnTime;
-        private const float SpawnPossibilityDistribution = 10;
 
         private bool isFired = false;
 

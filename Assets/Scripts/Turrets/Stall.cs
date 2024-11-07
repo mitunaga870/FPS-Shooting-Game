@@ -9,10 +9,11 @@ namespace Turrets
 {
     public class Stall : ATurret
     {
-        private const int Height = 1;
-        private const int Interval = 500;
         private const string TurretName = "Stall";
-        private const int Duration = 200;
+        
+        private float Height => turretObject.StallHeight;
+        private int Interval => turretObject.StallInterval;
+        private int Duration => turretObject.StallDuration;
         
         private bool _isAwaken;
         // 効果を与えた敵のリスト

@@ -87,6 +87,9 @@ namespace CreatePhase
             _mazeOrigin = new Vector3(0, 0, 0);
             _previewAddresses = new List<Dictionary<string, int>>();
             _lastEditVertical = false;
+            
+            // デッキの初期化
+            deck.DiscardHandTrap();
 
             // セーブデータ読み込み
             var tileData = SaveController.LoadTileData();
@@ -358,6 +361,15 @@ namespace CreatePhase
             // 道のアドレス群からタレット設置済みのアドレスを削除
             newRoadAddresses = newRoadAddresses.FindAll(address =>
                 Maze[address["row"]][address["col"]].HasTurret == false);
+            
+            // 道の容量を超えていたら削除
+            var capacityRoad = StageData.StageCustomData.CapacityRoad;
+            if (newRoadAddresses.Count > capacityRoad && capacityRoad != -1)
+            {
+                // 道の容量を超えていたら削除
+                // TODO: ここで削除するのはランダムでいいのか？
+                newRoadAddresses.RemoveRange(capacityRoad, newRoadAddresses.Count - capacityRoad);
+            }
 
             // 道を設置
             foreach (var address in newRoadAddresses)

@@ -38,5 +38,18 @@ namespace lib
 
             throw new Exception("砲台データが見つかりません、セーブデータが壊れている可能性があります。");
         }
+
+        public static ASkill GenerateSkill(string skill)
+        {
+            var skills = Resources.LoadAll<ASkill>("Prefabs/Skill");
+
+            // Linqを使うと見づらいのでforeachで書いている
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (var s in skills)
+                if (s.GetSkillName() == skill)
+                    return s;
+
+            throw new Exception("スキルデータが見つかりません、セーブデータが壊れている可能性があります。");
+        }
     }
 }

@@ -1,3 +1,4 @@
+using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 
@@ -9,6 +10,9 @@ public class S2SDataInitializer : MonoBehaviour
 
     [SerializeField]
     private CreateToInvasionData createToInvasionData;
+    
+    [SerializeField]
+    private DefaultValueObject defaultValueObject;
 
     private void Awake()
     {
@@ -18,6 +22,19 @@ public class S2SDataInitializer : MonoBehaviour
             generalS2SData.CurrentMapRow = SaveController.LoadCurrentMapRow();
         if (generalS2SData.CurrentMapColumn == -1)
             generalS2SData.CurrentMapColumn = SaveController.LoadCurrentMapColumn();
-        generalS2SData.PlayerHp = 10;
+        if (generalS2SData.PlayerHp == -1)
+        {
+            generalS2SData.PlayerHp = SaveController.LoadPlayerHP();
+            
+            if (generalS2SData.PlayerHp == -1)
+                generalS2SData.PlayerHp = defaultValueObject.defaultPlayerHp;
+        }
+        if (generalS2SData.Wallet == -1)
+        {
+            generalS2SData.Wallet = SaveController.LoadWallet();
+            
+            if (generalS2SData.Wallet == -1)
+                generalS2SData.Wallet = defaultValueObject.defaultWallet;
+        }
     }
 }

@@ -8,12 +8,13 @@ namespace Turrets
 {
     public class Fan : ATurret
     {
-        private const float Height = 0.155f;
-        private const float SlowPercentage = 0.8f;
-        private const int EffectDuration = 100;
-        private const int SlowDuration = 5;
-        private const int Interval = 400;
         private const string TurretName = "Fan";
+
+        private float Height => turretObject.FanHeight;
+        private float SlowPercentage => turretObject.FanSlowPercentage;
+        private int EffectDuration => turretObject.FanEffectDuration;
+        private int SlowDuration => turretObject.FanSlowDuration;
+        private int Interval => turretObject.FanInterval;
 
         private bool _isAwaken;
         

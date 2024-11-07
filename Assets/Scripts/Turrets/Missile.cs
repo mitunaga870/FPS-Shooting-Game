@@ -9,13 +9,14 @@ namespace Turrets
 {
     public class Missile : ATurret
     {
-        private const float Height = 0.13f;
-        private const int Damage = 1;
-        private const int ObjectDuration = 10;
-        private const int IgniteDamage = 0;
-        private const int IgniteDuration = 100;
-        private const int Interval = 500;
         private const string TurretName = "Missile";
+        
+        private float Height => turretObject.MissileHeight;
+        private int Damage => turretObject.MissileDamage;
+        private int ObjectDuration => turretObject.MissileObjectDuration;
+        private int IgniteDamage => turretObject.MissileIgniteDamage;
+        private int IgniteDuration => turretObject.MissileIgniteDuration;
+        private int Interval => turretObject.MissileInterval;
         
         [SerializeField]
         TinyTankAnimController animController;
