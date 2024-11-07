@@ -1431,7 +1431,7 @@ MonoBehaviour:
 --- !u!1 &533358385964339471
 GameObject:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 9066007781022698958, guid: 57714fca1689af441abf91d608269629, type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
@@ -3970,6 +3970,22 @@ PrefabInstance:
       propertyPath: _mazeController
       value: 
       objectReference: {fileID: 321828198}
+    - target: {fileID: 4668490410132529896, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
+      propertyPath: m_ClearFlags
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4668490410132529896, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.34684145
+      objectReference: {fileID: 0}
+    - target: {fileID: 4668490410132529896, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.3490566
+      objectReference: {fileID: 0}
+    - target: {fileID: 4668490410132529896, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.28813633
+      objectReference: {fileID: 0}
     - target: {fileID: 8712117627589467015, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
