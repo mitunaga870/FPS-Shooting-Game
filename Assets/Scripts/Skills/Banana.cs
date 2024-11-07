@@ -13,8 +13,8 @@ namespace Skills
         
         [SerializeField]
         private BananaActiveSklill_IgnitionAction anctionController;
-        
-        public override void UseSkill(TilePosition targetPosition, InvasionController sceneController, InvasionMazeController mazeController,
+
+        protected override void UseSkillMain(TilePosition targetPosition, InvasionController sceneController, InvasionMazeController mazeController,
             InvasionEnemyController enemyController)
         {
             // 対象を取得
@@ -42,6 +42,11 @@ namespace Skills
         protected override List<TilePosition> GetSkillRelativeEffectArea(InvasionMazeController mazeController)
         {
             return new List<TilePosition>{ new(0, 0) };
+        }
+
+        public override string GetSkillName()
+        {
+            return "Banana";
         }
     }
 }

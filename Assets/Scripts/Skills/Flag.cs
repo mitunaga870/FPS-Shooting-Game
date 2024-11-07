@@ -11,7 +11,7 @@ namespace Skills
         private int Duration => SkillDataObject.FlagDuration;
         private int AddDamage => SkillDataObject.FlagAddDamage;
         
-        public override void UseSkill(
+        protected override void UseSkillMain(
             TilePosition targetPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
@@ -49,6 +49,11 @@ namespace Skills
                 new(-1, -2), new(-1, -1), new(-1, 0), new(-1, 1), new(-1, 2),
                 new(-2, -2), new(-2, -1), new(-2, 0), new(-2, 1), new(-2, 2)
             };
+        }
+        
+        public override string GetSkillName()
+        {
+            return "Flag";
         }
     }
 }

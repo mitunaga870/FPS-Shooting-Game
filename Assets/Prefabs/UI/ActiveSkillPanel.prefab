@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9202470633494747089}
   - component: {fileID: 273367931203220877}
   - component: {fileID: 3624342377831599159}
+  - component: {fileID: -1272222975163648157}
   m_Layer: 5
   m_Name: ActiveSkillPanel
   m_TagString: Untagged
@@ -76,6 +77,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &-1272222975163648157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070066490723425901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34cd2517d22fc024dba7929e2890c762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deckController: {fileID: 0}
+  skillUIWrapper: {fileID: 0}
+  sceneController: {fileID: 0}
 --- !u!1 &2462233159777621948
 GameObject:
   m_ObjectHideFlags: 0

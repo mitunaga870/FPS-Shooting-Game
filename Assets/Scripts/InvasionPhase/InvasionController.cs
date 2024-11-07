@@ -6,6 +6,7 @@ using Map;
 using Map.UI;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
+using Shop;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
@@ -59,6 +60,10 @@ namespace InvasionPhase
 
         [SerializeField]
         private GeneralS2SData generalS2SData;
+        
+        // スキルのUI
+        [SerializeField]
+        private GameObject skillUI;
 
         /**
          * デッキ
@@ -130,6 +135,13 @@ namespace InvasionPhase
 
             // ステージデータ読み込み
             StageData = mazeController.StageData;
+            
+            // スキル禁止処理
+            if (!StageData.StageCustomData.IsAllowedToUseSkill)
+            {
+                // スキルを使えないようにする
+                skillUI.SetActive(false);
+            }
             
             // ショップならショップを開いて終わり
             if (openShop)

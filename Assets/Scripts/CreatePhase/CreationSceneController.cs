@@ -13,6 +13,7 @@ namespace CreatePhase
     /**
      * 制作フェーズでの全体動作を管理するクラス
      */
+    [DefaultExecutionOrder(100)]
     public class CreationSceneController : MonoBehaviour
     {
         /** シーン間のデータ共有オブジェクト */
@@ -38,8 +39,6 @@ namespace CreatePhase
         
         // かくしゅUI 
         [SerializeField]
-        private GameObject skillUI;
-        [SerializeField]
         private GameObject turretUI;
         
         // 仮のメッセージボックス
@@ -55,10 +54,6 @@ namespace CreatePhase
             if (stageData.StageCustomData == null) return;
                 
             // スキルとタレットが禁止されている場合はUIを非表示にする
-            if (!stageData.StageCustomData.IsAllowedToUseSkill)
-            {
-                skillUI.SetActive(false);
-            }
             if (!stageData.StageCustomData.IsAllowedToSetTurret)
             {
                 turretUI.SetActive(false);

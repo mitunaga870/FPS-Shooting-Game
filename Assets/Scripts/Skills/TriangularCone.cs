@@ -10,7 +10,7 @@ namespace Skills
     {
         private int Duration => SkillDataObject.TriangularConeDuration;
         
-        public override void UseSkill(
+        protected override void UseSkillMain(
             TilePosition targetPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
@@ -37,6 +37,11 @@ namespace Skills
         protected override List<TilePosition> GetSkillRelativeEffectArea(InvasionMazeController mazeController)
         {
             return new List<TilePosition>{ new(0, 0) };
+        }
+
+        public override string GetSkillName()
+        {
+            return "TriangularCone";
         }
     }
 }

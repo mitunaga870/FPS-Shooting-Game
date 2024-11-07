@@ -11,7 +11,7 @@ namespace Skills
     {
         private int Duration => SkillDataObject.TeleportDuration;
         
-        public override void UseSkill(
+        protected override void UseSkillMain(
             TilePosition targetPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
@@ -48,6 +48,11 @@ namespace Skills
             {
                 new(0, 0)
             };
+        }
+        
+        public override string GetSkillName()
+        {
+            return "Teleport";
         }
     }
 }
