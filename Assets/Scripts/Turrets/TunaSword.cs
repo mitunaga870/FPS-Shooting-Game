@@ -8,10 +8,11 @@ namespace Turrets
 {
     public class TunaSword : ATurret
     {
-        private const int Damage = 1;
-        private const float Height = -0.5f;
-        private const int Interval = 1;
         private const string TurretName = "TunaSword";
+        
+        private int Damage => turretObject.TunaSwordDamage;
+        private float Height => turretObject.TunaSwordHeight;
+        private int Interval => turretObject.TunaSwordInterval;
         
         [SerializeField]
         TrapKihada_IgnitionAction trapKihadaIgnitionAction;

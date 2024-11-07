@@ -7,7 +7,7 @@ namespace Skills
 {
     public class RailwayCrossing : ASkill
     {
-        private const int Duration = 500;
+        private int Duration => SkillDataObject.RailwayCrossingDuration;
         
         public override void UseSkill(
             TilePosition targetPosition,

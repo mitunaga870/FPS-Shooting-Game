@@ -10,6 +10,9 @@ namespace AClass
     public abstract class ASkill : MonoBehaviour
     {
         [SerializeField]
+        protected SkillObject SkillDataObject;
+        
+        [SerializeField]
         protected GameObject skillObject;
         
         public abstract void UseSkill(

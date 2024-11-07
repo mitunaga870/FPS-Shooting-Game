@@ -11,11 +11,11 @@ namespace Traps
     public class Car : ATrap
     {
         private const string TrapName = "Car";
-        private const int SetRange = 1;
-        private const float Height = 0.18f;
-        private const int Damage = 1;
-        private const int CoolDown = 5000;
-        private const int AttackRange = 4;
+        private int Damage => trapObject.CarDamage;
+        private float Height => trapObject.CarHeight;
+        private int CoolDown => trapObject.CarCoolDown;
+        private int AttackRange => trapObject.CarAttackRange;
+        private int SetRange => trapObject.CarSetRange;
         
         [SerializeField]
         private TrapBeetleIgnitionAction trapBeetleIgnitionAction;

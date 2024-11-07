@@ -8,8 +8,8 @@ namespace Skills
 {
     public class Stamp: ASkill
     {
-        private const int Damage = 5;
-        private const int Duration = 100;
+        private int Damage => SkillDataObject.StampDamage;
+        private int Duration => SkillDataObject.StampDuration;
         
         public override void UseSkill(
             TilePosition targetPosition,
