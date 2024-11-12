@@ -1,9 +1,5 @@
 using System;
 using Enums;
-using TMPro;
-using UnityEditor.Experimental.GraphView;
-using UnityEngine;
-using Random = System.Random;
 
 namespace Map
 {

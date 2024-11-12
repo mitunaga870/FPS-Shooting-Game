@@ -37,6 +37,9 @@ namespace Map
         /** 移動用マップかどうか */
         public bool IsMoveMap { get; private set; }
         
+        // マップが開いてるかどうか
+        public bool IsMapOpen;
+        
         private void Awake()
         {
             if (generalS2SData.Maps != null)
@@ -91,6 +94,10 @@ namespace Map
 
         public void ShowMap()
         {
+            // マップが開いている時は何もしない
+            if (IsMapOpen) return;
+            IsMapOpen = true;
+            
             ShowMap(true, false);
         }
 

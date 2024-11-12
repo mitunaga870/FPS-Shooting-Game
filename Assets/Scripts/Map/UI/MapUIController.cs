@@ -34,12 +34,14 @@ namespace Map.UI
         
         private bool _isClosable;
         private DeckController _deckController;
+        private MapController _mapController;
 
         /** マップを表示する */
         public void Load(MapController mapController, DeckController deckController, WalletController walletController, bool isClosable)
         {
             _isClosable = isClosable;
             _deckController = deckController;
+            _mapController = mapController;
             
             // 現在のマップを
             var map = mapController.GetCurrentMap();
@@ -95,6 +97,9 @@ namespace Map.UI
         public void HideMap()
         {
             if (!_isClosable) return; 
+            
+            // マップを閉じる
+            _mapController.IsMapOpen = false;
             
             Destroy(gameObject);
         }
