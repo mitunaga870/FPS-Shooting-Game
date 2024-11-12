@@ -171,6 +171,10 @@ namespace CreatePhase
 
             Sync();
 
+            // スタートとゴールを設置
+            Maze[StartPosition.Row][StartPosition.Col].SetStart();
+            Maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
+
             // ============== トラップ設置 ================
             if (trapData != null)
             {
@@ -203,10 +207,6 @@ namespace CreatePhase
                 foreach (var turret in TurretData)
                     Maze[turret.Row][turret.Column].SetTurret(turret.Turret, turret.angle);
             }
-
-            // スタートとゴールを設置
-            Maze[StartPosition.Row][StartPosition.Col].SetStart();
-            Maze[GoalPosition.Row][GoalPosition.Col].SetGoal();
 
             // スタート・ゴールを迷路にする
             var roadData = GetRoadAddresses();
