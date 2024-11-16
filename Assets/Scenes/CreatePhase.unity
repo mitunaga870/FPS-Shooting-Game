@@ -122,6 +122,55 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &96234107
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 96234109}
+  - component: {fileID: 96234108}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &96234108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96234107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: dd65074069cbcc9409c3cb272af14611, type: 2}
+--- !u!4 &96234109
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96234107}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 814.8086, y: 296.5944, z: 714.12396}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &212548519
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,7 +365,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 1
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 3311939115802902857}
   m_PlaneDistance: 5.51
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -741,6 +790,7 @@ MonoBehaviour:
   mapUIController: {fileID: 7837832386491098584, guid: 2e4e6e20c0bbb774ba533c64716ce008, type: 3}
   deckController: {fileID: 637409399}
   walletController: {fileID: 212548521}
+  IsMapOpen: 0
 --- !u!4 &1146026209
 Transform:
   m_ObjectHideFlags: 0
@@ -3981,6 +4031,14 @@ PrefabInstance:
       propertyPath: m_BackGroundColor.r
       value: 0.28813633
       objectReference: {fileID: 0}
+    - target: {fileID: 6259240154005056589, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
+      propertyPath: m_Antialiasing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259240154005056589, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
+      propertyPath: m_RenderPostProcessing
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8712117627589467015, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4026,6 +4084,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
+--- !u!20 &3311939115802902857 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 4668490410132529896, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
+  m_PrefabInstance: {fileID: 3311939115802902856}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3433257199990784366
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4254,3 +4317,4 @@ SceneRoots:
   - {fileID: 1285204393}
   - {fileID: 837808389087955291}
   - {fileID: 1160505996240409222}
+  - {fileID: 96234109}
