@@ -302,6 +302,7 @@ MonoBehaviour:
   mapUIController: {fileID: 7837832386491098584, guid: 2e4e6e20c0bbb774ba533c64716ce008, type: 3}
   deckController: {fileID: 1766966375}
   walletController: {fileID: 1860560426}
+  IsMapOpen: 0
 --- !u!1 &225140039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1537,10 +1538,6 @@ PrefabInstance:
     - target: {fileID: 706378672788807169, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1978279278900034687, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 327.7044
       objectReference: {fileID: 0}
     - target: {fileID: 2244194028484017240, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
       propertyPath: m_Name
