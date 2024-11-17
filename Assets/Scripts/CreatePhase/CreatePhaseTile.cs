@@ -14,7 +14,7 @@ namespace CreatePhase
     public class CreatePhaseTile : ATile
     {
         /** 連続入力防止時間 */
-        private const float ContinuousInputPreventionTime = 1f;
+        private const float ContinuousInputPreventionTime = 0.1f;
 
         private MazeCreationController _mazeCreationController;
 
