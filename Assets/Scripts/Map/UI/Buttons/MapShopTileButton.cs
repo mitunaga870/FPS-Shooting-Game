@@ -19,7 +19,7 @@ namespace Map.UI.Buttons
             // S2Sデータのマップナンバーを進める
             generalS2SData.CurrentMapRow = MapTile.Row;
             generalS2SData.CurrentMapColumn = MapTile.Column;
-            
+            generalS2SData.CurrentStageNumber++;
             
             // 次に遷移する変わりにショップを開く
             var shop = Instantiate(_shopUI);

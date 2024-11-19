@@ -323,6 +323,7 @@ namespace InvasionPhase
                 // ポジション
                 generalS2SData.CurrentMapRow = 0;
                 generalS2SData.CurrentMapColumn = 0;
+                generalS2SData.CurrentStageNumber = 1;
                 // 迷路データをリセット
                 createToInvasionData.Reset();
 
