@@ -13,7 +13,7 @@ namespace UI
         [SerializeField]
         private TextMeshProUGUI text;
         
-        private void Start()
+        private void Update()
         {
             text.text = $"STAGE {generalS2SData.MapNumber + 1}-{generalS2SData.CurrentStageNumber}";
         }
