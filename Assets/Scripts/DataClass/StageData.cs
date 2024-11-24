@@ -46,6 +46,11 @@ namespace DataClass
          * 侵攻データ
          */
         public InvasionData invasionData;
+        
+        /**
+         * 敵のHP
+         */
+        public int enemyHp;
 
         /**
          * ステージデータの識別名
