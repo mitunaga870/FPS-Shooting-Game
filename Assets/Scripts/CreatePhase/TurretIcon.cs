@@ -12,9 +12,9 @@ namespace CreatePhase
         private ATurret turretPrefab;
         
         [SerializeField]
-        private TextMeshProUGUI _remainingCountText;
+        private TextMeshProUGUI remainingCountText;
         
-        private MazeCreationController mazeCreationController;
+        private MazeCreationController _mazeCreationController;
         
         private int _remainingCount = 1;
 
@@ -24,7 +24,7 @@ namespace CreatePhase
         private void Update()
         {
             // 残りの数を表示
-            _remainingCountText.text = _remainingCount.ToString();
+            remainingCountText.text = _remainingCount.ToString();
             
             // 全部設置したら非表示
             if (_remainingCount <= 0)
@@ -36,25 +36,29 @@ namespace CreatePhase
         // ReSharper disable once ParameterHidesMember
         public void Init(MazeCreationController mazeCreationController)
         {
-            this.mazeCreationController = mazeCreationController;
+            _mazeCreationController = mazeCreationController;
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            mazeCreationController.StartSettingTurret(turretPrefab);
+            _mazeCreationController.StartSettingTurret(turretPrefab);
         }
 
         public void OnDrag(PointerEventData eventData) {}
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            mazeCreationController.EndSettingTurret();
+            _mazeCreationController.EndSettingTurret();
             _remainingCount--;
         }
 
         public void IncreaseCount()
         {
             _remainingCount++;
+            
+            // 表示を戻す
+            if (_remainingCount > 0)
+                gameObject.SetActive(true);
         }
 
         public string GetTurretName()
