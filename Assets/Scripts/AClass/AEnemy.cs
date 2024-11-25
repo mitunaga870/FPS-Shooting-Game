@@ -43,13 +43,16 @@ namespace AClass
         private bool Initialized { get; set; }
 
         /** Sceneコントローラー */
-        private InvasionController _sceneController;
+        protected InvasionController SceneController;
 
         /** 迷路コントローラー */
         private InvasionMazeController _mazeController;
 
         /** 現在の経路のインデックス */
         private int? CurrentPathIndex => Path?.Index(CurrentPosition);
+        
+        /** 死んでるか */
+        private bool IsDead => HP <= 0;
 
         private InvasionEnemyController _enemyController;
 
@@ -96,16 +99,19 @@ namespace AClass
         /**
          * マイフレームの処理
          */
-        private void FixedUpdate()
+        protected void FixedUpdate()
         {
             // 初期化されていない場合は何もしない
             if (!Initialized) return;
 
             // 初期化エラー確認
             if (CurrentPosition == null) throw new Exception("初期化処理に失敗しています");
+            
+            // 死んでいる場合は何もしない
+            if (IsDead) return;
 
             // 時刻を取得
-            var time = _sceneController.GameTime;
+            var time = SceneController.GameTime;
             // 時刻差を取得
             var timeDiff = time - _prevTime;
 
@@ -209,7 +215,14 @@ namespace AClass
             if (CurrentPosition == null) throw new ArgumentNullException($"Cant find current position.");
 
             // 目的地がない場合はその場で待機
-            if (Destination == null) return;
+            if (Destination == null)
+            {
+                PlayIdleAnimation();
+                return;
+            }
+            
+            // 移動中のアニメーションを再生
+            PlayMoveAnimation();
 
             // 経路がない場合は生成
             if (Path == null)
@@ -224,6 +237,7 @@ namespace AClass
                 var _localTransform = transform;
                 // ReSharper disable once InconsistentNaming
                 var _position = Path.Get(0).ToVector3(mazeOrigin);
+                _position.y = GetHeight();
                 _localTransform.position = _position;
             }
 
@@ -246,11 +260,16 @@ namespace AClass
             }
 
             var localTransform = transform;
+            
+            // 向きを取得
+            var direction = nextTileCoordinate - currentTileCoordinate;
+            direction.y = 0;
+            localTransform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180, 0);
 
             // 移動
             var moveAmount = (nextTileCoordinate - currentTileCoordinate) / 1000 * (Speed * timeDiff);
             // ステージデータで移動量をスケール
-            moveAmount *= _sceneController.StageData.StageCustomData.MoveSpeedScale;
+            moveAmount *= SceneController.StageData.StageCustomData.MoveSpeedScale;
             // スロー状態の場合はスロー処理
             if (_hasSlow)
             {
@@ -275,6 +294,7 @@ namespace AClass
 
                 if (tile != null) moveAmount *= 1 - tile.SlowAreaPower;
             }
+            
 
             var position = localTransform.position;
             position += moveAmount;
@@ -283,9 +303,10 @@ namespace AClass
             // 次のタイルとの距離
             var distance = Vector3.Distance(position, nextTileCoordinate);
             // 次のタイルに到達した場合
-            if (distance < 0.1f)
+            if (distance < Math.Sqrt(Math.Pow(0.1f, 2) + Math.Pow(GetHeight(), 2)))
                 // 現在地を更新
                 CurrentPosition = nextTilePosition;
+                
 
             if (CurrentPosition == null) throw new Exception("Current position is null");
 
@@ -303,10 +324,10 @@ namespace AClass
             if (CurrentPosition.Equals(_mazeController.GoalPosition))
             {
                 // 攻撃力をスケール
-                var attack = (int)(_sceneController.StageData.StageCustomData.EnemyAttackScale * Attack);
+                var attack = (int)(SceneController.StageData.StageCustomData.EnemyAttackScale * Attack);
                 
                 // シーンコントローラーにゴール到達を通知
-                _sceneController.EnterEnemy(attack);
+                SceneController.EnterEnemy(attack);
 
                 // ゲームオブジェクトを削除
                 Destroy(gameObject);
@@ -336,13 +357,16 @@ namespace AClass
             _jumpSpeed -= Gravity * timeDiff;
 
             // 地面に着地した場合
-            if (position.y <= 0)
+            if (position.y <= GetHeight())
             {
                 // ジャンプ中フラグを解除
                 _ccStatus = EnemyCCStatus.None;
 
                 // ダメージ処理
                 Damage(_jumpDamage);
+                
+                // 着地後の位置を地面に合わせる
+                position.y = GetHeight();
             }
         }
 
@@ -371,8 +395,11 @@ namespace AClass
             localTransform.position = position;
 
             // 到着した場合
-            if (Vector3.Distance(position, nextTileCoordinate) < 0.1f)
+            if (Vector3.Distance(position, nextTileCoordinate) 
+                < Math.Sqrt(Math.Pow(0.5f, 2) + Math.Pow(GetHeight(), 2)))
             {
+                // ノックバック終了アニメーションを再生
+                PlayKnockBackEndAnimation();
                 // 現在地を更新
                 CurrentPosition = destinationPosition;
                 // ノックバック中フラグを解除
@@ -411,19 +438,17 @@ namespace AClass
             // HPが0以下になった場合
             if (HP <= 0)
             {
-                // 残機がある場合は復活
-                if (RemainingLives > 0)
-                {
-                    // 残機を減らす
-                    RemainingLives--;
-                    // HPを回復
-                    HP = MaxHP;
-                }
-                else
-                {
-                    // ゲームオブジェクトを削除
-                    Destroy(gameObject);
-                }
+                // 死亡アニメーションを再生
+                PlayDeathAnimation(RemainingLives <= 0);
+                
+                // 残機がない場合は削除
+                if (RemainingLives <= 0) return;
+                
+                // 残機を減らす
+                RemainingLives--;
+                
+                // 蘇生アニメーション
+                PlayReviveAnimation();
             }
         }
 
@@ -454,7 +479,7 @@ namespace AClass
             MaxHP = HP;
             Speed = speed;
             Attack = attack;
-            _sceneController = sceneController;
+            SceneController = sceneController;
             _mazeController = mazeController;
             _enemyController = enemyController;
             
@@ -495,6 +520,9 @@ namespace AClass
 
             // ノックバック中フラグを立てる
             _ccStatus = EnemyCCStatus.KnockBacking;
+            
+            // アニメーション再生
+            PlayKnockBackAnimation();
 
             // 現在パスがない場合はエラー
             if (Path == null) throw new Exception("Current path index is null");
@@ -611,5 +639,47 @@ namespace AClass
             
             Path = path;
         }
+        
+        // アニメーションの再生系
+        // バーチャルメソッドを使って、継承先でオーバーライドする
+
+        /**
+         * 死亡アニメーション
+         * @param destroy ゲームオブジェクトを削除するか
+         */
+        protected virtual void PlayDeathAnimation( bool destroy = true)
+        {
+            // ゲームオブジェクトを削除
+            if (destroy)
+                Destroy(gameObject);
+        }
+        
+        /**
+         * 移動アニメーション
+         */
+        protected virtual void PlayMoveAnimation(){}
+        
+        /**
+         * 蘇生アニメーション
+         */
+        protected virtual void PlayReviveAnimation(){}
+        
+        /**
+         * 待機アニメーション
+         */
+        protected virtual void PlayIdleAnimation(){}
+        
+        /**
+         * knockバックの最初のアニメーション
+         */
+        protected virtual void PlayKnockBackAnimation(){}
+        
+        /**
+         * ノックバックの最後のアニメーション
+         */
+        protected virtual void PlayKnockBackEndAnimation(){}
+        
+        // ============= 抽象メソッド =============
+        protected abstract float GetHeight();
     }
 }
