@@ -24,6 +24,9 @@ namespace ScriptableObjects.S2SDataObjects
 
         [NonSerialized]
         private int currentMapColumn = -1;
+        
+        [SerializeField]
+        private int currentStageNumber = -1;
 
         [NonSerialized]
         private int playerHp = -1;
@@ -42,6 +45,9 @@ namespace ScriptableObjects.S2SDataObjects
 
         [NonSerialized]
         public int CurrentMapColumn;
+        
+        [NonSerialized]
+        public int CurrentStageNumber;
 
         [NonSerialized]
         public int PlayerHp;
@@ -126,6 +132,7 @@ namespace ScriptableObjects.S2SDataObjects
             MapNumber = mapNumber;
             CurrentMapRow = currentMapRow;
             CurrentMapColumn = currentMapColumn;
+            CurrentStageNumber = currentStageNumber;
             Wallet = wallet;
             Maps = null;
             _deckTraps = new List<ATrap>();

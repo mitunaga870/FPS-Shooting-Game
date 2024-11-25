@@ -164,6 +164,11 @@ public static class SaveController
     {
         PlayerPrefs.SetInt("Score", score);
     }
+    
+    public static void SaveCurrentStageNumber(int currentStageNumber)
+    {
+        PlayerPrefs.SetInt("CurrentStageNumber", currentStageNumber);
+    }
 
     // =======　読み込み処理　=======
     [CanBeNull]
@@ -385,5 +390,10 @@ public static class SaveController
     public static int LoadScore()
     {
         return PlayerPrefs.GetInt("Score", -1);
+    }
+    
+    public static int LoadCurrentStageNumber()
+    {
+        return PlayerPrefs.GetInt("CurrentStageNumber", 1);
     }
 }

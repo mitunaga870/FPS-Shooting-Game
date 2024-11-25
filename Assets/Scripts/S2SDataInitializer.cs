@@ -19,10 +19,16 @@ public class S2SDataInitializer : MonoBehaviour
     {
         if (generalS2SData.MapNumber == -1)
             generalS2SData.MapNumber = SaveController.LoadCurrentMapNumber();
+        
         if (generalS2SData.CurrentMapRow == -1)
             generalS2SData.CurrentMapRow = SaveController.LoadCurrentMapRow();
+        
         if (generalS2SData.CurrentMapColumn == -1)
             generalS2SData.CurrentMapColumn = SaveController.LoadCurrentMapColumn();
+        
+        if (generalS2SData.CurrentStageNumber == -1)
+            generalS2SData.CurrentStageNumber = SaveController.LoadCurrentStageNumber();
+        
         if (generalS2SData.PlayerHp == -1)
         {
             generalS2SData.PlayerHp = SaveController.LoadPlayerHP();
@@ -30,6 +36,7 @@ public class S2SDataInitializer : MonoBehaviour
             if (generalS2SData.PlayerHp == -1)
                 generalS2SData.PlayerHp = defaultValueObject.defaultPlayerHp;
         }
+        
         if (generalS2SData.Wallet == -1)
         {
             generalS2SData.Wallet = SaveController.LoadWallet();
@@ -50,5 +57,6 @@ public class S2SDataInitializer : MonoBehaviour
     private void OnApplicationQuit()
     {
         SaveController.SaveScore(generalS2SData.Score);
+        SaveController.SaveCurrentStageNumber(generalS2SData.CurrentStageNumber);
     }
 }

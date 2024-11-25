@@ -76,6 +76,7 @@ namespace Map.UI.Buttons
         {
             generalS2SData.CurrentMapRow = MapTile.Row;
             generalS2SData.CurrentMapColumn = MapTile.Column;
+            generalS2SData.CurrentStageNumber++;
 
             c2IData.Reset();
 
