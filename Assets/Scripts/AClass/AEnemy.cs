@@ -284,8 +284,12 @@ namespace AClass
             var distance = Vector3.Distance(position, nextTileCoordinate);
             // 次のタイルに到達した場合
             if (distance < 0.1f)
+            {
                 // 現在地を更新
                 CurrentPosition = nextTilePosition;
+                // 次のタイルの位置に強制移動
+                localTransform.position = nextTileCoordinate;
+            }
 
             if (CurrentPosition == null) throw new Exception("Current position is null");
 
@@ -433,7 +437,9 @@ namespace AClass
          * @param speed 移動速度 mTile/frame
          * @param startPosition 初期位置
          */
-        public void Initialize(int hp, int speed, int attack, TilePosition startPosition,
+        public void Initialize(
+            int hp, int speed, int attack, int spawnTime,
+            TilePosition startPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
             InvasionEnemyController enemyController,
@@ -454,6 +460,7 @@ namespace AClass
             MaxHP = HP;
             Speed = speed;
             Attack = attack;
+            _prevTime = spawnTime;
             _sceneController = sceneController;
             _mazeController = mazeController;
             _enemyController = enemyController;
