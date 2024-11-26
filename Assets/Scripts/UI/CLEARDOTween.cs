@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using TMPro;
-
+using InvasionPhase;
+using Enums;
 
 
 public class CLEARDOTween : MonoBehaviour
@@ -11,6 +12,10 @@ public class CLEARDOTween : MonoBehaviour
     //public TextMeshProUGUI dotweenTextMeshPro;
     //public float dotweenInterval;
     // Start is called before the first frame update
+     [SerializeField] 
+    private InvasionController invasionController;
+    bool flag;
+
     void Start()
     {
         
@@ -20,7 +25,7 @@ public class CLEARDOTween : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey (KeyCode.C)) {
+        if (invasionController.GameState == GameState.Clear && flag ==false) {
             this.transform.localScale = new Vector3(10.3f, 10.3f, 10.3f);
 
              // コンポ取得(TMPのあるふぁ初期設定)
@@ -40,6 +45,7 @@ public class CLEARDOTween : MonoBehaviour
             this.GetComponent<TextMeshProUGUI>()
 			.DOFade(1f, 0.3f)
 			.Play();
+            flag = true;
         }
     }
 }
