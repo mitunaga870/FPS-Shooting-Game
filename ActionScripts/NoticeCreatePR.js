@@ -24,7 +24,7 @@ const axios = require('axios');
         
         // ブランチ名が登録されたタスクを取得
         const searchResult =
-            await axios.put("https://api.notion.com/v1/databases/" + databaseId + "/query",
+            await axios.post("https://api.notion.com/v1/databases/" + databaseId + "/query",
                 {
                     "filter": {
                         "property": "blanch",
