@@ -1,5 +1,7 @@
-﻿using AClass;
+﻿using System;
+using AClass;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Shop.UI
 {
@@ -11,6 +13,11 @@ namespace Shop.UI
         public string GetSkillName()
         {
             return trapPrefab.GetSkillName();
+        }
+
+        public void SetButtonAction(Action action)
+        {
+            gameObject.GetComponent<Button>().onClick.AddListener(() => action());
         }
     }
 }

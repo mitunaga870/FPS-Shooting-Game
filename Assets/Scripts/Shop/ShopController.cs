@@ -27,11 +27,6 @@ namespace Shop
         [SerializeField]
         private Button reRollButton;
 
-        // 購入ボタン
-        [SerializeField]
-        private List<Button> trapButtons;
-        [SerializeField]
-        private List<Button> skillButtons;
     
         // アイコンのラッパーオブジェクト
         [SerializeField]
@@ -50,9 +45,9 @@ namespace Shop
         private List<TextMeshProUGUI> skillCostTexts;
 
         // 角商品の最大数
-        private int TrapCount => trapButtons.Count;
+        private static int TrapCount => 3;
 
-        private int SkillCount => skillButtons.Count;
+        private static int SkillCount => 2;
 
         //　ショップに並びうるものの一覧
         private readonly List<ATrap> _allTraps = new();
@@ -121,25 +116,21 @@ namespace Shop
             _trapsOnSale.Clear();
             for (var i = 0; i < TrapCount; i++)
             {
-                _trapsOnSale.Add(_allTraps[Random.Range(0, _allTraps.Count)]);
-
                 var number = i;
-                var trap = _trapsOnSale[i];
+                var trap = _allTraps[Random.Range(0, _allTraps.Count)];
                 var wrapper = trapIconWrappers[i];
+                
+                _trapsOnSale.Add(trap);
             
                 // アイコン作成
                 var trapIcon = trapIconGenerator.GetTrapIcon(trap.GetTrapName());
                 trapIcon = Instantiate(trapIcon, wrapper.transform, false);
 
-                // ボタンをアクティブに
-                trapButtons[i].interactable = true;
-                
                 // コスト表示
                 trapCostTexts[i].text = TRAP_COST.ToString();
 
                 // ボタンに購入処理を追加
-                trapButtons[i].onClick.RemoveAllListeners();
-                trapButtons[i].onClick.AddListener(() =>
+                trapIcon.SetButtonAction(() =>
                 {
                     Debug.Log("buy trap: " + trap.name + " for " + TRAP_COST + " yen");
 
@@ -157,7 +148,7 @@ namespace Shop
                     Debug.Log("deck traps: " + _deck.TrapDeckCount);
 
                     // 押せないようにインアクティブにする
-                    trapButtons[number].interactable = false;
+                    Destroy(trapIcon.gameObject);
                 });
             }
 
@@ -166,25 +157,23 @@ namespace Shop
 
             for (var i = 0; i < SkillCount; i++)
             {
-                _skillsOnSale.Add(_allSkills[Random.Range(0, _allSkills.Count)]);
-                
-                var skill = _skillsOnSale[i];
+                var number = i;
+                var skill = _allSkills[Random.Range(0, _allSkills.Count)];
                 var wrapper = skillIconWrappers[i];
+                
+                _skillsOnSale.Add(skill);
                 
                 // アイコン作成
                 var skillIcon = skillIconGenerator.GetSkillIcon(skill.GetSkillName());
                 skillIcon = Instantiate(skillIcon, wrapper.transform, false);
                 
-                // ボタンをアクティブに
-                skillButtons[i].interactable = true;
-                
                 // コスト表示
                 skillCostTexts[i].text = SKILL_COST.ToString();
 
-                // ボタンに購入処理を追加
-                skillButtons[i].onClick.RemoveAllListeners();
-                skillButtons[i].onClick.AddListener(() =>
+                skillIcon.SetButtonAction(()=>
                 {
+                    Debug.Log("buy skill: " + skill.name + " for " + SKILL_COST + " yen");
+                    
                     // お金が足りない場合は購入できない
                     if (!_wallet.CanBuy(SKILL_COST)) return;
 
@@ -193,6 +182,13 @@ namespace Shop
 
                     // デッキにスキルを追加
                     _deck.AddSkill(skill);
+                    
+                    Debug.Log("skill bought: " + skill.name + " for " + SKILL_COST + " yen");
+                    Debug.Log("after buy: " + _wallet.Wallet + " yen");
+                    Debug.Log("deck skills: " + _deck.SkillDeckCount);
+                    
+                    // 押せないように消す
+                    Destroy(skillIcon.gameObject);
                 });
             }
         }
