@@ -97,8 +97,13 @@ namespace InvasionPhase
                 // 敵を生成
                 var enemy = Instantiate(spawnData.enemy);
                 // 敵のスピードを設定
-                enemy.Initialize( invasionMazeController.StageData.enemyHp, 10, 1, invasionMazeController.StartPosition, invasionController,
-                    invasionMazeController, this);
+                enemy.Initialize(
+                    invasionMazeController.StageData.enemyHp, 10, 1,
+                    invasionController.GameTime,
+                    invasionMazeController.StartPosition,
+                    invasionController,
+                    invasionMazeController,
+                    this);
 
                 // 敵をリストに追加
                 _enemies.Add(enemy);
