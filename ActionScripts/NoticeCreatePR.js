@@ -3,6 +3,8 @@ const axios = require('axios');
 
 (async () => {
     try {
+        console.log("NoticeCreatePR.js");
+        
         // NotionのAPIキーを取得
         const apiKey = core.getInput('NOTION_API_KEY');
         // NotionのデータベースIDを取得
