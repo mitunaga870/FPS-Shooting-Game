@@ -12,7 +12,7 @@ const axios = require('axios');
         const databaseId = process.env.NOTION_DATABASE_ID;
         core.setSecret(databaseId);
         // PRのURLを取得
-        const prUrl = process.env.GITHUB_SERVER_URL + process.env.GITHUB_REPOSITORY + "/pull/" + process.env.GITHUB_RUN_NUMBER;
+        const prUrl = process.env.PULL_REQUEST_URL;
         
         // ヘッドブランチ名を取得
         const branch = process.env.GITHUB_HEAD_REF;
