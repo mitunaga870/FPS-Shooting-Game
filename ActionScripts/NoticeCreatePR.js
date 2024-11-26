@@ -4,9 +4,9 @@ const axios = require('axios');
 (async () => {
     try {
         // NotionのAPIキーを取得
-        const apiKey = core.getInput('apiKey');
+        const apiKey = core.getInput('NOTION_API_KEY');
         // NotionのデータベースIDを取得
-        const databaseId = core.getInput('databaseId');
+        const databaseId = core.getInput('NOTION_TASK_DATABASE_ID');
         // ヘッドブランチ名を取得
         const branch = process.env.GITHUB_HEAD_REF;
         
