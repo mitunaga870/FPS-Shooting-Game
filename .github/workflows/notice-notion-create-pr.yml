@@ -2,7 +2,7 @@
 run-name: ${{ github.actor }} is updating Notion 📝
 on:
   pull_request: 
-    types: [opened]
+    types: [opened, reopened]
 defaults: 
     run:
         working-directory: ./ActionScripts

@@ -15,6 +15,8 @@ const axios = require('axios');
             core.setFailed("Branch name not found.");
             return;
         }
+
+        console.log("Branch: " + branch);
         
         // ブランチ名が登録されたタスクを取得
         const searchResult =
@@ -43,6 +45,8 @@ const axios = require('axios');
             return;
         }
         
+        console.log("Task: " + task);
+        
         // タスクのIDを取得
         const taskId = task.id;
         
@@ -64,6 +68,8 @@ const axios = require('axios');
                     "Notion-Version": "2022-06-28"
                 }
             });
+        
+        console.log("Task status updated.");
     } catch (error) {
         core.setFailed(error.message);
     }
