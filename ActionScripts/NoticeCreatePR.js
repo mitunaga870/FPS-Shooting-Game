@@ -11,6 +11,9 @@ const axios = require('axios');
         // NotionのデータベースIDを取得
         const databaseId = process.env.NOTION_DATABASE_ID;
         core.setSecret(databaseId);
+        // PRのURLを取得
+        const prUrl = process.env.GITHUB_SERVER_URL + process.env.GITHUB_REPOSITORY + "/pull/" + process.env.GITHUB_RUN_NUMBER;
+        
         // ヘッドブランチ名を取得
         const branch = process.env.GITHUB_HEAD_REF;
         
@@ -21,6 +24,7 @@ const axios = require('axios');
         }
 
         console.log("Branch: " + branch);
+        console.log("PR URL: " + prUrl);
         
         // ブランチ名が登録されたタスクを取得
         const searchResult =
@@ -62,6 +66,9 @@ const axios = require('axios');
                         "status": {
                             "id": "HZ>a"
                         }
+                    },
+                    "PR": {
+                        "url": 
                     }
                 }
             },
