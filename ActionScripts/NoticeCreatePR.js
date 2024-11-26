@@ -6,9 +6,11 @@ const axios = require('axios');
         console.log("NoticeCreatePR.js");
         
         // NotionのAPIキーを取得
-        const apiKey = core.getInput('NOTION_API_KEY');
+        const apiKey = process.env.NOTION_API_KEY;
+        core.setSecret(apiKey);
         // NotionのデータベースIDを取得
-        const databaseId = core.getInput('NOTION_TASK_DATABASE_ID');
+        const databaseId = process.env.NOTION_DATABASE_ID;
+        core.setSecret(databaseId);
         // ヘッドブランチ名を取得
         const branch = process.env.GITHUB_HEAD_REF;
         
