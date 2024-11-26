@@ -27,4 +27,4 @@ jobs:
         run: node NoticeCreatePR.js
         env: 
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_TASK_DATABASE_ID }}
