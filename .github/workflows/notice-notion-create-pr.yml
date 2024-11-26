@@ -15,6 +15,7 @@ jobs:
         with:
           node-version: "20"
           cache: npm
+          cache-dependency-path: ./ActionScripts/package-lock.json
       
       - name: Move to the directory
         run: cd ActionScripts
