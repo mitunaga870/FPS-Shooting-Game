@@ -68,7 +68,7 @@ const axios = require('axios');
                         }
                     },
                     "PR": {
-                        "url": 
+                        "url": prUrl
                     }
                 }
             },
