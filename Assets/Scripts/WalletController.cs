@@ -78,6 +78,6 @@ public class WalletController : MonoBehaviour
      */
     public bool CanBuy(int price)
     {
-        return price >= 0;
+        return Wallet >= price;
     }
 }
