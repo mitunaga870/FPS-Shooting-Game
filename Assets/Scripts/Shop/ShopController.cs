@@ -38,11 +38,6 @@ namespace Shop
         private ShopTrapIconGenerator trapIconGenerator;
         [SerializeField]
         private ShopSkillIconGenerator skillIconGenerator;
-        
-        [SerializeField]
-        private List<TextMeshProUGUI> trapCostTexts;
-        [SerializeField]
-        private List<TextMeshProUGUI> skillCostTexts;
 
         // 角商品の最大数
         private static int TrapCount => 3;
@@ -126,9 +121,6 @@ namespace Shop
                 var trapIcon = trapIconGenerator.GetTrapIcon(trap.GetTrapName());
                 trapIcon = Instantiate(trapIcon, wrapper.transform, false);
 
-                // コスト表示
-                trapCostTexts[i].text = TRAP_COST.ToString();
-
                 // ボタンに購入処理を追加
                 trapIcon.SetButtonAction(() =>
                 {
@@ -167,9 +159,6 @@ namespace Shop
                 var skillIcon = skillIconGenerator.GetSkillIcon(skill.GetSkillName());
                 skillIcon = Instantiate(skillIcon, wrapper.transform, false);
                 
-                // コスト表示
-                skillCostTexts[i].text = SKILL_COST.ToString();
-
                 skillIcon.SetButtonAction(()=>
                 {
                     Debug.Log("buy skill: " + skill.name + " for " + SKILL_COST + " yen");
