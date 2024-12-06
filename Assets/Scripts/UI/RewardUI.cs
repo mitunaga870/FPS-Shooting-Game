@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using InvasionPhase;
 using Enums;
+using UnityEngine.UI;
 
 public class RewardUI : MonoBehaviour
 {
@@ -14,11 +15,6 @@ public class RewardUI : MonoBehaviour
     public GameObject item2;
     public GameObject item3;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
 
     // Update is called once per frame
     void Update()
@@ -28,15 +24,25 @@ public class RewardUI : MonoBehaviour
         }
     }
 
+
     public void OnItem1Button() {
-        Debug.Log("アイテム1のボタンが押された");
+        //一番左のトラップが押されたら
+        item1.GetComponent<Image>().enabled = false;
+        item2.GetComponent<Image>().enabled = true;
+        item3.GetComponent<Image>().enabled = true;
     }
 
     public void OnItem2Button() {
-        Debug.Log("アイテム2のボタンが押された");
+        //真ん中のトラップが押されたら
+        item1.GetComponent<Image>().enabled = true;
+        item2.GetComponent<Image>().enabled = false;
+        item3.GetComponent<Image>().enabled = true;
     }
 
     public void OnItem3Button() {
-        Debug.Log("アイテム3のボタンが押された");
+        //一番右のトラップが押されたら
+        item1.GetComponent<Image>().enabled = true;
+        item2.GetComponent<Image>().enabled = true;
+        item3.GetComponent<Image>().enabled = false;
     }
 }
