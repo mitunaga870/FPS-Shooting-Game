@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Shop.UI
 {
-    public class ShopTrapIcon : MonoBehaviour
+    public class TrapCard : MonoBehaviour
     {
         [SerializeField]
         private ATrap trapPrefab;

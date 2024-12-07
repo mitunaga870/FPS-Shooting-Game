@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6497224468663779907}
-  - component: {fileID: -7442714139489712625}
   - component: {fileID: 1071106570811822227}
+  - component: {fileID: -3472533508743140547}
   m_Layer: 5
   m_Name: Cone
   m_TagString: Untagged
@@ -40,19 +40,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &-7442714139489712625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1492184752641269392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58ed502f8bc74123b8ce43e20b4d294f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skillObject: {fileID: 6258520639678388547, guid: 362b391fbab1584439fb269a08a7f4b1, type: 3}
 --- !u!114 &1071106570811822227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,6 +96,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &-3472533508743140547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1492184752641269392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 565ceb7aad6a4ab8b6cf2ba8ecbb45f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skill: {fileID: -7442714139489712625, guid: 43cc21a37007c0b4489d677cf929687d, type: 3}
 --- !u!1 &3227935946570129527
 GameObject:
   m_ObjectHideFlags: 0

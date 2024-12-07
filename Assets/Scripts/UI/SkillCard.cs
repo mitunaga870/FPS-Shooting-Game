@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Shop.UI
 {
-    public class ShopSkillIcon : MonoBehaviour
+    public class SkillCard : MonoBehaviour
     {
         [SerializeField]
         private ASkill trapPrefab;

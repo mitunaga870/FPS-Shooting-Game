@@ -85,7 +85,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3257033395292240605}
   - component: {fileID: 383061906261210831}
-  - component: {fileID: 7279784000243881811}
+  - component: {fileID: -4157742988177237731}
   m_Layer: 5
   m_Name: Flag
   m_TagString: Untagged
@@ -171,7 +171,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &7279784000243881811
+--- !u!114 &-4157742988177237731
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -180,10 +180,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3298206888116829487}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4650fb3cab664653b5a664990d294bb4, type: 3}
+  m_Script: {fileID: 11500000, guid: 565ceb7aad6a4ab8b6cf2ba8ecbb45f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillObject: {fileID: 4066365261962900034, guid: 5b027a5e3b47e8a42bd7e0ca794087a9, type: 3}
+  skill: {fileID: 7279784000243881811, guid: cc1fefaa210373b40a42e7be9b0e1369, type: 3}
 --- !u!1 &4049055578340644905
 GameObject:
   m_ObjectHideFlags: 0

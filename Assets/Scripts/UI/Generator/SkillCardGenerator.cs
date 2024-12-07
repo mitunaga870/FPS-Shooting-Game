@@ -2,14 +2,14 @@
 using Shop.UI;
 using UnityEngine;
 
-namespace Shop
+namespace UI.Generator
 {
-    public class ShopSkillIconGenerator : MonoBehaviour
+    public class SkillCardGenerator : MonoBehaviour
     {
         [SerializeField]
-        private List<ShopSkillIcon> skillIcons = new ();
+        private List<SkillCard> skillIcons = new ();
         
-        public ShopSkillIcon GetSkillIcon(string skillName)
+        public SkillCard GetSkillIcon(string skillName)
         {
             foreach (var skillIcon in skillIcons)
             {
