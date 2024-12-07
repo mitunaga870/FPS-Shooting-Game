@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using AClass;
 using TMPro;
+using UI.Generator;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -39,10 +41,12 @@ namespace Shop
         [SerializeField]
         private List<GameObject> skillIconWrappers;
         
+        [FormerlySerializedAs("trapIconGenerator")]
         [SerializeField]
-        private ShopTrapIconGenerator trapIconGenerator;
+        private TrapCardGenerator trapCardGenerator;
+        [FormerlySerializedAs("skillIconGenerator")]
         [SerializeField]
-        private ShopSkillIconGenerator skillIconGenerator;
+        private SkillCardGenerator skillCardGenerator;
         
         [SerializeField]
         private List<TextMeshProUGUI> trapCostTexts;
@@ -128,7 +132,7 @@ namespace Shop
                 var wrapper = trapIconWrappers[i];
             
                 // アイコン作成
-                var trapIcon = trapIconGenerator.GetTrapIcon(trap.GetTrapName());
+                var trapIcon = trapCardGenerator.GetTrapIcon(trap.GetTrapName());
                 trapIcon = Instantiate(trapIcon, wrapper.transform, false);
 
                 // ボタンをアクティブに
@@ -172,7 +176,7 @@ namespace Shop
                 var wrapper = skillIconWrappers[i];
                 
                 // アイコン作成
-                var skillIcon = skillIconGenerator.GetSkillIcon(skill.GetSkillName());
+                var skillIcon = skillCardGenerator.GetSkillIcon(skill.GetSkillName());
                 skillIcon = Instantiate(skillIcon, wrapper.transform, false);
                 
                 // ボタンをアクティブに

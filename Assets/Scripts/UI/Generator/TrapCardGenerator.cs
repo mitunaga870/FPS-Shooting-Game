@@ -2,14 +2,14 @@
 using Shop.UI;
 using UnityEngine;
 
-namespace Shop
+namespace UI.Generator
 {
-    public class ShopTrapIconGenerator : MonoBehaviour
+    public class TrapCardGenerator : MonoBehaviour
     {
         [SerializeField]
-        private List<ShopTrapIcon> trapIcons = new ();
+        private List<TrapCard> trapIcons = new ();
         
-        public ShopTrapIcon GetTrapIcon(string trapName)
+        public TrapCard GetTrapIcon(string trapName)
         {
             foreach (var trapIcon in trapIcons)
             {
