@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AClass;
 using DataClass;
 using JetBrains.Annotations;
+using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -17,6 +19,9 @@ namespace InvasionPhase
         [FormerlySerializedAs("_invasionMazeController")]
         [SerializeField]
         private InvasionMazeController invasionMazeController;
+        
+        [SerializeField]
+        private GeneralS2SData generalS2SData;
 
         /**
          * 残りの敵数
@@ -92,13 +97,27 @@ namespace InvasionPhase
          */
         private void SpawnEnemy(SpawnData spawnData)
         {
+            // スケーリングの倍率計算
+            // 参照値にかける倍率を指定
+            var factorMapNum = 1f;
+            var factorColNum = 0.05f;
+            var mapNum = generalS2SData.MapNumber;
+            var colNum = generalS2SData.CurrentMapColumn;
+            var scale = 1 + mapNum * factorMapNum + colNum * factorColNum;
+            
+            // 値をスケーリング
+            var health = (int) (invasionMazeController.StageData.enemyHp * scale);
+            var attack = (int) (1 * scale); 
+            
             for (var i = 0; i < spawnData.spawnCount; i++)
             {
                 // 敵を生成
                 var enemy = Instantiate(spawnData.enemy);
+                
                 // 敵のスピードを設定
                 enemy.Initialize(
-                    invasionMazeController.StageData.enemyHp, 10, 1,
+                    health,
+                    10, attack,
                     invasionController.GameTime,
                     invasionMazeController.StartPosition,
                     invasionController,
