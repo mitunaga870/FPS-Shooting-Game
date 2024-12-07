@@ -6,8 +6,8 @@ public class TitleGameButon : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
-    {
-        
+    {   
+        GetComponent<UnityEngine.UI.Button>().onClick.AddListener(TitleGame);
     }
 
     public static void TitleGame()

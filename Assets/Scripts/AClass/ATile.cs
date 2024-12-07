@@ -84,12 +84,12 @@ namespace AClass
         private Color _prevColor;
 
         /** 設置されているturret */
-        protected ATurret Turret;
+        public ATurret Turret { get; private set; }
 
         public TileTypes TileType
         {
             get => _tileType;
-            protected set
+            private set
             {
                 _tileType = value;
                 OnTileTypeChanged();
@@ -766,6 +766,23 @@ namespace AClass
             ResetColor( _prevPreviewColor);
             
             _prevPreviewColor = null;
+        }
+
+        /**
+         * turretを削除する
+         */
+        public ATurret RemoveTurret()
+        {
+            // turretが設置されていない場合は処理しない
+            if (!hasTurret) return null;
+            
+            // クラスを作成して返す
+            var returnTurret = InstanceGenerator.GenerateTurret(Turret.GetTurretName());
+
+            hasTurret = false;
+            Destroy(Turret.gameObject);
+            
+            return returnTurret;
         }
     }
 }

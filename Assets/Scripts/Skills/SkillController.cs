@@ -35,7 +35,7 @@ namespace Skills
                 }
                 else
                 {
-                    var skillObject = Instantiate(skill, skillUIWrapper.transform, true);
+                    var skillObject = Instantiate(skill, skillUIWrapper.transform, false);
                     var icon = skillObject.GetComponent<SkillIcon>();
 
                     // スキルを追加

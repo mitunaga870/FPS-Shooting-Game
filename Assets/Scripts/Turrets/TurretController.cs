@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AClass;
 using CreatePhase;
 using Map.UI.lib;
 using UnityEngine;
@@ -26,8 +27,14 @@ namespace Turrets
         {
             // デッキを読んでUIに表示
             var deckTurrets = deckController.DrawTurrets();
+            
+            AddTurret(deckTurrets);
+        }
 
-            foreach (var turret in deckTurrets)
+        /** turretをUIに追加する */
+        public void AddTurret(IEnumerable<ATurret> turrets)
+        {
+            foreach (var turret in turrets)
             {
                 var turretName = turret.GetTurretName();
                 

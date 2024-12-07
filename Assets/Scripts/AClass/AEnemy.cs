@@ -220,7 +220,7 @@ namespace AClass
                 PlayIdleAnimation();
                 return;
             }
-            
+
             // 移動中のアニメーションを再生
             PlayMoveAnimation();
 
@@ -228,9 +228,10 @@ namespace AClass
             if (Path == null)
             {
                 Path = _mazeController.GetShortestPath(CurrentPosition, Destination);
-                
+
                 // 経緯がないときはエラー
-                if (Path == null) throw new ArgumentNullException($"Cant find path from {CurrentPosition} to {Destination}");
+                if (Path == null)
+                    throw new ArgumentNullException($"Cant find path from {CurrentPosition} to {Destination}");
 
                 // 位置をタイルの中心に補正
                 // ReSharper disable once InconsistentNaming
@@ -248,19 +249,19 @@ namespace AClass
             var currentTileCoordinate = CurrentPosition.ToVector3(mazeOrigin);
             var nextTilePosition = Path.Get(pathIndex + 1);
             var nextTileCoordinate = nextTilePosition.ToVector3(mazeOrigin);
-            
+
             // 次のタイルがブロックエリアの時は今のタイルにとどまらせる
             if (_mazeController.GetTile(nextTilePosition)!.IsBlockArea)
             {
                 // 現在のタイル位置に強制移動
                 transform.position = currentTileCoordinate;
-                
+
                 // 移動させない
                 return;
             }
 
             var localTransform = transform;
-            
+
             // 向きを取得
             var direction = nextTileCoordinate - currentTileCoordinate;
             direction.y = 0;
@@ -286,6 +287,7 @@ namespace AClass
                     _hasSlow = false;
                 }
             }
+
             // 鈍化タイル上の場合はスロー処理
             if (_mazeController.IsSlow(CurrentPosition))
             {
@@ -294,7 +296,7 @@ namespace AClass
 
                 if (tile != null) moveAmount *= 1 - tile.SlowAreaPower;
             }
-            
+
 
             var position = localTransform.position;
             position += moveAmount;
@@ -304,9 +306,12 @@ namespace AClass
             var distance = Vector3.Distance(position, nextTileCoordinate);
             // 次のタイルに到達した場合
             if (distance < Math.Sqrt(Math.Pow(0.1f, 2) + Math.Pow(GetHeight(), 2)))
+            {
                 // 現在地を更新
                 CurrentPosition = nextTilePosition;
-                
+                // 次のタイルの位置に強制移動
+                localTransform.position = nextTileCoordinate;
+            }
 
             if (CurrentPosition == null) throw new Exception("Current position is null");
 
@@ -458,7 +463,9 @@ namespace AClass
          * @param speed 移動速度 mTile/frame
          * @param startPosition 初期位置
          */
-        public void Initialize(int hp, int speed, int attack, TilePosition startPosition,
+        public void Initialize(
+            int hp, int speed, int attack, int spawnTime,
+            TilePosition startPosition,
             InvasionController sceneController,
             InvasionMazeController mazeController,
             InvasionEnemyController enemyController,
@@ -480,6 +487,7 @@ namespace AClass
             Speed = speed;
             Attack = attack;
             SceneController = sceneController;
+            _prevTime = spawnTime;
             _mazeController = mazeController;
             _enemyController = enemyController;
             
