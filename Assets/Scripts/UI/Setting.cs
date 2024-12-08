@@ -17,4 +17,8 @@ public class Setting : MonoBehaviour
     public void OnCloseButton() {
         gameObject.SetActive(false);
     }
+
+    public void OnTitleButton() {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Title");
+    }
 }

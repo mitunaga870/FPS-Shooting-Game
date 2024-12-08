@@ -1419,10 +1419,6 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4294967295
       objectReference: {fileID: 0}
-    - target: {fileID: 374574943472344831, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
-      propertyPath: m_hasFontAssetChanged
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 548848432352992126, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 103
@@ -1458,6 +1454,34 @@ PrefabInstance:
     - target: {fileID: 935452261500072281, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2196629457905244393, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2196629457905244393, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2196629457905244393, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 795880667707602091}
+    - target: {fileID: 2196629457905244393, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2196629457905244393, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnTitleButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 2196629457905244393, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Setting, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2196629457905244393, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2404107795375667788, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1566,10 +1590,6 @@ PrefabInstance:
     - target: {fileID: 5491672381916169021, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
       propertyPath: m_Name
       value: SettingUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 5491672381916169021, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5755615810605593840, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
       propertyPath: m_AnchoredPosition.y
