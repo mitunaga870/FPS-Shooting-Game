@@ -27,22 +27,22 @@ public class RewardUI : MonoBehaviour
 
     public void OnItem1Button() {
         //一番左のトラップが押されたら
-        item1.GetComponent<Image>().enabled = false;
-        item2.GetComponent<Image>().enabled = true;
-        item3.GetComponent<Image>().enabled = true;
+        item1.GetComponent<Image>().enabled = true;
+        item2.GetComponent<Image>().enabled = false;
+        item3.GetComponent<Image>().enabled = false;
     }
 
     public void OnItem2Button() {
         //真ん中のトラップが押されたら
-        item1.GetComponent<Image>().enabled = true;
-        item2.GetComponent<Image>().enabled = false;
-        item3.GetComponent<Image>().enabled = true;
+        item1.GetComponent<Image>().enabled = false;
+        item2.GetComponent<Image>().enabled = true;
+        item3.GetComponent<Image>().enabled = false;
     }
 
     public void OnItem3Button() {
         //一番右のトラップが押されたら
-        item1.GetComponent<Image>().enabled = true;
-        item2.GetComponent<Image>().enabled = true;
-        item3.GetComponent<Image>().enabled = false;
+        item1.GetComponent<Image>().enabled = false;
+        item2.GetComponent<Image>().enabled = false;
+        item3.GetComponent<Image>().enabled = true;
     }
 }
