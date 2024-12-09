@@ -19,6 +19,11 @@ namespace Enemies
         
         private bool _invokedEndAnimation;
         
+        /**
+         * ダメージ表記を消すためのコルーチン
+         */
+        private System.Collections.IEnumerator _disableCoroutine;
+        
         [SerializeField]
         private Animator animator;
         
@@ -129,11 +134,11 @@ namespace Enemies
             textMeshProGeometryAnimator.gameObject.SetActive(true);
             
             // 指定時間後に非表示にする
-            var disableCoroutine = General.DelayCoroutine(0.5f, () =>
+            _disableCoroutine = General.DelayCoroutine(0.5f, () =>
             {
                 textMeshProGeometryAnimator.gameObject.SetActive(false);
             });
-            StartCoroutine(disableCoroutine);
+            StartCoroutine(_disableCoroutine);
         }
     }
 }
