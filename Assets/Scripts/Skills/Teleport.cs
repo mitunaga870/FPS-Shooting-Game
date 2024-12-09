@@ -20,10 +20,10 @@ namespace Skills
             // オブジェクトを召喚
             var sourceObject = Instantiate(skillObject);
             sourceObject.transform.position = 
-                targetPosition.ToVector3(mazeController.MazeOrigin) + new Vector3(0, 0.5f, 0);
+                targetPosition.ToVector3(mazeController.MazeOrigin) + new Vector3(0, 0.01f, 0);
             var destinationObject = Instantiate(skillObject);
             destinationObject.transform.position = 
-                mazeController.StartPosition.ToVector3(mazeController.MazeOrigin) + new Vector3(0, 0.5f, 0);
+                mazeController.StartPosition.ToVector3(mazeController.MazeOrigin) + new Vector3(0, 0.01f, 0);
             
             // 時間後にワープホールを削除
             var sourceDestroyColutine = General.DelayCoroutineByGameTime(

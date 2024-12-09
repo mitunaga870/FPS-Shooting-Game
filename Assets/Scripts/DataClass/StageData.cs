@@ -97,6 +97,7 @@ namespace DataClass
             invasionData = stageData.invasionData;
             StageType = stageData.StageType;
             stageName = stageData.stageName;
+            enemyHp = stageData.enemyHp;
         }
 
         public RewardData GetReward(StageObject stageObject)

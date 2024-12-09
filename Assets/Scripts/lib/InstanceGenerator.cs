@@ -1,7 +1,6 @@
 using System;
 using AClass;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace lib
 {
@@ -12,6 +11,8 @@ namespace lib
          */
         public static ATrap GenerateTrap(string trapName)
         {
+            if (trapName == "") return null;
+            
             var traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
 
             // Linqを使うと見づらいのでforeachで書いている
