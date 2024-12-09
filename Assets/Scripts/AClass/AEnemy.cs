@@ -17,9 +17,9 @@ namespace AClass
         private const float Gravity = 9.8f * 0.02f;
 
         // 敵ごとのパラメータ、多分最終的には別のとこで管理する
-        private int HP { get; set; }
+        protected int HP { get; set; }
         private int Attack { get; set; }
-        private int MaxHP { get; set; }
+        protected int MaxHP { get; set; }
         private int RemainingLives { get; set; }
 
         /**
@@ -197,7 +197,7 @@ namespace AClass
                     KnockBacking(timeDiff, mazeOrigin);
                     break;
                 case EnemyCCStatus.Stun:
-                    Flipping(timeDiff);
+                    Stunning(timeDiff);
                     break;
             }
 
@@ -310,7 +310,9 @@ namespace AClass
                 // 現在地を更新
                 CurrentPosition = nextTilePosition;
                 // 次のタイルの位置に強制移動
-                localTransform.position = nextTileCoordinate;
+                localTransform.position = new Vector3(
+                    nextTileCoordinate.x, GetHeight(), nextTileCoordinate.z
+                );
             }
 
             if (CurrentPosition == null) throw new Exception("Current position is null");
@@ -419,7 +421,7 @@ namespace AClass
         /**
          * ペラペラ中処理
          */
-        private void Flipping(
+        private void Stunning(
             int timeDiff
         )
         {
@@ -438,6 +440,7 @@ namespace AClass
          */
         public void Damage(int damage)
         {
+            OnDamage(damage);
             HP -= damage;
 
             // HPが0以下になった場合
@@ -650,6 +653,7 @@ namespace AClass
         
         // アニメーションの再生系
         // バーチャルメソッドを使って、継承先でオーバーライドする
+        #region Animation
 
         /**
          * 死亡アニメーション
@@ -687,7 +691,12 @@ namespace AClass
          */
         protected virtual void PlayKnockBackEndAnimation(){}
         
+        #endregion
+        
         // ============= 抽象メソッド =============
         protected abstract float GetHeight();
+        
+        // ============= コールバック用バーチャル関数 =============
+        protected virtual void OnDamage(int damage) { }
     }
 }

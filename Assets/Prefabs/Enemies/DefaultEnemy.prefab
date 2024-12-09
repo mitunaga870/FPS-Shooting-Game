@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 1864766983775752742}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.022241592, y: -0.005389929, z: -0.0032835007}
+  m_LocalPosition: {x: -1.2, y: -0.005389929, z: -0.0032835007}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -233,7 +233,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 112221
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fe8762e6f4d69e544a0505d69850180c, type: 2}
   m_sharedMaterial: {fileID: -4534754827122267915, guid: fe8762e6f4d69e544a0505d69850180c, type: 2}
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 1, g: 0.59425557, b: 0, a: 1}
   m_enableVertexGradient: 1
   m_colorMode: 3
   m_fontColorGradient:
@@ -326,7 +326,7 @@ MonoBehaviour:
       use: 1
       delay: 0
       wave: 0
-      time: 0.1
+      time: 0.5
       curve:
         serializedVersion: 2
         m_Curve:
@@ -383,45 +383,27 @@ MonoBehaviour:
       use: 1
       delay: 0
       wave: 0
-      time: 0.1
+      time: 0.5
       curve:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0.0000076293945
-          inSlope: 0.010255046
-          outSlope: 0.010255046
-          tangentMode: 34
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.33333334
-        - serializedVersion: 3
-          time: 0.72035563
-          value: 0.00739491
-          inSlope: 0.09477446
-          outSlope: 0.09477446
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.20737852
-          outWeight: 0.33333334
-        - serializedVersion: 3
-          time: 0.8285053
-          value: 0.99734104
-          inSlope: 0.0521543
-          outSlope: 0.0521543
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.14176475
+          outWeight: 0
         - serializedVersion: 3
           time: 1
           value: 1
-          inSlope: 0.015504636
-          outSlope: 0.015504636
-          tangentMode: 34
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -892,6 +874,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
   animator: {fileID: 967619587107861040}
+  textMeshProGeometryAnimator: {fileID: 3446555257024738834}
+  damageText: {fileID: 418558301846419984}
+  hpBar: {fileID: 1864766983775752742}
 --- !u!4 &6597070006137907274 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4ee7d3efb333df54cb387fb0cd2e57f8, type: 3}

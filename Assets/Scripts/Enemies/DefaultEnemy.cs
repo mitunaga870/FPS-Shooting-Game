@@ -1,11 +1,14 @@
 ﻿using System;
 using AClass;
+using lib;
 using UnityEngine;
 
 namespace Enemies
 {
     public class DefaultEnemy : AEnemy
     {
+        private const float ZeroHealthOffset = -1.2f;
+        
         private int _prevTime;
         
         private float _currentAnimationTime;
@@ -18,11 +21,23 @@ namespace Enemies
         
         [SerializeField]
         private Animator animator;
+        
+        [SerializeField]
+        private TextMeshProGeometryAnimator textMeshProGeometryAnimator;
+        
+        [SerializeField]
+        private TMPro.TextMeshProUGUI damageText;
+        
+        [SerializeField]
+        private GameObject hpBar;
 
         private new void FixedUpdate()
         {
             // 基底クラスのFixedUpdateを呼び出す
             base.FixedUpdate();
+            
+            // HPバーの位置を設定
+            hpBar.transform.localPosition = new Vector3(ZeroHealthOffset/MaxHP * HP - ZeroHealthOffset, 0, 0);
             
             // ゲーム時刻取得
             var current = SceneController.GameTime;
@@ -105,6 +120,20 @@ namespace Enemies
         protected override float GetHeight()
         {
             return 0.5f;
+        }
+
+        protected override void OnDamage(int damage)
+        {
+            // ダメージテキストを表示
+            damageText.text = damage.ToString();
+            textMeshProGeometryAnimator.gameObject.SetActive(true);
+            
+            // 指定時間後に非表示にする
+            var disableCoroutine = General.DelayCoroutine(0.5f, () =>
+            {
+                textMeshProGeometryAnimator.gameObject.SetActive(false);
+            });
+            StartCoroutine(disableCoroutine);
         }
     }
 }
