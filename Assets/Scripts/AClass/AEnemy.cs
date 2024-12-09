@@ -87,6 +87,13 @@ namespace AClass
         // ============= ペラペラ用変数 =============
         private int _stunDuration;
         // ============================================
+        
+        // ============= テレポート用変数 =============
+        [SerializeField]
+        private GameObject teleportPrefab;
+        private TilePosition _teleportDestination;
+        private GameObject _teleportObject;
+        // ============================================
 
         /**
          * 初期化処理
@@ -155,16 +162,31 @@ namespace AClass
                 if (tile == null) throw new Exception("Tile is null");
 
                 // テレポート先を取得
-                var teleportDestination = tile.WarpHoleDestination;
+                _teleportDestination = tile.WarpHoleDestination;
                 // テレポート先がない場合はエラー
-                if (teleportDestination == null) throw new Exception("Teleport destination is null");
-
-                // テレポート先に移動
-                transform.position = teleportDestination.ToVector3(mazeOrigin);
-                // 現在地を更新
-                CurrentPosition = teleportDestination;
+                if (_teleportDestination == null) throw new Exception("Teleport destination is null");
                 
-                // ルートを消去
+                // アニメーション用にモックを生成
+                _teleportObject = Instantiate(teleportPrefab);
+                // 位置を設定
+                var transform1 = transform;
+                _teleportObject.transform.position = transform1.position;
+                // スケールもそろえる
+                _teleportObject.transform.localScale = transform1.localScale;
+                // 回転もそろえる
+                _teleportObject.transform.rotation = transform1.rotation;
+                
+                // 現在地を更新
+                CurrentPosition = _teleportDestination;
+                // 座標も更新
+                var destCoordinate = _teleportDestination.ToVector3(mazeOrigin);
+                destCoordinate.y = -GetHeight();
+                transform.position = destCoordinate;
+
+                // テレポート
+                _ccStatus = EnemyCCStatus.Teleporting;
+                
+                // パスを消す
                 Path = null;
             }
             
@@ -198,6 +220,9 @@ namespace AClass
                     break;
                 case EnemyCCStatus.Stun:
                     Stunning(timeDiff);
+                    break;
+                case EnemyCCStatus.Teleporting:
+                    Teleporting(timeDiff, mazeOrigin);
                     break;
             }
 
@@ -435,6 +460,40 @@ namespace AClass
                 _ccStatus = EnemyCCStatus.None;
         }
 
+        /**
+         * テレポート中処理
+         */
+        private void Teleporting(
+            int timeDiff,
+            Vector3 mazeOrigin
+        )
+        {
+            // テレポート先がない場合はエラー
+            if (_teleportDestination == null) throw new Exception("Teleport destination is null");
+            
+            // ｓｏｕｒｃｅ側動作
+            // 沈める
+            var sourcePosition = _teleportObject.transform.position;
+            sourcePosition.y -= Gravity *  timeDiff * 0.1f;
+            _teleportObject.transform.position = sourcePosition;
+            
+            // 目的地側動作
+            // 浮かす
+            var o = gameObject;
+            var destinationPosition = o.transform.position;
+            destinationPosition.y += Gravity * timeDiff * 0.1f;
+            o.transform.position = destinationPosition;
+            
+            // 目的地がいい高さになったら終わり
+            if (destinationPosition.y >= GetHeight())
+            {
+                // MOCを消す
+                Destroy(_teleportObject);
+                // テレポート終了
+                _ccStatus = EnemyCCStatus.None;
+            }
+        }
+        
         /**
          * ダメージ処理
          */
