@@ -1,0 +1,31 @@
+﻿name: Notice Notion Create PR
+run-name: ${{ github.actor }} is updating Notion 📝
+on:
+  pull_request: 
+    types: [opened, reopened]
+defaults: 
+    run:
+        working-directory: ./ActionScripts
+jobs: 
+  call-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: ./ActionScripts/package-lock.json
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Run the script
+        run: node NoticeCreatePR.js
+        env: 
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_TASK_DATABASE_ID }}
+          PULL_REQUEST_URL: ${{ github.event.pull_request.html_url }}

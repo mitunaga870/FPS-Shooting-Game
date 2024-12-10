@@ -78,13 +78,9 @@ namespace CreatePhase
             }
             else if (hasTurret && Input.GetMouseButtonDown(1))
             {
-                // TODO: タレット削除処理
-                _mazeCreationController.SetPreviewTurretEffectArea(
-                    Turret,
-                    new TilePosition(Row, Column),
-                    1000
-                );
-
+                // タレットを削除
+                _mazeCreationController.RemoveTurret(Column, Row);
+                
                 return;
             }
 

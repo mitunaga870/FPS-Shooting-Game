@@ -7,8 +7,8 @@ using DataClass;
 using Enums;
 using JetBrains.Annotations;
 using lib;
+using Turrets;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 using TrapData = DataClass.TrapData;
@@ -34,6 +34,10 @@ namespace CreatePhase
         /** デッキシステムつなぎこみ */
         [SerializeField]
         private DeckController deck;
+        
+        /** turretのUIシステムつなぎこみ */
+        [SerializeField]
+        private TurretController turretController;
 
         /** 迷路の原点 */
         private Vector3 _mazeOrigin;
@@ -223,7 +227,6 @@ namespace CreatePhase
         {
             // トラップを取得
             var traps = deck.DrowTraps(TrapCount);
-            var i = 0;
 
             // 一時トラップリストを作成
             var tempTrapData = new List<TrapData>();
@@ -236,7 +239,7 @@ namespace CreatePhase
                 var column = Random.Range(0, MazeColumns);
 
                 var loopCount = 0;
-                var setTrapResult = false;
+                bool setTrapResult;
 
                 // nullの場合は設置できてないので再度設置
                 while (true)
@@ -602,7 +605,6 @@ namespace CreatePhase
             SyncMazeData(maze);
         }
 
-        [CanBeNull]
         public override ATile GetTile(int row, int column)
         {
             if (row < 0 || row >= MazeRows || column < 0 || column >= MazeColumns)
@@ -759,6 +761,29 @@ namespace CreatePhase
                 TurretData.Add(turretData);
                 return;
             }
+        }
+
+        /**
+         * トラップを削除
+         */
+        public void RemoveTurret(int column, int row)
+        {
+            // 対象タイルを取得
+            var targetTile = Maze[row][column];
+            
+            // turretがない場合は何もしない
+            if (!targetTile.HasTurret) return;
+            
+            // 削除するturretを取得
+            
+            // 対象タイルのturretを削除
+            var removedTurret = targetTile.RemoveTurret();
+            
+            // 対象タイルのturret情報を削除
+            TurretData.RemoveAll(data => data.Row == row && data.Column == column);
+
+            // デッキに戻す
+            turretController.AddTurret(new []{removedTurret});
         }
     }
 }
