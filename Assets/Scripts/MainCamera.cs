@@ -1,6 +1,7 @@
 using AClass;
 using DataClass;
 using ScriptableObjects.S2SDataObjects;
+using UI;
 using UnityEngine;
 
 public class MainCamera : MonoBehaviour
@@ -36,6 +37,12 @@ public class MainCamera : MonoBehaviour
      */
     [SerializeField]
     private GeneralS2SData _generalS2SData;
+    
+    /**
+     * デッキの高さ
+     */
+    [SerializeField]
+    private DeckUIController _deckUIController;
 
     /**
      * マウスの横制限
@@ -70,7 +77,7 @@ public class MainCamera : MonoBehaviour
         }
 
         // マウスホイールでズーム
-        if (Input.mouseScrollDelta.y != 0)
+        if (Input.mouseScrollDelta.y != 0 && !_deckUIController.IsDeckUIShowing)
         {
             var moveY = Input.mouseScrollDelta.y;
             cam.transform.localPosition -= new Vector3(0, moveY, 0);

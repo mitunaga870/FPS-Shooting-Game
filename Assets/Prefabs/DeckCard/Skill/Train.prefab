@@ -313,7 +313,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5823216311897052600}
   - component: {fileID: -2105206703398629916}
-  - component: {fileID: 1505619627793635734}
+  - component: {fileID: 7888328596166193598}
   m_Layer: 5
   m_Name: Train
   m_TagString: Untagged
@@ -399,7 +399,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1505619627793635734
+--- !u!114 &7888328596166193598
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -408,10 +408,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5255891093229980110}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d7d911c582140efac94641d8a3ce4bf, type: 3}
+  m_Script: {fileID: 11500000, guid: 565ceb7aad6a4ab8b6cf2ba8ecbb45f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillObject: {fileID: 0}
+  skill: {fileID: 1505619627793635734, guid: b0e96d81b07d50746b8fe64153baa521, type: 3}
 --- !u!1 &8162217926582416385
 GameObject:
   m_ObjectHideFlags: 0
