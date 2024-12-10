@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DataClass;
 using JetBrains.Annotations;
+using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 
 namespace ScriptableObjects
@@ -14,6 +15,9 @@ namespace ScriptableObjects
     [CreateAssetMenu]
     public class StageObject : ScriptableObject
     {
+        [SerializeField]
+        private GeneralS2SData generalS2SData;
+        
         [SerializeField]
         private LevelData normalLevelData;
 
@@ -33,12 +37,17 @@ namespace ScriptableObjects
          */
         public StageData getNormalStageData(int stageNum = -1)
         {
+            // 現在のスケールのステージデータリストを作成
+            var normalStageDataList = normalLevelData.StageDataList[generalS2SData.MapNumber];
+            
             if (stageNum == -1)
                 // ステージナンバーが未指定の時はランダムで取得
-                stageNum = UnityEngine.Random.Range(0, normalLevelData.StageDataList.Count);
+                stageNum = UnityEngine.Random.Range(0, normalStageDataList.Count);
 
             // ステージタイプをノーマルに変更
-            var result = new StageData(normalLevelData.StageDataList[stageNum]);
+            var result = 
+                new StageData(
+                    normalStageDataList[stageNum]);
             result.StageType = Enums.StageType.Normal;
 
             return result;
@@ -50,12 +59,16 @@ namespace ScriptableObjects
          */
         public StageData getEliteStageData(int stageNum = -1)
         {
+            // 現在のスケールのステージデータリストを作成
+            var eliteStageDataList = eliteLevelData.StageDataList[generalS2SData.MapNumber];
+            
+            // 現在のステージデータリストを作成
             if (stageNum == -1)
                 // ステージナンバーが未指定の時はランダムで取得
-                stageNum = UnityEngine.Random.Range(0, eliteLevelData.StageDataList.Count);
+                stageNum = UnityEngine.Random.Range(0, eliteStageDataList.Count);
 
             // ステージタイプをエリートに変更
-            var result = eliteLevelData.StageDataList[stageNum];
+            var result = eliteStageDataList[stageNum];
             result.StageType = Enums.StageType.Elite;
             
             // カスタムをつける
@@ -70,12 +83,15 @@ namespace ScriptableObjects
          */
         public StageData getBossStageData(int stageNum = -1)
         {
+            // 現在のスケールのステージデータリストを作成
+            var bossStageDataList = bossLevelData.StageDataList[generalS2SData.MapNumber];
+            
             if (stageNum == -1)
                 // ステージナンバーが未指定の時はランダムで取得
-                stageNum = UnityEngine.Random.Range(0, bossLevelData.StageDataList.Count);
+                stageNum = UnityEngine.Random.Range(0, bossStageDataList.Count);
 
             // ステージタイプをボスに変更
-            var result = bossLevelData.StageDataList[stageNum];
+            var result = bossStageDataList[stageNum];
             result.StageType = Enums.StageType.Boss;
             
             // カスタムを当てる
@@ -91,10 +107,13 @@ namespace ScriptableObjects
         public StageData GetFromStageName(string stageName)
         {
             var allStageData = new List<StageData>();
-            allStageData.AddRange(normalLevelData.StageDataList);
-            allStageData.AddRange(eliteLevelData.StageDataList);
-            allStageData.AddRange(bossLevelData.StageDataList);
-
+            for (var i = 0; i < Environment.TotalMapSize; i++)
+            {
+                allStageData.AddRange(normalLevelData.StageDataList[i]);
+                allStageData.AddRange(eliteLevelData.StageDataList[i]);
+                allStageData.AddRange(bossLevelData.StageDataList[i]);
+            }
+            
             var result = allStageData.Find(stageData => stageData.stageName == stageName);
 
             return result;
