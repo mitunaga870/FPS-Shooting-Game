@@ -3,10 +3,14 @@ const axios = require('axios');
 
 (async () => {
     try {
+        console.log("NoticeMargePR.js");
+        
         // NotionのAPIキーを取得
-        const apiKey = core.getInput('NOTION_API_KEY');
+        const apiKey = process.env.NOTION_API_KEY;
+        core.setSecret(apiKey);
         // NotionのデータベースIDを取得
-        const databaseId = core.getInput('NOTION_TASK_DATABASE_ID');
+        const databaseId = process.env.NOTION_DATABASE_ID;
+        core.setSecret(databaseId);
         // ヘッドブランチ名を取得
         const branch = process.env.GITHUB_HEAD_REF;
         
@@ -16,9 +20,11 @@ const axios = require('axios');
             return;
         }
         
+        console.log("Branch: " + branch);
+        
         // ブランチ名が登録されたタスクを取得
         const searchResult =
-            await axios.put("https://api.notion.com/v1/databases/" + databaseId + "/query",
+            await axios.post("https://api.notion.com/v1/databases/" + databaseId + "/query",
                 {
                     "filter": {
                         "property": "blanch",
@@ -43,6 +49,8 @@ const axios = require('axios');
             return;
         }
         
+        console.log("Task: " + task);
+        
         // タスクのIDを取得
         const taskId = task.id;
         
@@ -64,6 +72,8 @@ const axios = require('axios');
                     "Notion-Version": "2022-06-28"
                 }
             });
+        
+        console.log("NoticeMargePR.js finished.");
     } catch (error) {
         core.setFailed(error.message);
     }
