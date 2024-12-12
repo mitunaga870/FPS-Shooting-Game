@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Shop.UI;
+using UI.Card;
 using UnityEngine;
 
 namespace UI.Generator
