@@ -5,6 +5,7 @@ namespace Enums
         None,
         Jumping,
         KnockBacking,
-        Stun
+        Stun,
+        Teleporting,
     }
 }

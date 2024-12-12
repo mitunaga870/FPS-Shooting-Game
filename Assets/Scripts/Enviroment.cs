@@ -6,4 +6,6 @@ using UnityEngine;
 public static class Environment
 {
     public const int TileSize = 1;
+
+    public const int TotalMapSize = 4;
 }
