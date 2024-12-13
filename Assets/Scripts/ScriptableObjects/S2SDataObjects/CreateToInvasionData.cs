@@ -34,10 +34,6 @@ namespace ScriptableObjects.S2SDataObjects
             StageData = null;
         }
 
-        public override void OnBeforeSerialize()
-        {
-        }
-
         public override string ToString()
         {
             var message = $"MazeSize: {TileData.Length}*{TileData[0].Length}\n";

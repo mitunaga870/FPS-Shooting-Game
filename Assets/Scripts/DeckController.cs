@@ -34,7 +34,10 @@ public class DeckController : MonoBehaviour
     private List<ATrap> _handTraps = new();
 
     public int TrapDeckCount => _deckTraps.Count;
-
+    
+    public bool HasTrap => _deckTraps.Count > 0;
+    public bool HasSkill => _deckSkills.Count > 0;
+    public bool HasTurret => _deckTurrets.Count > 0;
 
     private void Awake()
     {

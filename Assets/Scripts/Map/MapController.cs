@@ -27,6 +27,9 @@ namespace Map
         [SerializeField]
         private WalletController walletController;
         
+        [SerializeField]
+        private Chat.ChatController chatController;
+        
         /**
          * マップのラッパー
          * ステージごとに配列要素とする
@@ -109,7 +112,7 @@ namespace Map
                 var mapInstance = Instantiate(mapUIController);
                 
                 // マップをロードさせる
-                mapInstance.Load(this, deckController, walletController, isClosable);
+                mapInstance.Load(this, deckController, walletController, chatController, isClosable);
         }
 
         private void OnApplicationQuit()

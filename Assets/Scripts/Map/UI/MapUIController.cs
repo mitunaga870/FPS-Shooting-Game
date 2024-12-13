@@ -37,7 +37,12 @@ namespace Map.UI
         private MapController _mapController;
 
         /** マップを表示する */
-        public void Load(MapController mapController, DeckController deckController, WalletController walletController, bool isClosable)
+        public void Load(
+            MapController mapController,
+            DeckController deckController,
+            WalletController walletController,
+            Chat.ChatController chatController,
+            bool isClosable)
         {
             _isClosable = isClosable;
             _deckController = deckController;
@@ -79,7 +84,7 @@ namespace Map.UI
                             break;
                         case MapTileType.Shop:
                             button = Instantiate(mapShopTileButton, mapRow.transform);
-                            ((MapShopTileButton)button).Initialize(deckController, walletController);
+                            ((MapShopTileButton)button).Initialize(deckController, walletController, chatController);
                             break;
                         default:
                             throw new Exception("Invalid MapTileType");

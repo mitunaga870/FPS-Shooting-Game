@@ -38,10 +38,12 @@ namespace CreatePhase
         /** turretのUIシステムつなぎこみ */
         [SerializeField]
         private TurretController turretController;
+        
+        [SerializeField]
+        private Chat.ChatController chatController;
 
         /** 迷路の原点 */
         private Vector3 _mazeOrigin;
-
 
         /** 迷路のデータ */
         private new CreatePhaseTile[][] Maze { get; set; }
@@ -114,6 +116,8 @@ namespace CreatePhase
                 CreateMaze(tileData);
                 // リロールボタンを消す
                 reRollButton.Hide();
+                // リロールチャットを送信
+                chatController.ShowRerollChat();
             });
 
             // ユーザーに設定される可能性あり
