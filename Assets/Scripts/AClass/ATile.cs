@@ -74,6 +74,14 @@ namespace AClass
         /** 斜め角 */
         [SerializeField]
         protected GameObject diagonalCorner;
+        
+        /** スタート用デカール */
+        [SerializeField]
+        protected GameObject startDecal;
+        
+        /** ゴール用デカール */
+        [SerializeField]
+        protected GameObject goalDecal;
 
         /** 現在のタイルタイプ */
         private TileTypes _tileType = TileTypes.Nothing;
@@ -450,18 +458,6 @@ namespace AClass
                 Destroy(model);
             }
 
-            // ゴール地点の場合は色を変更
-            switch (TileType)
-            {
-                case TileTypes.Goal:
-                    SetGoal();
-                    break;
-                case TileTypes.Start:
-                    SetStart();
-                    break;
-            }
-
-
             // つながった道の回転を設定
             transform.rotation = rotation;
         }
@@ -566,10 +562,11 @@ namespace AClass
      */
         public void SetStart()
         {
-            // TODO: スタート地点の状態固定と示し方を決める
-            SetColor(Color.blue);
-
             TileType = TileTypes.Start;
+            
+            // デカール設置
+            var decal = Instantiate(startDecal, transform.position, Quaternion.identity);
+            decal.transform.rotation = Quaternion.Euler(90, 0, 0);
         }
 
         /**
@@ -577,10 +574,11 @@ namespace AClass
      */
         public void SetGoal()
         {
-            // TODO: ゴール地点の状態固定と示し方を決める
-            SetColor(Color.red);
-
             TileType = TileTypes.Goal;
+            
+            // デカール設置
+            var decal = Instantiate(goalDecal, transform.position, Quaternion.identity);
+            decal.transform.rotation = Quaternion.Euler(90, 0, 0);
         }
 
         /**
