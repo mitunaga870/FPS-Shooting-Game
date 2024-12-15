@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using AClass;
 using DataClass;
 using Enums;
 using Map;
+using Reward;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
 using Shop;
@@ -111,6 +113,11 @@ namespace InvasionPhase
         private bool _isSkillMode;
         [NonSerialized]
         public ASkill Skill;
+        // =================================================
+        
+        // =============== 報酬用変数 =====================
+        [SerializeField]
+        private RewardUIController rewardUIController;
         // =================================================
         
         // Start is called before the first frame update
@@ -253,16 +260,14 @@ namespace InvasionPhase
             // アプリケーション終了処理中はクリアしない
             if (_isApplicateQuit) return;
 
-            Debug.Log("Game Clear!");
             GameState = GameState.Clear;
 
             // 報酬付与
             var reward = StageData.GetReward(stageObject);
 
             // TODO: ここで報酬を付与するUIを出したい　とりあえず即時付与
-            // お金
-            walletController.AddWallet(reward.money);
             // トラップ
+            var rewardTraps = new List<ATrap>();
             for (var i = 0; i < reward.randomTrap; i++)
             {
                 // ランダムなトラップを取得
@@ -270,14 +275,15 @@ namespace InvasionPhase
                 var trap = all[Random.Range(0, all.Length)];
 
                 // デッキに追加
-                deckController.AddTrap(trap);
+                rewardTraps.Add(trap);
             }
 
             // 指定トラップ
             var selectedTrap = reward.selectedTrap;
-            deckController.AddTrapRange(selectedTrap);
-
+            rewardTraps.AddRange(selectedTrap);
+            
             // タレット
+            var rewardTurrets = new List<ATurret>();
             for (var i = 0; i < reward.randomTurret; i++)
             {
                 // ランダムなタレットを取得
@@ -285,14 +291,15 @@ namespace InvasionPhase
                 var turret = all[Random.Range(0, all.Length)];
 
                 // デッキに追加
-                deckController.AddTurret(turret);
+                rewardTurrets.Add(turret);
             }
 
             // 指定タレット
             var selectedTurret = reward.selectedTurret;
-            deckController.AddTurretRange(selectedTurret);
+            rewardTurrets.AddRange(selectedTurret);
 
             // スキル
+            var rewardSkills = new List<ASkill>();
             for (var i = 0; i < reward.randomSkill; i++)
             {
                 // ランダムなスキルを取得
@@ -300,40 +307,20 @@ namespace InvasionPhase
                 var skill = all[Random.Range(0, all.Length)];
 
                 // デッキに追加
-                deckController.AddSkill(skill);
+                rewardSkills.Add(skill);
             }
 
             // 指定スキル
             var selectedSkill = reward.selectedSkill;
-            deckController.AddSkillRange(selectedSkill);
+            rewardSkills.AddRange(selectedSkill);
+            
+            rewardUIController.ShowRewardUI(
+                reward.money,
+                rewardTraps,
+                rewardSkills,
+                rewardTurrets
+            );
 
-            if (StageData.StageType == StageType.Boss)
-            {
-                // ボスの時はステージを進める
-                // 最終マップか確認 最大値は3
-                if (generalS2SData.MapNumber == 3)
-                {
-                    // 最終マップならクリア
-                    SceneManager.LoadScene("Score");
-                    return;
-                }
-
-                // マップを進める
-                generalS2SData.MapNumber++;
-                // ポジション
-                generalS2SData.CurrentMapRow = 0;
-                generalS2SData.CurrentMapColumn = 0;
-                generalS2SData.CurrentStageNumber = 1;
-                // 迷路データをリセット
-                createToInvasionData.Reset();
-
-                // 作成フェーズに移行    
-                SceneManager.LoadScene("CreatePhase");
-            }
-            else
-            {
-                mapController.ShowMap( false, true);
-            }
         }
 
         public void FastPlay()
@@ -384,6 +371,69 @@ namespace InvasionPhase
         {
             // HPを保存
             generalS2SData.PlayerHp = PlayerHp;
+        }
+        
+        /**
+         * 報酬を受け取る
+         */
+        public void ReceiveReward(
+            int rewardCredit,
+            (ATrap, ATurret, ASkill) reward,
+            RewardType rewardType
+        ) {
+            // お金を増やす
+            walletController.AddWallet(rewardCredit);
+            
+            // デッキに追加
+            switch (rewardType)
+            {
+                case RewardType.Trap:
+                    deckController.AddTrap(reward.Item1);
+                    break;
+                case RewardType.Turret:
+                    deckController.AddTurret(reward.Item2);
+                    break;
+                case RewardType.Skill:
+                    deckController.AddSkill(reward.Item3);
+                    break;
+            }
+            
+            // 次のステージに進む
+            GoNextStage();
+        }
+        
+        /**
+         * 次のステージに進む
+         */
+        private void GoNextStage()
+        {
+            if (StageData.StageType == StageType.Boss)
+            {
+                // ボスの時はステージを進める
+                // 最終マップか確認 最大値は3
+                if (generalS2SData.MapNumber == 3)
+                {
+                    // 最終マップならクリア
+                    SceneManager.LoadScene("Score");
+                    return;
+                }
+
+                // マップを進める
+                generalS2SData.MapNumber++;
+                // ポジション
+                generalS2SData.CurrentMapRow = 0;
+                generalS2SData.CurrentMapColumn = 0;
+                generalS2SData.CurrentStageNumber = 1;
+                // 迷路データをリセット
+                createToInvasionData.Reset();
+
+                // 作成フェーズに移行    
+                SceneManager.LoadScene("CreatePhase");
+            }
+            else
+            {
+                mapController.ShowMap( false, true);
+            }
         }
     }
 }

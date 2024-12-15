@@ -2,6 +2,8 @@ namespace Enums
 {
     public enum RewardType
     {
-        Money,
+        Trap,
+        Skill,
+        Turret
     }
 }

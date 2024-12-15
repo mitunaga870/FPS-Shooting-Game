@@ -1,5 +1,6 @@
 using AClass;
 using DataClass;
+using Reward;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
 
@@ -36,6 +37,18 @@ public class MainCamera : MonoBehaviour
      */
     [SerializeField]
     private GeneralS2SData _generalS2SData;
+    
+    /**
+     * デッキの高さ
+     */
+    [SerializeField]
+    private DeckUIController _deckUIController;
+    
+    /**
+     * リワードUI
+     */
+    [SerializeField]
+    private RewardUIController _rewardUIController;
 
     /**
      * マウスの横制限
@@ -48,18 +61,31 @@ public class MainCamera : MonoBehaviour
     private float _mouseZLimit;
 
     private StageData _stageData => _mazeController.StageData;
+    
+    // UI要素があるかどうかのフラグ
+    private bool _hasRewardUI;
 
     // Start is called before the first frame update
     private void Start()
     {
         _mouseXLimit = _stageData.mazeColumn * 0.5f;
         _mouseZLimit = _stageData.mazeRow * 0.5f;
+        
+        // UI要素があるかどうかのフラグ
+        _hasRewardUI = _rewardUIController != null;
     }
 
     // Update is called once per frame
     private void Update()
     {
         var cam = GetComponent<MainCamera>();
+        
+        // 各種UIが表示されている場合はカメラの移動を制限
+        if (
+         _hasRewardUI && _rewardUIController.IsRewardUIShowing
+        ) {
+            return;
+        }
 
         // マウスの位置でカメラを移動
         if (Input.GetMouseButton(2))
