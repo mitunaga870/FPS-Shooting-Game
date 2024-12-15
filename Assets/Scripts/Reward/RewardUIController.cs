@@ -17,6 +17,12 @@ namespace Reward
         
         [SerializeField]
         private List<GameObject> rewardItemWrappers;
+        
+        [SerializeField]
+        private List<GameObject> creditIcons;
+        
+        [SerializeField]
+        private TMPro.TextMeshProUGUI rewardMoneyText;
 
         #endregion
 
@@ -37,8 +43,14 @@ namespace Reward
         /**
          * 報酬画面を表示する
          */
-        public void ShowRewardUI(int rewardMoney, List<ATrap> rewardTraps, List<ASkill> rewardSkills, List<ATurret> rewardTurrets)
-        {
+        public void ShowRewardUI(
+            StageType stageType,
+            // ReSharper disable once ParameterHidesMember
+            int rewardMoney,
+            List<ATrap> rewardTraps,
+            List<ASkill> rewardSkills,
+            List<ATurret> rewardTurrets
+        ) {
             // 報酬アイテムが３つ以上ある場合はエラー
             if (rewardTraps.Count + rewardSkills.Count + rewardTurrets.Count > 3)
             {
@@ -71,6 +83,29 @@ namespace Reward
                 rewardItems.Add((null, null, skill));
                 rewardTypes.Add(RewardType.Skill);
             }
+            
+            // ステージの種類でクレジットアイコン数を変える
+            switch (stageType)
+            {
+                case StageType.Normal:
+                    creditIcons[0].SetActive(true);
+                    creditIcons[1].SetActive(false);
+                    creditIcons[2].SetActive(false);
+                    break;
+                case StageType.Elite:
+                    creditIcons[0].SetActive(true);
+                    creditIcons[1].SetActive(true);
+                    creditIcons[2].SetActive(false);
+                    break;
+                case StageType.Boss:
+                    creditIcons[0].SetActive(true);
+                    creditIcons[1].SetActive(true);
+                    creditIcons[2].SetActive(true);
+                    break;
+            }
+            
+            // 報酬金額を表示
+            rewardMoneyText.text = rewardMoney.ToString();
         }
 
 

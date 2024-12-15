@@ -315,6 +315,7 @@ namespace InvasionPhase
             rewardSkills.AddRange(selectedSkill);
             
             rewardUIController.ShowRewardUI(
+                StageData.StageType,
                 reward.money,
                 rewardTraps,
                 rewardSkills,
@@ -335,6 +336,9 @@ namespace InvasionPhase
             {
                 Debug.Log("Game Over!");
                 GameState = GameState.GameOver;
+                
+                // セーブデータ消去
+                SaveController.DeleteSaveData();
                 
                 // シーン遷移
                 SceneManager.LoadScene("Score");
