@@ -1519,7 +1519,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-
 --- !u!1001 &837808389087955291
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3193,7 +3192,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7181956397617678518, guid: 57714fca1689af441abf91d608269629, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.6890724
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7219279209048926788, guid: 57714fca1689af441abf91d608269629, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3581,7 +3580,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8694458702402830182, guid: 57714fca1689af441abf91d608269629, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1615
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8749587991808488346, guid: 57714fca1689af441abf91d608269629, type: 3}
       propertyPath: m_AnchorMax.y
@@ -4323,3 +4322,4 @@ SceneRoots:
   - {fileID: 1285204393}
   - {fileID: 1160505996240409222}
   - {fileID: 96234109}
+  - {fileID: 837808389087955291}
