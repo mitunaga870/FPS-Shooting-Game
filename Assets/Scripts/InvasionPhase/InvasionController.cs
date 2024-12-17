@@ -350,7 +350,7 @@ namespace InvasionPhase
                 GameState = GameState.GameOver;
                 
                 // ゲームオーバー時の処理
-                SaveController.DelSave();
+                SaveController.SetGameOvered();
                 
                 // シーン遷移
                 SceneManager.LoadScene("Score");
