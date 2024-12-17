@@ -20,8 +20,8 @@ namespace lib
             foreach (var trap in traps)
                 if (trap.GetTrapName() == trapName)
                     return trap;
-
-            throw new Exception("トラップデータが見つかりません、セーブデータが壊れている可能性があります。");
+            
+            throw new Exception("トラップデータが見つかりません、セーブデータが壊れている可能性があります。 " + trapName);
         }
 
         /**
@@ -29,6 +29,8 @@ namespace lib
          */
         public static ATurret GenerateTurret(string turretName)
         {
+            if (turretName == "") return null;
+            
             var turrets = Resources.LoadAll<ATurret>("Prefabs/Turrets");
 
             // Linqを使うと見づらいのでforeachで書いている
@@ -42,6 +44,8 @@ namespace lib
 
         public static ASkill GenerateSkill(string skill)
         {
+            if (skill == "") return null;
+            
             var skills = Resources.LoadAll<ASkill>("Prefabs/Skill");
 
             // Linqを使うと見づらいのでforeachで書いている
