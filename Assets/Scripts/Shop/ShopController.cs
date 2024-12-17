@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using AClass;
 using TMPro;
+using UI.Generator;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -34,15 +36,23 @@ namespace Shop
         [SerializeField]
         private List<GameObject> skillIconWrappers;
         
+        [FormerlySerializedAs("trapIconGenerator")]
         [SerializeField]
-        private ShopTrapIconGenerator trapIconGenerator;
+        private TrapCardGenerator trapCardGenerator;
+        [FormerlySerializedAs("skillIconGenerator")]
         [SerializeField]
-        private ShopSkillIconGenerator skillIconGenerator;
+        private SkillCardGenerator skillCardGenerator;
+        
+        [SerializeField]
+        private List<TextMeshProUGUI> trapCostTexts;
+        [SerializeField]
+        private List<TextMeshProUGUI> skillCostTexts;
 
         // 角商品の最大数
         private static int TrapCount => 3;
 
         private static int SkillCount => 2;
+        public bool IsShopUIShowing => gameObject.activeSelf;
 
         //　ショップに並びうるものの一覧
         private readonly List<ATrap> _allTraps = new();
@@ -118,7 +128,7 @@ namespace Shop
                 _trapsOnSale.Add(trap);
             
                 // アイコン作成
-                var trapIcon = trapIconGenerator.GetTrapIcon(trap.GetTrapName());
+                var trapIcon = trapCardGenerator.GetTrapIcon(trap.GetTrapName());
                 trapIcon = Instantiate(trapIcon, wrapper.transform, false);
 
                 // ボタンに購入処理を追加
@@ -156,7 +166,7 @@ namespace Shop
                 _skillsOnSale.Add(skill);
                 
                 // アイコン作成
-                var skillIcon = skillIconGenerator.GetSkillIcon(skill.GetSkillName());
+                var skillIcon = skillCardGenerator.GetSkillIcon(skill.GetSkillName());
                 skillIcon = Instantiate(skillIcon, wrapper.transform, false);
                 
                 skillIcon.SetButtonAction(()=>
