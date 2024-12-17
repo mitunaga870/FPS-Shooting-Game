@@ -1,6 +1,8 @@
-﻿using AClass;
+﻿using System;
+using AClass;
 using UI.Abstract;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI.Card
 {
@@ -12,6 +14,11 @@ namespace UI.Card
         public string GetTrapName()
         {
             return trapPrefab.GetTrapName();
+        }
+        
+        public void SetButtonAction(Action action)
+        {
+            gameObject.GetComponent<Button>().onClick.AddListener(() => action());
         }
     }
 }
