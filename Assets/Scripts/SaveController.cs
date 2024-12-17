@@ -176,6 +176,11 @@ public static class SaveController
         PlayerPrefs.SetInt("CurrentStageNumber", currentStageNumber);
     }
 
+    public static void SetGameOvered()
+    {
+        PlayerPrefs.SetInt("GameOvered", 1);
+    }
+
     // =======　読み込み処理　=======
     [CanBeNull]
     public static TileData[][] LoadTileData()
@@ -401,5 +406,10 @@ public static class SaveController
     public static int LoadCurrentStageNumber()
     {
         return PlayerPrefs.GetInt("CurrentStageNumber", 1);
+    }
+    
+    public static bool LoadGameOvered()
+    {
+        return PlayerPrefs.GetInt("GameOvered", 0) == 1;
     }
 }

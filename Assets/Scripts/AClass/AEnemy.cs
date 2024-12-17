@@ -499,6 +499,9 @@ namespace AClass
          */
         public void Damage(int damage)
         {
+            // すでに死んでいる場合は何もしない
+            if (IsDead) return;
+            
             OnDamage(damage);
             HP -= damage;
 
@@ -509,7 +512,7 @@ namespace AClass
                 PlayDeathAnimation(RemainingLives <= 0);
                 
                 // 残機がない場合は削除
-                if (RemainingLives <= 0) return;
+                if (RemainingLives <= 0)return;
                 
                 // 残機を減らす
                 RemainingLives--;
