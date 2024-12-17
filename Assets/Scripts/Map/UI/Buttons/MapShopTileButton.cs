@@ -28,6 +28,7 @@ namespace Map.UI.Buttons
             // ショップが閉じられた時の処理を追加
             shop.SetOnClose(() =>
             {
+                shop.gameObject.SetActive(false);
                 // マップを開く
                 MapController.ShowMap(false, true);
             });
