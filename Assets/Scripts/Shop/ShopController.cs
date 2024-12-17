@@ -52,6 +52,7 @@ namespace Shop
         private static int TrapCount => 3;
 
         private static int SkillCount => 2;
+        public bool IsShopUIShowing => gameObject.activeSelf;
 
         //　ショップに並びうるものの一覧
         private readonly List<ATrap> _allTraps = new();

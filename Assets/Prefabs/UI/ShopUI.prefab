@@ -260,8 +260,10 @@ MonoBehaviour:
   skillIconWrappers:
   - {fileID: 2033417419891865146}
   - {fileID: 6399471330237707331}
-  trapIconGenerator: {fileID: 3503359173148754929}
-  skillIconGenerator: {fileID: 8256217162042542114}
+  trapCardGenerator: {fileID: 3503359173148754929}
+  skillCardGenerator: {fileID: 8256217162042542114}
+  trapCostTexts: []
+  skillCostTexts: []
 --- !u!114 &8256217162042542114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,13 +277,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillIcons:
-  - {fileID: -7287423699353986128, guid: 1fdf71c5263468548bce9d9385556dba, type: 3}
-  - {fileID: -2086685414662050309, guid: a96dd93ef5c0d6040be75ee5e273536e, type: 3}
-  - {fileID: -4136855043351339194, guid: ec9d9c5ea9732fe4fa272b2fdaa386fa, type: 3}
-  - {fileID: -4338830424808874613, guid: af5de029ca221d9498b104e37a2a458b, type: 3}
-  - {fileID: 8121512682310752722, guid: 6dbf24b61a1dde248892118f7fcbf1e0, type: 3}
-  - {fileID: -2470126401066766002, guid: d971fb373c3c8634ba028e21a983eca1, type: 3}
-  - {fileID: 4537326268466683344, guid: 435f2e4c1bd0f0545b87994f1d39900e, type: 3}
+  - {fileID: -7287423699353986128, guid: 77e27ebb0c092f1449e41b3b27ae632f, type: 3}
+  - {fileID: -2086685414662050309, guid: efa812b4088a64c45a78fa40249a56a1, type: 3}
+  - {fileID: -4136855043351339194, guid: 3d676fcd388c8244ca9f262f4eba1398, type: 3}
+  - {fileID: -4338830424808874613, guid: 95357c37e9b0cd84685db9f3380693c1, type: 3}
+  - {fileID: 8121512682310752722, guid: c7c4e9d48e373bb42bc88622b32aa932, type: 3}
+  - {fileID: -2470126401066766002, guid: 1f79925acb3350748afc31b503f0c218, type: 3}
+  - {fileID: 4537326268466683344, guid: e6d1c7ccce7da9b40b79e91d14482205, type: 3}
 --- !u!114 &3503359173148754929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -295,12 +297,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trapIcons:
-  - {fileID: -7007337755839588411, guid: 7cfd49e36fbed9b4f8010aab6d3290fd, type: 3}
-  - {fileID: -4366094618591307359, guid: b2253d6a4fec3e6428456cf543509ffe, type: 3}
-  - {fileID: -6023201194926496576, guid: 4ab4166b7f8ad534ea975016f576a86a, type: 3}
-  - {fileID: 4849632749605074819, guid: f7567be882f2fdf41af215bf60192123, type: 3}
-  - {fileID: 9136319325147307433, guid: 0b0aa4ef2431e3340877b38bb888a35f, type: 3}
-  - {fileID: 3277908688851602676, guid: 5f00d3b9b5ca5e847be987be6019fdca, type: 3}
+  - {fileID: -7007337755839588411, guid: 6438f7f69570b7242aa82b947ab9dacb, type: 3}
+  - {fileID: -4366094618591307359, guid: 453271c790c4daf4aad6eac24342954c, type: 3}
+  - {fileID: -6023201194926496576, guid: 9d35527c3be6e594ba16409bc9731cc4, type: 3}
+  - {fileID: 4849632749605074819, guid: 0ee37f75f48c50747b4f599bce5b38fc, type: 3}
+  - {fileID: 9136319325147307433, guid: 32eb0412444c0cc4c98c86eec36fb7a1, type: 3}
+  - {fileID: 3277908688851602676, guid: 5c6e786f8a2c4dc4b95722b2061b204f, type: 3}
 --- !u!1 &661687254354213917
 GameObject:
   m_ObjectHideFlags: 0
@@ -784,8 +786,10 @@ MonoBehaviour:
   reRollButton: {fileID: 0}
   trapIconWrappers: []
   skillIconWrappers: []
-  trapIconGenerator: {fileID: 0}
-  skillIconGenerator: {fileID: 0}
+  trapCardGenerator: {fileID: 0}
+  skillCardGenerator: {fileID: 0}
+  trapCostTexts: []
+  skillCostTexts: []
 --- !u!1 &5115711142809129480
 GameObject:
   m_ObjectHideFlags: 0
