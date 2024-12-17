@@ -1,6 +1,8 @@
 using AClass;
 using DataClass;
 using ScriptableObjects.S2SDataObjects;
+using Shop;
+using UI;
 using UnityEngine;
 
 public class MainCamera : MonoBehaviour
@@ -36,6 +38,18 @@ public class MainCamera : MonoBehaviour
      */
     [SerializeField]
     private GeneralS2SData _generalS2SData;
+    
+    /**
+     * デッキの高さ
+     */
+    [SerializeField]
+    private DeckUIController _deckUIController;
+    
+    /**
+     * ショップUI
+     */
+    [SerializeField]
+    private ShopController _shopController;
 
     /**
      * マウスの横制限
@@ -46,6 +60,10 @@ public class MainCamera : MonoBehaviour
      * マウスの縦制限
      */
     private float _mouseZLimit;
+    
+    // ================= UIの表示情報 =================
+    private bool _hasDeckUI;
+    private bool _hasShopController;
 
     private StageData _stageData => _mazeController.StageData;
 
@@ -54,12 +72,25 @@ public class MainCamera : MonoBehaviour
     {
         _mouseXLimit = _stageData.mazeColumn * 0.5f;
         _mouseZLimit = _stageData.mazeRow * 0.5f;
+        
+        if (_deckUIController != null)
+            _hasDeckUI = true;
+        
+        if (_shopController != null)
+            _hasShopController = true;
     }
 
     // Update is called once per frame
     private void Update()
     {
         var cam = GetComponent<MainCamera>();
+        
+        // デッキUIが表示されている場合はカメラの移動を制限
+        if (_hasDeckUI && _deckUIController.IsDeckUIShowing)
+            return;
+        // ショップUIが表示されている場合はカメラの移動を制限
+        if (_hasShopController && _shopController.IsShopUIShowing)
+            return;
 
         // マウスの位置でカメラを移動
         if (Input.GetMouseButton(2))
@@ -70,7 +101,7 @@ public class MainCamera : MonoBehaviour
         }
 
         // マウスホイールでズーム
-        if (Input.mouseScrollDelta.y != 0)
+        if (Input.mouseScrollDelta.y != 0 && !_deckUIController.IsDeckUIShowing)
         {
             var moveY = Input.mouseScrollDelta.y;
             cam.transform.localPosition -= new Vector3(0, moveY, 0);
