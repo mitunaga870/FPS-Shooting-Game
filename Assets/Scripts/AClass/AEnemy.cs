@@ -248,6 +248,9 @@ namespace AClass
 
             // 移動中のアニメーションを再生
             PlayMoveAnimation();
+            
+            // 目的地と現在地が同じ場合は何もしない
+            if (CurrentPosition.Equals(Destination)) return;
 
             // 経路がない場合は生成
             if (Path == null)
