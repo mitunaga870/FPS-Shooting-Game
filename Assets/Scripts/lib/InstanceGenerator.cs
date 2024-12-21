@@ -1,7 +1,6 @@
 using System;
 using AClass;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace lib
 {
@@ -12,6 +11,8 @@ namespace lib
          */
         public static ATrap GenerateTrap(string trapName)
         {
+            if (trapName == "") return null;
+            
             var traps = Resources.LoadAll<ATrap>("Prefabs/Traps");
 
             // Linqを使うと見づらいのでforeachで書いている
@@ -19,8 +20,8 @@ namespace lib
             foreach (var trap in traps)
                 if (trap.GetTrapName() == trapName)
                     return trap;
-
-            throw new Exception("トラップデータが見つかりません、セーブデータが壊れている可能性があります。");
+            
+            throw new Exception("トラップデータが見つかりません、セーブデータが壊れている可能性があります。 " + trapName);
         }
 
         /**
@@ -28,6 +29,8 @@ namespace lib
          */
         public static ATurret GenerateTurret(string turretName)
         {
+            if (turretName == "") return null;
+            
             var turrets = Resources.LoadAll<ATurret>("Prefabs/Turrets");
 
             // Linqを使うと見づらいのでforeachで書いている
@@ -41,6 +44,8 @@ namespace lib
 
         public static ASkill GenerateSkill(string skill)
         {
+            if (skill == "") return null;
+            
             var skills = Resources.LoadAll<ASkill>("Prefabs/Skill");
 
             // Linqを使うと見づらいのでforeachで書いている

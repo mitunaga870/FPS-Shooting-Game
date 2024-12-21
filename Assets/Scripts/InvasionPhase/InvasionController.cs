@@ -349,6 +349,9 @@ namespace InvasionPhase
                 Debug.Log("Game Over!");
                 GameState = GameState.GameOver;
                 
+                // ゲームオーバー時の処理
+                SaveController.SetGameOvered();
+                
                 // シーン遷移
                 SceneManager.LoadScene("Score");
             }
