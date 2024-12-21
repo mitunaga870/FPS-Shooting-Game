@@ -89,7 +89,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4978004804937235380}
+        m_TargetAssemblyTypeName: UI.SettingUIController, Assembly-CSharp
+        m_MethodName: OnBGMVolumeChanged
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &685342855137030843
 GameObject:
   m_ObjectHideFlags: 0
@@ -397,8 +409,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4978004804937235380}
-        m_TargetAssemblyTypeName: Setting, Assembly-CSharp
-        m_MethodName: OnCloseButton
+        m_TargetAssemblyTypeName: UI.SettingUIController, Assembly-CSharp
+        m_MethodName: CloseButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -960,6 +972,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05383c4fd8f074e4e8c6c4910c6a6587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _bgmSlider: {fileID: 3836230519553708108}
+  _seSlider: {fileID: 8045622490431650208}
+  _deckController: {fileID: 0}
+  _mapController: {fileID: 0}
+  _walletController: {fileID: 0}
+  _s2SDataInitializer: {fileID: 0}
+  _creationSceneController: {fileID: 0}
+  _invasionController: {fileID: 0}
+  _invasionMazeController: {fileID: 0}
 --- !u!1 &5697540661058143915
 GameObject:
   m_ObjectHideFlags: 0
@@ -1525,7 +1546,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4978004804937235380}
+        m_TargetAssemblyTypeName: UI.SettingUIController, Assembly-CSharp
+        m_MethodName: OnSEVolumeChanged
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7827349850126825172
 GameObject:
   m_ObjectHideFlags: 0

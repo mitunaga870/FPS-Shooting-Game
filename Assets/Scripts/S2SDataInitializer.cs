@@ -56,7 +56,12 @@ public class S2SDataInitializer : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        SaveController.SaveScore(generalS2SData.Score);
-        SaveController.SaveCurrentStageNumber(generalS2SData.CurrentStageNumber);
+        Save();
+    }
+    
+    public void Save()
+    {
+        SaveController.SavePlayerHP(generalS2SData.PlayerHp);
+        SaveController.SaveWallet(generalS2SData.Wallet);
     }
 }

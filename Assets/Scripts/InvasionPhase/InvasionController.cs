@@ -219,6 +219,14 @@ namespace InvasionPhase
             _isApplicateQuit = true;
             
             // セーブデータを保存
+            Save();
+        }
+
+        /**
+         * セーブを保存
+         */
+        public void Save()
+        {
             SaveController.SavePhase(Phase.Invade);
         }
 
