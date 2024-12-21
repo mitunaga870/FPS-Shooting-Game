@@ -1,12 +1,13 @@
 using System;
 using AClass;
 using TMPro;
+using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace CreatePhase
 {
-    public class TurretIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class TurretIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField]
         private ATurret turretPrefab;
@@ -15,6 +16,8 @@ namespace CreatePhase
         private TextMeshProUGUI remainingCountText;
         
         private MazeCreationController _mazeCreationController;
+        
+        private DetailViewerController _detailViewerController;
         
         private int _remainingCount = 1;
 
@@ -34,9 +37,10 @@ namespace CreatePhase
         }
 
         // ReSharper disable once ParameterHidesMember
-        public void Init(MazeCreationController mazeCreationController)
+        public void Init(MazeCreationController mazeCreationController, DetailViewerController detailViewerController)
         {
             _mazeCreationController = mazeCreationController;
+            _detailViewerController = detailViewerController;
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -64,6 +68,20 @@ namespace CreatePhase
         public string GetTurretName()
         {
             return turretPrefab.GetTurretName();
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (_detailViewerController == null) return;
+            
+            _detailViewerController.ShowTurretDetail(turretPrefab);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (_detailViewerController == null) return;
+            
+            _detailViewerController.CloseDetail();
         }
     }
 }
