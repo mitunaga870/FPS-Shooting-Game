@@ -8,6 +8,7 @@ using lib;
 using Map;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
+using UI;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -30,6 +31,9 @@ namespace AClass
 
         [SerializeField]
         private MapController mapController;
+        
+        [SerializeField]
+        protected DetailViewerController detailViewerController;
 
         /** 迷路タイル配列 */
         public ATile[][] Maze { get; private set; }
@@ -489,6 +493,30 @@ namespace AClass
             }
             
             _previewAddresses.Clear();
+        }
+        
+        /**
+         * トラップの詳細を表示
+         */
+        public void ShowTrapDetail(ATrap trap)
+        {
+            detailViewerController.ShowTrapDetail(trap);
+        }
+        
+        /**
+         * トラップの詳細を表示
+         */
+        public void ShowTurretDetail(ATurret turret)
+        {
+            detailViewerController.ShowTurretDetail(turret);
+        }
+
+        /**
+         * トラップの詳細を非表示
+         */
+        public void CloseDetail()
+        {
+            detailViewerController.CloseDetail();
         }
     }
 }
