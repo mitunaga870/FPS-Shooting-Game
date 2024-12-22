@@ -326,6 +326,7 @@ MonoBehaviour:
   deckController: {fileID: 1766966375}
   mapController: {fileID: 210013744}
   shopUI: {fileID: 7798519001121184098, guid: fba33cf6932e2ce49bb202a8563c2114, type: 3}
+  rewardUIController: {fileID: 206745848}
 --- !u!1 &140573161
 GameObject:
   m_ObjectHideFlags: 0
@@ -783,6 +784,17 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 4668490410132529896, guid: e4d852e93b0812b43a16cb9ed92aae64, type: 3}
   m_PrefabInstance: {fileID: 169688762}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &206745848 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7576515365797387700, guid: 9a6f60ac5c5146944b786d67d41e5ea9, type: 3}
+  m_PrefabInstance: {fileID: 8561473618492565249}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc0e849652cd05b4a9a7823d26908865, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &210013742
 GameObject:
   m_ObjectHideFlags: 0
@@ -5018,7 +5030,8 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -60
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7670114745612846586, guid: 9a6f60ac5c5146944b786d67d41e5ea9, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

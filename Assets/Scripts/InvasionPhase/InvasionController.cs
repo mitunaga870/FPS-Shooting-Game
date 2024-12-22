@@ -319,7 +319,8 @@ namespace InvasionPhase
                 reward.money,
                 rewardTraps,
                 rewardSkills,
-                rewardTurrets
+                rewardTurrets,
+                reward.selectCount
             );
 
         }
@@ -382,24 +383,37 @@ namespace InvasionPhase
          */
         public void ReceiveReward(
             int rewardCredit,
-            (ATrap, ATurret, ASkill) reward,
-            RewardType rewardType
+            List<(ATrap, ATurret, ASkill)> rewards,
+            List<RewardType> rewardTypes
         ) {
             // お金を増やす
             walletController.AddWallet(rewardCredit);
             
-            // デッキに追加
-            switch (rewardType)
+            // 受け取るアイテム数に齟齬がある場合はエラーを出力
+            if (rewards.Count != rewardTypes.Count)
             {
-                case RewardType.Trap:
-                    deckController.AddTrap(reward.Item1);
-                    break;
-                case RewardType.Turret:
-                    deckController.AddTurret(reward.Item2);
-                    break;
-                case RewardType.Skill:
-                    deckController.AddSkill(reward.Item3);
-                    break;
+                Debug.LogError("報酬アイテムの数が合いません");
+                return;
+            }
+            
+            // デッキに追加
+            for (var i = 0; i < rewards.Count; i++)
+            {
+                var reward = rewards[i];
+                var rewardType = rewardTypes[i];
+                
+                switch (rewardType)
+                {
+                    case RewardType.Trap:
+                        deckController.AddTrap(reward.Item1);
+                        break;
+                    case RewardType.Turret:
+                        deckController.AddTurret(reward.Item2);
+                        break;
+                    case RewardType.Skill:
+                        deckController.AddSkill(reward.Item3);
+                        break;
+                }
             }
             
             // 次のステージに進む
