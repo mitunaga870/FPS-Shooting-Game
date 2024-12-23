@@ -345,9 +345,6 @@ namespace AClass
 
             if (CurrentPosition == null) throw new Exception("Current position is null");
 
-            // トラップに引っかかった場合
-            _mazeController.AwakeTrap(CurrentPosition);
-
             // 目的地に到達した場合
             if (CurrentPosition.Equals(Destination))
             {
