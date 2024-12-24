@@ -2,6 +2,7 @@
 using AClass;
 using CreatePhase;
 using Map.UI.lib;
+using UI;
 using UnityEngine;
 
 namespace Turrets
@@ -19,6 +20,9 @@ namespace Turrets
 
         [SerializeField]
         private TurretIconGenerator _turretIconGenerator;
+        
+        [SerializeField]
+        private DetailViewerController detailViewerController;
         
         /** 追加済みタレットの辞書 */
         private Dictionary<string, TurretIcon> _addedTurrets = new Dictionary<string, TurretIcon>();
@@ -51,7 +55,7 @@ namespace Turrets
                     // タレットを追加
                     _addedTurrets[turretName] = icon;
 
-                    icon.Init(mazeCreationController);
+                    icon.Init(mazeCreationController, detailViewerController);
                 }
             }
         }
