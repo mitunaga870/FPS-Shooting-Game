@@ -85,8 +85,7 @@ namespace CreatePhase
         /** プレビュー中のトラップのアドレス */
         private TilePosition _previewTurretAddress;
 
-        // Start is called before the first frame update
-        private void Start()
+        public void StartMaze()
         {
             // 初期値設定
             IsEditingRoad = false;

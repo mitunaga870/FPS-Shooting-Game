@@ -4,6 +4,7 @@ using Enums;
 using InvasionPhase;
 using ScriptableObjects.S2SDataObjects;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Chat
 {
@@ -13,6 +14,8 @@ namespace Chat
      */
     public class ChatController : MonoBehaviour
     {
+        #region SerializeField
+
         [SerializeField]
         private MessageBoxController messageBoxController;
     
@@ -31,9 +34,20 @@ namespace Chat
         [SerializeField]
         private ChatS2SData chatS2SData;
         
+        #endregion
+
+        public void StartChat()
+        {
+            _isStartedChat = true;
+        }
+        
+        #region private 
+
         private Phase _currentPhase;
         
         private bool _isInitialized;
+        
+        private bool _isStartedChat;
 
         private void Start()
         {
@@ -53,6 +67,9 @@ namespace Chat
             if (!_isInitialized)
                 return;
             
+            if (!_isStartedChat)
+                return;
+            
             switch (_currentPhase)
             {
                 case Phase.Create:
@@ -65,6 +82,8 @@ namespace Chat
                     throw new Exception("Unknown phase.");
             }
         }
+        
+        #endregion
 
         #region CreatePhase
         
@@ -73,12 +92,13 @@ namespace Chat
          */
         private void CheckCreatePhaseChat()
         {
+            
             if (!chatS2SData.ShowedFirstBattle)
                 ShowFirstBattleChat();
             if (!chatS2SData.ShowedFirstTurret && deckController.HasTurret)
                 ShowFirstTurretChat();
         }
-        
+
         /**
          * リロール周りは受動的に表示
          */
@@ -96,7 +116,20 @@ namespace Chat
         private void ShowFirstBattleChat()
         {
             chatS2SData.ShowedFirstBattle = true;
+            
             messageBoxController.SetMessage("First Battle");
+            
+            // csvからテキストを取得
+            var textCSV = Resources.Load<TextAsset>("ChatTexts/First");
+            var text = textCSV.text;
+            
+            // 初回は２行目
+            var lines = text.Split('\n');
+            var wholeMessage = lines[1];
+            
+            // カンマで分割
+            var messages = wholeMessage.Split(',');
+            messageBoxController.SetMessages(messages);
         }
 
         /**
@@ -113,6 +146,26 @@ namespace Chat
         private void ShowFirstTurretChat()
         {
             chatS2SData.ShowedFirstTurret = true;
+        }
+
+        /**
+         * OPのチャットを表示
+         */
+        public void ShowOPChat(UnityAction onEndMessages)
+        {
+            chatS2SData.ShowedOP = true;
+            
+            // CSVからテキストを取得
+            var textCSV = Resources.Load<TextAsset>("ChatTexts/First");
+            var text = textCSV.text;
+            
+            // OPは１行目
+            var lines = text.Split('\n');
+            var wholeMessage = lines[0];
+            
+            // カンマで分割
+            var messages = wholeMessage.Split(',');
+            messageBoxController.SetMessages(messages, onEndMessages);
         }
         
         #endregion 
@@ -146,7 +199,6 @@ namespace Chat
         {
             if (!chatS2SData.ShowedFirstShop)
                 ShowFirstShopChat();
-            // ここにショップのチャット表示
         }
         
         /**
@@ -155,6 +207,18 @@ namespace Chat
         private void ShowFirstShopChat()
         {
             chatS2SData.ShowedFirstShop = true;
+            
+            // csvからテキストを取得
+            var textCSV = Resources.Load<TextAsset>("ChatTexts/First");
+            var text = textCSV.text;
+            
+            // 初回は３行目
+            var lines = text.Split('\n');
+            var wholeMessage = lines[2];
+            
+            // カンマで分割
+            var messages = wholeMessage.Split(',');
+            messageBoxController.SetMessages(messages);
         }
         
         #endregion

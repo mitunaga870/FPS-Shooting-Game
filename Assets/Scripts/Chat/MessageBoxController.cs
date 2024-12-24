@@ -2,6 +2,7 @@
 using lib;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Chat
 {
@@ -18,7 +19,7 @@ namespace Chat
     
         /** メッセージボックスに表示した後消えるまでの時間 */
         private readonly int _closeDelay = 3;
-    
+        
         public void SetMessage(string message)
         {
             if (_closeCoroutine != null)
@@ -34,7 +35,7 @@ namespace Chat
             StopCoroutine(_closeCoroutine);
         }
     
-        public void SetMessages(string[] messages)
+        public void SetMessages(string[] messages, UnityAction onEndMessages = null)
         {
             if (_closeCoroutine != null)
                 StopCoroutine(_closeCoroutine);
@@ -48,8 +49,13 @@ namespace Chat
             {
                 _closeCoroutine = General.DelayCoroutine(
                     _closeDelay,
-                    () => gameObject.SetActive(false)
-                );
+                    () =>
+                    {
+                        gameObject.SetActive(false);
+                        
+                        // 終了時の処理があれば実行
+                        onEndMessages?.Invoke();
+                    });
                 StartCoroutine(_closeCoroutine);
             
                 return;
@@ -63,7 +69,7 @@ namespace Chat
             // 再起的に表示
             _closeCoroutine = General.DelayCoroutine(
                 _closeDelay,
-                () => SetMessages(restMessages)
+                () => SetMessages(restMessages, onEndMessages)
             );
             StartCoroutine(_closeCoroutine);
         }

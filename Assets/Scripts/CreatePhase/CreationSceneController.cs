@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Chat;
 using Enums;
 using Map;
@@ -45,9 +43,37 @@ namespace CreatePhase
         // 仮のメッセージボックス
         [SerializeField]
         private MessageBoxController messageBox;
+        
+        [SerializeField]
+        private Chat.ChatController chatController;
+        
+        [SerializeField]
+        private ChatS2SData chatS2SData;
+        
+        [SerializeField]
+        private GameObject opBackground;
 
         private void Start()
         {
+            // OPを表示
+            if(chatS2SData.ShowedOP)
+            {
+                StartCreate();
+            }
+            else
+            {
+                opBackground.SetActive(true);
+                chatController.ShowOPChat(StartCreate);
+            }
+        }
+        
+        private void StartCreate()
+        {
+            // OP用の背景を非表示
+            opBackground.SetActive(false);
+            
+            mazeCreationController.StartMaze();
+            
             // ステージデータを取得
             var stageData = mazeCreationController.StageData;
 
@@ -66,12 +92,8 @@ namespace CreatePhase
                 mapController.ShowMap( false, true);
             }
             
-            // メッセージを表示
-            var messages = new System.Collections.Generic.List<string>();
-            messages.Add(generalS2SData.MapNumber + " - (" + generalS2SData.CurrentMapColumn+", "+generalS2SData.CurrentMapRow + ")");
-            messages.Add("ステージ"+ stageData.stageName+"を開始します。\n 通路を作成してください");
-            
-            messageBox.SetMessages(messages.ToArray());
+            // チャットを開始
+            chatController.StartChat();
         }
 
         /**
