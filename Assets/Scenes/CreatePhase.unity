@@ -686,6 +686,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 548848432352992126, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -115
+      objectReference: {fileID: 0}
+    - target: {fileID: 935452261500072281, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2976973264131901967, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4050010720362616712, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 4295854140424132406, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4465607830049541912, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -786,26 +806,27 @@ PrefabInstance:
       propertyPath: _creationSceneController
       value: 
       objectReference: {fileID: 2133232374}
+    - target: {fileID: 4997687004198517996, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
     - target: {fileID: 5491672381916169021, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
       propertyPath: m_Name
       value: SettingUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 6662608546997455805, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -167
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119404665868689175, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
---- !u!114 &690868288 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4978004804937235380, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
-  m_PrefabInstance: {fileID: 690868287}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05383c4fd8f074e4e8c6c4910c6a6587, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &753157376 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2242798954313869036, guid: 57714fca1689af441abf91d608269629, type: 3}
@@ -1281,7 +1302,7 @@ PrefabInstance:
     - target: {fileID: 2428086642701893882, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 690868288}
+      objectReference: {fileID: 4978004805354351499}
     - target: {fileID: 2428086642701893882, guid: df6356a2c699d284eb9fd33f4ea31f8c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OpenSetting
@@ -4154,6 +4175,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46ecaf7c3fe5630499f621d9027f0317, type: 3}
+--- !u!114 &4978004805354351499 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4978004804937235380, guid: 3bdd1f9b35521ea408baaaf6812c662b, type: 3}
+  m_PrefabInstance: {fileID: 690868287}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05383c4fd8f074e4e8c6c4910c6a6587, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5750488172312407969
 PrefabInstance:
   m_ObjectHideFlags: 0
