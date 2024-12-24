@@ -78,6 +78,19 @@ namespace InvasionPhase
         [FormerlySerializedAs("_shopUI")]
         [SerializeField]
         private ShopController shopUI;
+        
+        // =============== サウンド系 =====================
+        [SerializeField]
+        private SoundController soundController;
+        
+        [SerializeField]
+        private AudioClip defaultBgm;
+        
+        [SerializeField]
+        private AudioClip bossBgm;
+        
+        [SerializeField]
+        private AudioClip RewardBgm;
 
         /**
          * 減速時の時刻スタック（１を超えたら０にして時刻を進める）
@@ -240,6 +253,11 @@ namespace InvasionPhase
 
             // 各コントローラー
             invasionEnemyController.StartGame();
+            
+            // BGMの再生
+            soundController.ChangeBGM(
+                StageData.StageType == StageType.Boss ? bossBgm : defaultBgm
+            );
         }
 
         public void PauseGame()
@@ -314,6 +332,10 @@ namespace InvasionPhase
             var selectedSkill = reward.selectedSkill;
             rewardSkills.AddRange(selectedSkill);
             
+            // 報酬BGMを再生
+            soundController.ChangeBGM(RewardBgm);
+            
+            // 報酬UIを表示
             rewardUIController.ShowRewardUI(
                 StageData.StageType,
                 reward.money,
