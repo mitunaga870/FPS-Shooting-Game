@@ -4,6 +4,12 @@ namespace TitleScene
 {
     public class StartGameButton : MonoBehaviour
     {
+        [SerializeField]
+        private GameObject loading;
+        
+        [SerializeField]
+        private GameObject loadingEnemy;
+        
         void Start()
         {
             // クリック時にStartGameを呼び出す
@@ -11,8 +17,11 @@ namespace TitleScene
         }
 
 
-        public static void StartGame()
+        public void StartGame()
         {
+            loading.SetActive(true);
+            loadingEnemy.SetActive(true);
+            
             // セーブデータ削除
             SaveController.DelSave();
 

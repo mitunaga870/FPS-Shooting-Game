@@ -6,14 +6,24 @@ namespace TitleScene
 {
     public class ContinueGameButton : MonoBehaviour
     {
+        [SerializeField]
+        private GameObject loading;
+        
+        [SerializeField]
+        private GameObject loadingEnemy;
+        
         private void Start()
         {
             // クリック時にStartGameを呼び出す
             GetComponent<UnityEngine.UI.Button>().onClick.AddListener(StartGame);
         }
 
-        public static void StartGame()
+        public void StartGame()
         {
+            // ローディング画面を表示
+            loading.SetActive(true);
+            loadingEnemy.SetActive(true);
+            
             Debug.Log("StartGame");
 
             // セーブデータのSceneに移動
