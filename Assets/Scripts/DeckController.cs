@@ -102,6 +102,12 @@ public class DeckController : MonoBehaviour
     private void OnApplicationQuit()
     {
         // セーブ
+        Save();
+    }
+    
+    public void Save()
+    {
+        // セーブ
         SaveController.SaveDeckData(
             _deckTraps.ToArray(), _handTraps.ToArray(), _discardTraps.ToArray(),
             _deckSkills.ToArray(), _deckTurrets.ToArray());
