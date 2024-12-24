@@ -59,6 +59,9 @@ namespace AClass
         private int _prevTime;
 
         private EnemyCCStatus _ccStatus;
+        
+        /** オフセット */
+        private Vector3 _offset;
 
         // ============= ジャンプ用変数 =============
         private int _jumpDamage;
@@ -248,6 +251,9 @@ namespace AClass
 
             // 移動中のアニメーションを再生
             PlayMoveAnimation();
+            
+            // 目的地と現在地が同じ場合は何もしない
+            if (CurrentPosition.Equals(Destination)) return;
 
             // 経路がない場合は生成
             if (Path == null)
@@ -264,7 +270,7 @@ namespace AClass
                 // ReSharper disable once InconsistentNaming
                 var _position = Path.Get(0).ToVector3(mazeOrigin);
                 _position.y = GetHeight();
-                _localTransform.position = _position;
+                _localTransform.position = _position + _offset;
             }
 
             // 現在のパス番号がない場合はエラー
@@ -326,24 +332,26 @@ namespace AClass
             var position = localTransform.position;
             position += moveAmount;
             localTransform.position = position;
-
+            
             // 次のタイルとの距離
-            var distance = Vector3.Distance(position, nextTileCoordinate);
+            var distance = Vector3.Distance(position - _offset, nextTileCoordinate);
             // 次のタイルに到達した場合
             if (distance < Math.Sqrt(Math.Pow(0.1f, 2) + Math.Pow(GetHeight(), 2)))
             {
                 // 現在地を更新
                 CurrentPosition = nextTilePosition;
                 // 次のタイルの位置に強制移動
-                localTransform.position = new Vector3(
+                var newPosition = new Vector3(
                     nextTileCoordinate.x, GetHeight(), nextTileCoordinate.z
                 );
+                
+                // オフセットを加える
+                newPosition += _offset;
+
+                localTransform.position = newPosition;
             }
 
             if (CurrentPosition == null) throw new Exception("Current position is null");
-
-            // トラップに引っかかった場合
-            _mazeController.AwakeTrap(CurrentPosition);
 
             // 目的地に到達した場合
             if (CurrentPosition.Equals(Destination))
@@ -542,9 +550,18 @@ namespace AClass
 
             // 座標に変換
             var position = startPosition.ToVector3(mazeController.MazeOrigin);
-            // 初期ポイントに移動
-            transform.position = position;
+            // 水平にオフセットかける
+            var randX = UnityEngine.Random.Range(-0.3f, 0.3f);
+            var randY = UnityEngine.Random.Range(-0.3f, 0.3f);
+            _offset = new Vector3(
+                Environment.TileSize * randX,
+                0,
+                Environment.TileSize * randY
+                );
 
+            // 初期ポイントに移動
+            transform.position = position + _offset;
+            
             // 初期情報登録
             CurrentPosition = startPosition;
             HP = (int)(hp * sceneController.StageData.StageCustomData.EnemyHpScale); // ステージデータでHPをスケール
