@@ -9,6 +9,12 @@ namespace Turrets
     {
         private const string TurretName = "BeansGatling";
         
+        [SerializeField]
+        private AudioSource audioSource;
+        
+        [SerializeField]
+        private AudioClip awakeSound;
+        
         private int Damage => turretObject.BeansGatlingDamage;
         private float Height => turretObject.BeansGatlingHeight;
         private int Interval => turretObject.BeansGatlingInterval;
@@ -23,6 +29,9 @@ namespace Turrets
 
         protected override void AwakeTurret(List<AEnemy> enemies)
         {
+            // 効果音再生
+            audioSource.PlayOneShot(awakeSound);
+            
             // 最も近い敵に対して攻撃
             AEnemy target = null;
             var minDistance = float.MaxValue;

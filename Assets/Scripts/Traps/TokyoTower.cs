@@ -11,6 +11,12 @@ namespace Traps
     {
         private const string TrapName = "Tokyo Tower";
         
+        [SerializeField]
+        private AudioSource audioSource;
+
+        [SerializeField]
+        private AudioClip awakeSound;
+        
         private int Damage => trapObject.TokyoTowerDamage;
         private float InvadeHeight => trapObject.TokyoTowerInvadeHeight;
         private float MovedHeight => trapObject.TokyoTowerMovedHeight;
@@ -26,6 +32,9 @@ namespace Traps
 
             // クールダウン中は何もしない
             if (ChargeTime > 0) return;
+            
+            // 効果音再生
+            audioSource.PlayOneShot(awakeSound);
 
             // クールダウンをセット
             ChargeTime = CoolDown;
