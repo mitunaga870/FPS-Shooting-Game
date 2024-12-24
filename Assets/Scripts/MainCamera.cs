@@ -1,5 +1,6 @@
 using AClass;
 using DataClass;
+using Reward;
 using ScriptableObjects.S2SDataObjects;
 using Shop;
 using UI;
@@ -46,6 +47,12 @@ public class MainCamera : MonoBehaviour
     private DeckUIController _deckUIController;
     
     /**
+     * リワードUI
+     */
+    [SerializeField]
+    private RewardUIController _rewardUIController;
+    
+    /**
      * ショップUI
      */
     [SerializeField]
@@ -66,6 +73,9 @@ public class MainCamera : MonoBehaviour
     private bool _hasShopController;
 
     private StageData _stageData => _mazeController.StageData;
+    
+    // UI要素があるかどうかのフラグ
+    private bool _hasRewardUI;
 
     // Start is called before the first frame update
     private void Start()
@@ -78,6 +88,9 @@ public class MainCamera : MonoBehaviour
         
         if (_shopController != null)
             _hasShopController = true;
+        
+        // UI要素があるかどうかのフラグ
+        _hasRewardUI = _rewardUIController != null;
     }
 
     // Update is called once per frame
@@ -91,6 +104,13 @@ public class MainCamera : MonoBehaviour
         // ショップUIが表示されている場合はカメラの移動を制限
         if (_hasShopController && _shopController.IsShopUIShowing)
             return;
+        
+        // 各種UIが表示されている場合はカメラの移動を制限
+        if (
+         _hasRewardUI && _rewardUIController.IsRewardUIShowing
+        ) {
+            return;
+        }
 
         // マウスの位置でカメラを移動
         if (Input.GetMouseButton(2))

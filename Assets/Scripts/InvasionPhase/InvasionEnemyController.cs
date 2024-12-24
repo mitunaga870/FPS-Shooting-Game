@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using AClass;
@@ -50,6 +49,9 @@ namespace InvasionPhase
 
         /** 現ステージの侵攻データ */
         public InvasionData CurrentInvasionData => _currentStageData.invasionData;
+        
+        /** 敵の現在地リスト　*/
+        private List<TilePosition> _enemyTiles = new();
 
         public void Start()
         {
@@ -90,6 +92,31 @@ namespace InvasionPhase
 
             // 読み込み済み時間を更新
             _prevTime = time;
+            
+            // 時間が更新されていたらトラップを発火してリストをリフレッシュ
+            if (diff > 0) 
+            {
+                // 敵がいるタイルリストのトラップを発火
+                foreach (var tile in _enemyTiles)
+                {
+                    invasionMazeController.AwakeTrap(tile);
+                }
+                
+                // 敵がいるタイルリストをリフレッシュ
+                _enemyTiles.Clear();
+            }
+            
+            // 敵リストを走査
+            foreach (var enemy in _enemies)
+            {
+                // 敵の位置を取得
+                var position = enemy.CurrentPosition;
+                // 位置がnullでない場合はリストに追加
+                if (position == null) continue;
+                // 追加されているか確認
+                if (!_enemyTiles.Contains(position)) _enemyTiles.Add(position);
+            }
+            
         }
 
         /**
@@ -168,7 +195,6 @@ namespace InvasionPhase
                 if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
                 {
                     enemy.Damage(i);
-                    break;
                 }
         }
 
@@ -205,7 +231,6 @@ namespace InvasionPhase
                 if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
                 {
                     enemy.Jump(height, damage);
-                    break;
                 }
         }
 
@@ -217,7 +242,6 @@ namespace InvasionPhase
                 if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
                 {
                     enemy.KnockBack(distance, stunTime);
-                    break;
                 }
         }
 
@@ -229,7 +253,6 @@ namespace InvasionPhase
                 if (enemy.CurrentPosition != null && enemy.CurrentPosition.Equals(position))
                 {
                     enemy.InfusePoison(damage, duration, level);
-                    break;
                 }
         }
 
@@ -242,8 +265,6 @@ namespace InvasionPhase
                 {
                     enemy.Damage(damage);
                     enemy.Stun(duration);
-                    
-                    break;
                 }
         }
 
