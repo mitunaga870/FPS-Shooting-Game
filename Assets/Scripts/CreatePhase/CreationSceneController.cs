@@ -79,6 +79,14 @@ namespace CreatePhase
         private void OnApplicationQuit()
         {
             // セーブデータを保存
+            Save();
+        }
+
+        /**
+         * セーブする
+         */
+        public void Save()
+        {
             SaveController.SavePhase(Phase.Create);
             SaveController.SaveStageData(mazeCreationController.StageData);
             SaveController.SaveTileData(mazeCreationController.GetTileData());
