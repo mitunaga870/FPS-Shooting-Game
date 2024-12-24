@@ -16,6 +16,9 @@ namespace DataClass
     {
         /** 報酬額 */
         public int money;
+        
+        /** トラップ・タレット・スキルを何個選択できるか */
+        public int selectCount;
 
         /** ランダムトラップが何個か */
         public int randomTrap;

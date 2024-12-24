@@ -5,6 +5,7 @@ using AClass;
 using lib;
 using ScriptableObjects;
 using ScriptableObjects.S2SDataObjects;
+using UI;
 using Unity.VisualScripting;
 using UnityEngine;
 using ATrap = AClass.ATrap;
@@ -34,6 +35,7 @@ public class DeckController : MonoBehaviour
     private List<ATrap> _handTraps = new();
 
     public int TrapDeckCount => _deckTraps.Count;
+    public int SkillDeckCount => _deckSkills.Count;
     
     public bool HasTrap => _deckTraps.Count > 0;
     public bool HasSkill => _deckSkills.Count > 0;
@@ -248,11 +250,19 @@ public class DeckController : MonoBehaviour
         return _deckTurrets;
     }
 
-    /**
-     * デッキUIを表示する
-     */
-    public void ShowDeckUI()
+    public (List<ATrap> traps, List<ASkill> skills, List<ATurret> turrets) LoadDeck()
     {
-        deckUIController.ShowDeckUI(_deckTraps, _handTraps, _deckSkills, _deckTurrets);
+        var traps = new List<ATrap>();
+        var skills = new List<ASkill>();
+        var turrets = new List<ATurret>();
+        
+        traps.AddRange(_deckTraps);
+        traps.AddRange(_handTraps);
+        traps.AddRange(_discardTraps);
+        
+        skills.AddRange(_deckSkills);
+        turrets.AddRange(_deckTurrets);
+        
+        return (traps, skills, turrets);
     }
 }
