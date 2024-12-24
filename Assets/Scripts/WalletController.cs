@@ -47,6 +47,11 @@ public class WalletController : MonoBehaviour
 
     private void OnApplicationQuit()
     {
+        Save();
+    }
+    
+    public void Save()
+    {
         SaveController.SaveWallet(Wallet);
     }
 
@@ -78,6 +83,6 @@ public class WalletController : MonoBehaviour
      */
     public bool CanBuy(int price)
     {
-        return price >= 0;
+        return Wallet >= price;
     }
 }

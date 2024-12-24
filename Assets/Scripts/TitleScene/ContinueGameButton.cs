@@ -25,6 +25,12 @@ namespace TitleScene
             loadingEnemy.SetActive(true);
             
             Debug.Log("StartGame");
+            
+            // ゲームオーバーかどうか
+            if (SaveController.LoadGameOvered())
+            {
+                return;
+            }
 
             // セーブデータのSceneに移動
             switch (SaveController.LoadPhase())

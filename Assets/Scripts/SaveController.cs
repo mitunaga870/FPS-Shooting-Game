@@ -125,33 +125,39 @@ public static class SaveController
         
         // トラップ山札
         var deckTrapsText = "";
-        foreach (var trap in deckTraps) deckTrapsText += $"{trap},";
+        foreach (var trap in deckTraps) deckTrapsText += $"{trap.GetTrapName()},";
         if (deckTrapsText.Length != 0)
             deckTrapsText = deckTrapsText.Substring(0, deckTrapsText.Length - 1);
         saveText += deckTrapsText + "\n";
         
         // トラップ手札
         var handTrapsText = "";
-        foreach (var trap in handTraps) handTrapsText += $"{trap},";
+        foreach (var trap in handTraps) handTrapsText += $"{trap.GetTrapName()},";
         if (handTrapsText.Length != 0)
             handTrapsText = handTrapsText.Substring(0, handTrapsText.Length - 1);
         saveText += handTrapsText + "\n";
         
         // トラップ捨て場
         var discardTrapsText = "";
-        foreach (var trap in discardTraps) discardTrapsText += $"{trap},";
+        foreach (var trap in discardTraps) discardTrapsText += $"{trap.GetTrapName()},";
         if (discardTrapsText.Length != 0)
             discardTrapsText = discardTrapsText.Substring(0, discardTrapsText.Length - 1);
         saveText += discardTrapsText + "\n";
         
         // スキル
         var skillsText = "";
-        foreach (var skill in aSkills) skillsText += $"{skill},";
+        foreach (var skill in aSkills) skillsText += $"{skill.GetSkillName()},";
         if (skillsText.Length != 0)
             skillsText = skillsText.Substring(0, skillsText.Length - 1);
         saveText += skillsText + "\n";
         
-        
+        // タレット
+        var turretsText = "";
+        foreach (var turret in aTurrets) turretsText += $"{turret.GetTurretName()},";
+        if (turretsText.Length != 0)
+            turretsText = turretsText.Substring(0, turretsText.Length - 1);
+        saveText += turretsText;
+
         PlayerPrefs.SetString("DeckData", saveText);
     }
     
@@ -168,6 +174,11 @@ public static class SaveController
     public static void SaveCurrentStageNumber(int currentStageNumber)
     {
         PlayerPrefs.SetInt("CurrentStageNumber", currentStageNumber);
+    }
+
+    public static void SetGameOvered()
+    {
+        PlayerPrefs.SetInt("GameOvered", 1);
     }
 
     // =======　読み込み処理　=======
@@ -331,7 +342,14 @@ public static class SaveController
      */
     public static void DelSave()
     {
+        // 音量系は消さない
+        var bgmVolume = PlayerPrefs.GetFloat("BGMVolume", 1);
+        var seVolume = PlayerPrefs.GetFloat("SEVolume", 1);
+        
         PlayerPrefs.DeleteAll();
+        
+        PlayerPrefs.SetFloat("BGMVolume", bgmVolume);
+        PlayerPrefs.SetFloat("SEVolume", seVolume);
     }
 
     public static (
@@ -343,7 +361,7 @@ public static class SaveController
         // セーブデータを読み込んで消す
         var saveText = PlayerPrefs.GetString("DeckData");
         PlayerPrefs.DeleteKey("DeckData");
-        
+
         if (saveText == "") return null;
         
         // セーブデータを行ごとに分ける
@@ -395,5 +413,10 @@ public static class SaveController
     public static int LoadCurrentStageNumber()
     {
         return PlayerPrefs.GetInt("CurrentStageNumber", 1);
+    }
+    
+    public static bool LoadGameOvered()
+    {
+        return PlayerPrefs.GetInt("GameOvered", 0) == 1;
     }
 }
