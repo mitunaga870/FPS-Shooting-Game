@@ -124,7 +124,7 @@ namespace Enemies
 
         protected override float GetHeight()
         {
-            return 0.5f;
+            return 0.2f;
         }
 
         protected override void OnDamage(int damage)

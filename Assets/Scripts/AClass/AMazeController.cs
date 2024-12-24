@@ -133,8 +133,11 @@ namespace AClass
          * ないときはnull
          */
         [CanBeNull]
-        public Path GetShortestPath(TilePosition start, TilePosition destination, bool considerBlockTile = false)
-        {
+        public Path GetShortestPath(
+            TilePosition start,
+            TilePosition destination,
+            bool considerBlockTile = false
+        ) {
             Sync();
 
             // 検索中のパスを保持するリスト
