@@ -106,8 +106,6 @@ namespace Chat
         {
             if (!chatS2SData.ShowedFirstReroll)
                 ShowFirstRerollChat();
-            
-            // ここにリロールのチャット表示
         }
         
         /**
@@ -199,6 +197,20 @@ namespace Chat
         {
             if (!chatS2SData.ShowedFirstShop)
                 ShowFirstShopChat();
+            else
+            {
+                // csvからテキストを取得
+                var textCSV = Resources.Load<TextAsset>("ChatTexts/Shop");
+                var text = textCSV.text;
+                
+                // ランダムで表示
+                var lines = text.Split('\n');
+                var wholeMessage = lines[UnityEngine.Random.Range(0, lines.Length)];
+                
+                // カンマで分割
+                var messages = wholeMessage.Split(',');
+                messageBoxController.SetMessages(messages);
+            }
         }
         
         /**
