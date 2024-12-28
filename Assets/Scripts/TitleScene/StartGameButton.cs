@@ -9,11 +9,13 @@ namespace TitleScene
         
         [SerializeField]
         private GameObject loadingEnemy;
+        private Animator anim;
         
         void Start()
         {
             // クリック時にStartGameを呼び出す
             GetComponent<UnityEngine.UI.Button>().onClick.AddListener(StartGame);
+            anim = loadingEnemy.GetComponent<Animator>();
         }
 
 
@@ -21,6 +23,7 @@ namespace TitleScene
         {
             loading.SetActive(true);
             loadingEnemy.SetActive(true);
+            anim.Play("Run");
             
             // セーブデータ削除
             SaveController.DelSave();
