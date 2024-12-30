@@ -97,7 +97,7 @@ namespace Chat
             
             if (!_showedBattleChat && !chatS2SData.ShowedFirstBattle)
                 ShowFirstBattleChat();
-            else if (!chatS2SData.ShowedOP)
+            else if (!_showedBattleChat)
                 ShowBattleChat();
             if (!chatS2SData.ShowedFirstTurret && deckController.HasTurret)
                 ShowFirstTurretChat();
