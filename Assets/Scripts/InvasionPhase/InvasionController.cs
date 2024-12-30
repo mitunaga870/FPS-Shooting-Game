@@ -120,9 +120,16 @@ namespace InvasionPhase
         private RewardUIController rewardUIController;
         // =================================================
         
+        // =============== チャット用変数 =====================
+        [SerializeField]
+        private Chat.ChatController chatController;
+        // =================================================
+        
         // Start is called before the first frame update
         public void Start()
         {
+            // チャットの初期化
+            chatController.StartChat();
             // セーブデータ読み込み
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();

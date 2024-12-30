@@ -10,6 +10,7 @@ namespace Map.UI.Buttons
         
         private DeckController _deckController;
         private WalletController _walletController;
+        private Chat.ChatController _chatController;
         
         protected override void MoveNextMap()
         {
@@ -25,6 +26,9 @@ namespace Map.UI.Buttons
             var shop = Instantiate(_shopUI);
             shop.Initialize(_deckController, _walletController);
             
+            // ショップ表示用チャットを表示
+            _chatController.ShowShopChat();
+            
             // ショップが閉じられた時の処理を追加
             shop.SetOnClose(() =>
             {
@@ -34,10 +38,11 @@ namespace Map.UI.Buttons
             });
         }
 
-        public void Initialize(DeckController deckController, WalletController walletController)
+        public void Initialize(DeckController deckController, WalletController walletController, Chat.ChatController chatController)
         {
             _deckController = deckController;
             _walletController = walletController;
+            _chatController = chatController;
         }
     }
 }
