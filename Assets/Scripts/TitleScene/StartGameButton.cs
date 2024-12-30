@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 namespace TitleScene
 {
@@ -9,13 +11,15 @@ namespace TitleScene
         
         [SerializeField]
         private GameObject loadingEnemy;
-        private Animator anim;
+
+        //ロード進捗状況を管理するための変数
+        private AsyncOperation async;
+
         
         void Start()
         {
             // クリック時にStartGameを呼び出す
             GetComponent<UnityEngine.UI.Button>().onClick.AddListener(StartGame);
-            anim = loadingEnemy.GetComponent<Animator>();
         }
 
 
@@ -23,12 +27,28 @@ namespace TitleScene
         {
             loading.SetActive(true);
             loadingEnemy.SetActive(true);
-            anim.Play("Run");
-            
+
+            // ロードを開始するメソッド
+            StartCoroutine(Load());
+        }
+
+        // コルーチンを使用してロードを実行するメソッド
+        private IEnumerator Load() {
+
             // セーブデータ削除
             SaveController.DelSave();
 
-            UnityEngine.SceneManagement.SceneManager.LoadScene("CreatePhase");
+            // シーンを非同期でロードする
+            async = SceneManager.LoadSceneAsync("CreatePhase");
+
+            // ロードが完了するまで待機する
+            while (!async.isDone) {
+                yield return null;
+            }
+
+            // ロード画面を非表示にする
+            loading.SetActive(false);
+            loadingEnemy.SetActive(false);
         }
     }
 }

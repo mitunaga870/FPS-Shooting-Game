@@ -1848,14 +1848,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1387138549}
-  - component: {fileID: 1387138558}
   - component: {fileID: 1387138550}
   - component: {fileID: 1387138552}
   - component: {fileID: 1387138553}
   - component: {fileID: 1387138555}
   - component: {fileID: 1387138554}
   - component: {fileID: 1387138557}
-  - component: {fileID: 1387138556}
   m_Layer: 0
   m_Name: Title_Credit
   m_TagString: Untagged
@@ -1997,19 +1995,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1387138556}
-        m_TargetAssemblyTypeName: TitleCreditBT, Assembly-CSharp
-        m_MethodName: GotoCredit
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1387138554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2084,18 +2070,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.9930317, y: 1.3983533}
   m_EdgeRadius: 0
---- !u!114 &1387138556
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1387138548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7ba9fc7de2c13c4f9842aac407ff4ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1387138557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2108,19 +2082,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef0f743f111fac246a02c7c58aaf7c40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1387138558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1387138548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0ecbef7123beb24bb594702caae6342, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   loading: {fileID: 1971800996033434817}
+  loadingEnemy: {fileID: 354862965}
 --- !u!1 &1401858446
 GameObject:
   m_ObjectHideFlags: 0
@@ -3041,7 +3004,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loading: {fileID: 1971800996033434817}
-  loadingEnemy: {fileID: 0}
+  loadingEnemy: {fileID: 354862965}
 --- !u!114 &2010590871
 MonoBehaviour:
   m_ObjectHideFlags: 0
