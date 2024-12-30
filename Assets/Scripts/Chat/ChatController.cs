@@ -48,7 +48,7 @@ namespace Chat
         private bool _isInitialized;
         
         private bool _isStartedChat;
-
+        
         private void Start()
         {
             // コントローラーのアタッチ情報を取得し、現在のシーンを判定
@@ -87,14 +87,18 @@ namespace Chat
 
         #region CreatePhase
         
+        private bool _showedBattleChat;
+        
         /**
          * コントローラーから情報見てチャット表示メソッドを呼び出す
          */
         private void CheckCreatePhaseChat()
         {
             
-            if (!chatS2SData.ShowedFirstBattle)
+            if (!_showedBattleChat && !chatS2SData.ShowedFirstBattle)
                 ShowFirstBattleChat();
+            else if (!chatS2SData.ShowedOP)
+                ShowBattleChat();
             if (!chatS2SData.ShowedFirstTurret && deckController.HasTurret)
                 ShowFirstTurretChat();
         }
@@ -114,8 +118,6 @@ namespace Chat
         private void ShowFirstBattleChat()
         {
             chatS2SData.ShowedFirstBattle = true;
-            
-            messageBoxController.SetMessage("First Battle");
             
             // csvからテキストを取得
             var textCSV = Resources.Load<TextAsset>("ChatTexts/First");
@@ -164,6 +166,26 @@ namespace Chat
             // カンマで分割
             var messages = wholeMessage.Split(',');
             messageBoxController.SetMessages(messages, onEndMessages);
+        }
+
+        /**
+         * バトル中のチャットを表示
+         */
+        private void ShowBattleChat()
+        {
+            _showedBattleChat = true;
+            
+            // csvからテキストを取得
+            var textCSV = Resources.Load<TextAsset>("ChatTexts/Battle");
+            var text = textCSV.text;
+            
+            // ランダムで表示
+            var lines = text.Split('\n');
+            var wholeMessage = lines[UnityEngine.Random.Range(0, lines.Length)];
+            
+            // カンマで分割
+            var messages = wholeMessage.Split(',');
+            messageBoxController.SetMessages(messages);
         }
         
         #endregion 
