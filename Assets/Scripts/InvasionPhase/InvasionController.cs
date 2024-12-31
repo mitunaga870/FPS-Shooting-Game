@@ -288,7 +288,10 @@ namespace InvasionPhase
             PlayerHp -= damage;
             if (PlayerHp <= 0)
             {
-                // ディレイをかけてゲームオーバー
+                // ステートは先に変更
+                GameState = GameState.GameOver;
+                
+                // ディレイをかけてゲームオーバー処理
                 var delay = General.DelayCoroutine(
                     Environment.DelayForClearAndGameOver,
                     GameOver);
