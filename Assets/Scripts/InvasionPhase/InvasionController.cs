@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AClass;
 using DataClass;
 using Enums;
+using lib;
 using Map;
 using Reward;
 using ScriptableObjects;
@@ -269,70 +270,14 @@ namespace InvasionPhase
             if (_isApplicateQuit) return;
 
             GameState = GameState.Clear;
-
-            // 報酬付与
-            var reward = StageData.GetReward(stageObject);
-
-            // TODO: ここで報酬を付与するUIを出したい　とりあえず即時付与
-            // トラップ
-            var rewardTraps = new List<ATrap>();
-            for (var i = 0; i < reward.randomTrap; i++)
-            {
-                // ランダムなトラップを取得
-                var all = Resources.LoadAll<ATrap>("Prefabs/Traps");
-                var trap = all[Random.Range(0, all.Length)];
-
-                // デッキに追加
-                rewardTraps.Add(trap);
-            }
-
-            // 指定トラップ
-            var selectedTrap = reward.selectedTrap;
-            rewardTraps.AddRange(selectedTrap);
             
-            // タレット
-            var rewardTurrets = new List<ATurret>();
-            for (var i = 0; i < reward.randomTurret; i++)
-            {
-                // ランダムなタレットを取得
-                var all = Resources.LoadAll<ATurret>("Prefabs/Turrets");
-                var turret = all[Random.Range(0, all.Length)];
-
-                // デッキに追加
-                rewardTurrets.Add(turret);
-            }
-
-            // 指定タレット
-            var selectedTurret = reward.selectedTurret;
-            rewardTurrets.AddRange(selectedTurret);
-
-            // スキル
-            var rewardSkills = new List<ASkill>();
-            for (var i = 0; i < reward.randomSkill; i++)
-            {
-                // ランダムなスキルを取得
-                var all = Resources.LoadAll<ASkill>("Prefabs/Skill");
-                var skill = all[Random.Range(0, all.Length)];
-
-                // デッキに追加
-                rewardSkills.Add(skill);
-            }
-
-            // 指定スキル
-            var selectedSkill = reward.selectedSkill;
-            rewardSkills.AddRange(selectedSkill);
-            
-            rewardUIController.ShowRewardUI(
-                StageData.StageType,
-                reward.money,
-                rewardTraps,
-                rewardSkills,
-                rewardTurrets,
-                reward.selectCount
-            );
-
+            // ディレイをかけて報酬UIを表示
+            var delay = General.DelayCoroutine(
+                Environment.DelayForClearAndGameOver,
+                SendReward);
+            StartCoroutine(delay);
         }
-
+        
         public void FastPlay()
         {
             GameState = GameState.FastPlaying;
@@ -343,14 +288,14 @@ namespace InvasionPhase
             PlayerHp -= damage;
             if (PlayerHp <= 0)
             {
-                Debug.Log("Game Over!");
+                // ステートは先に変更
                 GameState = GameState.GameOver;
                 
-                // ゲームオーバー時の処理
-                SaveController.SetGameOvered();
-                
-                // シーン遷移
-                SceneManager.LoadScene("Score");
+                // ディレイをかけてゲームオーバー処理
+                var delay = General.DelayCoroutine(
+                    Environment.DelayForClearAndGameOver,
+                    GameOver);
+                StartCoroutine(delay);
             }
         }
 
@@ -460,6 +405,80 @@ namespace InvasionPhase
             {
                 mapController.ShowMap( false, true);
             }
+        }
+
+        private void SendReward()
+        {
+            var reward = StageData.GetReward(stageObject);
+
+            // トラップ
+            var rewardTraps = new List<ATrap>();
+            for (var i = 0; i < reward.randomTrap; i++)
+            {
+                // ランダムなトラップを取得
+                var all = Resources.LoadAll<ATrap>("Prefabs/Traps");
+                var trap = all[Random.Range(0, all.Length)];
+
+                // デッキに追加
+                rewardTraps.Add(trap);
+            }
+
+            // 指定トラップ
+            var selectedTrap = reward.selectedTrap;
+            rewardTraps.AddRange(selectedTrap);
+
+            // タレット
+            var rewardTurrets = new List<ATurret>();
+            for (var i = 0; i < reward.randomTurret; i++)
+            {
+                // ランダムなタレットを取得
+                var all = Resources.LoadAll<ATurret>("Prefabs/Turrets");
+                var turret = all[Random.Range(0, all.Length)];
+
+                // デッキに追加
+                rewardTurrets.Add(turret);
+            }
+
+            // 指定タレット
+            var selectedTurret = reward.selectedTurret;
+            rewardTurrets.AddRange(selectedTurret);
+
+            // スキル
+            var rewardSkills = new List<ASkill>();
+            for (var i = 0; i < reward.randomSkill; i++)
+            {
+                // ランダムなスキルを取得
+                var all = Resources.LoadAll<ASkill>("Prefabs/Skill");
+                var skill = all[Random.Range(0, all.Length)];
+
+                // デッキに追加
+                rewardSkills.Add(skill);
+            }
+
+            // 指定スキル
+            var selectedSkill = reward.selectedSkill;
+            rewardSkills.AddRange(selectedSkill);
+
+            rewardUIController.ShowRewardUI(
+                StageData.StageType,
+                reward.money,
+                rewardTraps,
+                rewardSkills,
+                rewardTurrets,
+                reward.selectCount
+            );
+        }
+
+        private void GameOver()
+        {
+            // ゲームの状態をゲームオーバーに変更
+            GameState = GameState.GameOver;
+
+            // ゲームオーバー時の処理
+            SaveController.SetGameOvered();
+
+            // シーン遷移
+            SceneManager.LoadScene("Score");
         }
     }
 }
