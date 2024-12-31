@@ -273,7 +273,6 @@ namespace InvasionPhase
             // 報酬付与
             var reward = StageData.GetReward(stageObject);
 
-            // TODO: ここで報酬を付与するUIを出したい　とりあえず即時付与
             // トラップ
             var rewardTraps = new List<ATrap>();
             for (var i = 0; i < reward.randomTrap; i++)
