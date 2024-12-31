@@ -84,6 +84,11 @@ namespace CreatePhase
                 return;
             }
 
+            // ======== トラップタレット詳細表示用処理 =========
+            if (hasTurret)
+                _mazeCreationController.ShowTurretDetail(Turret);
+            else if (HasTrap)
+                _mazeCreationController.ShowTrapDetail(Trap);
 
             // ======== 道路設置用処理 =========
 
@@ -165,6 +170,14 @@ namespace CreatePhase
             // 0.5秒後に連続入力フラグを下ろす
             StartCoroutine(General.DelayCoroutine(ContinuousInputPreventionTime,
                 () => _continuousMouseEnterFlag = false));
+        }
+
+        /**
+         * 離れた時にタレットトラップ詳細を非表示にする
+         */
+        private void OnMouseExit()
+        {
+            _mazeCreationController.CloseDetail();
         }
 
 
