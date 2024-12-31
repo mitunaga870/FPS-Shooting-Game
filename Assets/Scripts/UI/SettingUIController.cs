@@ -36,6 +36,9 @@ namespace UI
         [SerializeField]
         private InvasionMazeController _invasionMazeController;
         
+        [SerializeField]
+        private SoundController _soundController;
+        
         public void OpenSetting() {
             gameObject.SetActive(true);
         }
@@ -71,14 +74,28 @@ namespace UI
         
         public void OnBGMVolumeChanged()
         {
-            PlayerPrefs.SetFloat("BGMVolume", _bgmSlider.value);
+            // 倍率を対数に変換
+            var realFactor = _bgmSlider.value;
+            var dbFactor =
+                realFactor != 0 ? Math.Log10(realFactor) * 10 : -100;
+            
+            PlayerPrefs.SetFloat("BGMVolume", (float) dbFactor);
             PlayerPrefs.Save();
+            
+            _soundController.UpdateVolume();
         }
         
         public void OnSEVolumeChanged()
         {
-            PlayerPrefs.SetFloat("SEVolume", _seSlider.value);
+            // 倍率を対数に変換
+            var realFactor = _seSlider.value;
+            var dbFactor =
+                realFactor != 0 ? Math.Log10(realFactor) * 10 : -100;
+            
+            PlayerPrefs.SetFloat("SEVolume", (float) dbFactor);
             PlayerPrefs.Save();
+            
+            _soundController.UpdateVolume();
         }
     }
 }

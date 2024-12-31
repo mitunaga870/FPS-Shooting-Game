@@ -7,6 +7,12 @@ namespace Traps
 {
     public class Alligator : ATrap
     {
+        [SerializeField]
+        private AudioSource audioSource;
+
+        [SerializeField]
+        private AudioClip awakeSound;
+        
         private int Damage => trapObject.AlligatorDamage;
         private float Height => trapObject.AlligatorHeight;
         private int CoolDown => trapObject.AlligatorCoolDown;
@@ -25,6 +31,9 @@ namespace Traps
             ChargeTime = CoolDown;
 
             if (EnemyController == null) return;
+            
+            // 効果音再生
+            audioSource.PlayOneShot(awakeSound);
             
             // アニメーション再生
             crocTrapActionIgnition.IgnitionAction();
