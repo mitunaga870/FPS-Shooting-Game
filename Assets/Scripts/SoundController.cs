@@ -16,7 +16,7 @@ public class SoundController : MonoBehaviour
     
     public void UpdateVolume()
     {
-        audioMixer.SetFloat("BGMVolume", PlayerPrefs.GetFloat("BGMVolume", 1));
+        audioMixer.SetFloat("BGMBolume", PlayerPrefs.GetFloat("BGMVolume", 1));
         audioMixer.SetFloat("SEVolume", PlayerPrefs.GetFloat("SEVolume", 1));
     }
     
