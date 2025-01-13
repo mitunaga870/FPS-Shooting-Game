@@ -12,6 +12,12 @@ namespace Turrets
     {
         private string TurretName = "Shark";
         
+        [SerializeField]
+        private AudioSource audioSource;
+
+        [SerializeField]
+        private AudioClip awakeSound;
+        
         private int Damage => turretObject.SharkDamage;
         private int Height => turretObject.SharkHeight;
         private int Interval => turretObject.SharkInterval;
@@ -72,6 +78,9 @@ namespace Turrets
         {
             // 発火済みなら何もしない
             if (isFired) return;
+            
+            // 効果音再生
+            audioSource.PlayOneShot(awakeSound);
 
             // 確率で敵にダメージを与える
             var possibility = GetPossibility(SceneController.GameTime);

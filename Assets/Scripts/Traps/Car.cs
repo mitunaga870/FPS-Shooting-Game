@@ -10,6 +10,12 @@ namespace Traps
 {
     public class Car : ATrap
     {
+        [SerializeField]
+        private AudioSource audioSource;
+        
+        [SerializeField]
+        private AudioClip awakeSound;
+        
         private const string TrapName = "Car";
         private int Damage => trapObject.CarDamage;
         private float Height => trapObject.CarHeight;
@@ -32,6 +38,9 @@ namespace Traps
             
             // チャージ中は無効
             if (0 < ChargeTime) return;
+            
+            // 音声再生
+            audioSource.PlayOneShot(awakeSound);
 
             // CD設定
             ChargeTime = CoolDown;

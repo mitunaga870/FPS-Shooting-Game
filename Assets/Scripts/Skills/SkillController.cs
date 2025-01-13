@@ -2,6 +2,7 @@
 using AClass;
 using InvasionPhase;
 using InvasionPhase.UI;
+using UI;
 using UnityEngine;
 
 namespace Skills
@@ -16,6 +17,9 @@ namespace Skills
         
         [SerializeField]
         private InvasionController sceneController;
+        
+        [SerializeField]
+        private DetailViewerController detailViewerController;
         
         private Dictionary<string, SkillIcon> _addedSkills = new Dictionary<string, SkillIcon>();
         
@@ -42,7 +46,7 @@ namespace Skills
                     _addedSkills[skillName] = icon;
                     
                     skillObject.Init(this);
-                    icon.Init(sceneController);
+                    icon.Init(sceneController, detailViewerController);
                 }
             }
         }

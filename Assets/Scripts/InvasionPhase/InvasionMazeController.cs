@@ -180,7 +180,13 @@ namespace InvasionPhase
 
         private void OnApplicationQuit()
         {
-            // シーン遷移で読み込んだデータをそのまま保存
+            // セーブ
+            Save();
+        }
+        
+        public void Save()
+        {
+            // セーブ
             SaveController.SaveTileData(TileData);
             SaveController.SaveTrapData(TrapData);
             SaveController.SaveStageData(StageData);

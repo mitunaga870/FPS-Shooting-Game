@@ -47,6 +47,11 @@ public class WalletController : MonoBehaviour
 
     private void OnApplicationQuit()
     {
+        Save();
+    }
+    
+    public void Save()
+    {
         SaveController.SaveWallet(Wallet);
     }
 

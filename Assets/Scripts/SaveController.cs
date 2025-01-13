@@ -342,7 +342,14 @@ public static class SaveController
      */
     public static void DelSave()
     {
+        // 音量系は消さない
+        var bgmVolume = PlayerPrefs.GetFloat("BGMVolume", 1);
+        var seVolume = PlayerPrefs.GetFloat("SEVolume", 1);
+        
         PlayerPrefs.DeleteAll();
+        
+        PlayerPrefs.SetFloat("BGMVolume", bgmVolume);
+        PlayerPrefs.SetFloat("SEVolume", seVolume);
     }
 
     public static (

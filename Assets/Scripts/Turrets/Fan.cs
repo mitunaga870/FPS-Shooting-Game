@@ -9,6 +9,9 @@ namespace Turrets
     public class Fan : ATurret
     {
         private const string TurretName = "Fan";
+        
+        [SerializeField]
+        private AudioSource audioSource;
 
         private float Height => turretObject.FanHeight;
         private float SlowPercentage => turretObject.FanSlowPercentage;
@@ -34,6 +37,9 @@ namespace Turrets
             foreach (var enemy in enemies) enemy.Slow(SlowPercentage, SlowDuration);
             
             trapFanIgnitionAction.IgnitionAction();
+            
+            // 効果音再生開始
+            audioSource.Play();
         }
 
         public override List<TilePosition> GetEffectArea()
@@ -75,6 +81,9 @@ namespace Turrets
             _isAwaken = false;
             
             trapFanIgnitionAction.StopAction();
+            
+            // 効果音再生停止
+            audioSource.Stop();
         }
 
         protected override int GetDuration()
