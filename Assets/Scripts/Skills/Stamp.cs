@@ -3,11 +3,18 @@ using AClass;
 using DataClass;
 using DG.Tweening;
 using InvasionPhase;
+using UnityEngine;
 
 namespace Skills
 {
     public class Stamp: ASkill
     {
+        [SerializeField]
+        private AudioSource audioSource;
+        
+        [SerializeField]
+        private AudioClip awakeSound;
+        
         private int Damage => SkillDataObject.StampDamage;
         private int Duration => SkillDataObject.StampDuration;
         
@@ -27,6 +34,9 @@ namespace Skills
                 .SetEase(Ease.InCubic)
                 .onComplete += () =>
             {
+                // 効果音再生
+                audioSource.PlayOneShot(awakeSound);
+                
                 Destroy(spawnedObject, 1);
             
                 // 範囲を取得

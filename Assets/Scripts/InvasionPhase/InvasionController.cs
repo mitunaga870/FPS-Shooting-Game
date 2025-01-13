@@ -79,6 +79,19 @@ namespace InvasionPhase
         [FormerlySerializedAs("_shopUI")]
         [SerializeField]
         private ShopController shopUI;
+        
+        // =============== サウンド系 =====================
+        [SerializeField]
+        private SoundController soundController;
+        
+        [SerializeField]
+        private AudioClip defaultBgm;
+        
+        [SerializeField]
+        private AudioClip bossBgm;
+        
+        [SerializeField]
+        private AudioClip RewardBgm;
 
         /**
          * 減速時の時刻スタック（１を超えたら０にして時刻を進める）
@@ -121,9 +134,16 @@ namespace InvasionPhase
         private RewardUIController rewardUIController;
         // =================================================
         
+        // =============== チャット用変数 =====================
+        [SerializeField]
+        private Chat.ChatController chatController;
+        // =================================================
+        
         // Start is called before the first frame update
         public void Start()
         {
+            // チャットの初期化
+            chatController.StartChat();
             // セーブデータ読み込み
             var tileData = SaveController.LoadTileData();
             var trapData = SaveController.LoadTrapData();
@@ -249,6 +269,11 @@ namespace InvasionPhase
 
             // 各コントローラー
             invasionEnemyController.StartGame();
+            
+            // BGMの再生
+            soundController.ChangeBGM(
+                StageData.StageType == StageType.Boss ? bossBgm : defaultBgm
+            );
         }
 
         public void PauseGame()
