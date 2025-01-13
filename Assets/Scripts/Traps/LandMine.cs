@@ -8,6 +8,12 @@ namespace Traps
     {
         private const string TrapName = "LandMine";
         
+        [SerializeField]
+        private AudioSource audioSource;
+
+        [SerializeField]
+        private AudioClip awakeSound;
+        
         private int Damage => trapObject.LandMineDamage;
         private float Height => trapObject.LandMineHeight;
         private int CoolDown => trapObject.LandMineCoolDown;
@@ -22,6 +28,9 @@ namespace Traps
             
             // クールダウン中は処理しない
             if (ChargeTime > 0) return;
+            
+            // 効果音再生
+            audioSource.PlayOneShot(awakeSound);
 
             // クールダウン設定
             ChargeTime = CoolDown;

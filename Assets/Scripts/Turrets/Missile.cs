@@ -11,6 +11,12 @@ namespace Turrets
     {
         private const string TurretName = "Missile";
         
+        [SerializeField]
+        private AudioSource audioSource;
+
+        [SerializeField]
+        private AudioClip awakeSound;
+        
         private float Height => turretObject.MissileHeight;
         private int Damage => turretObject.MissileDamage;
         private int ObjectDuration => turretObject.MissileObjectDuration;
@@ -30,6 +36,9 @@ namespace Turrets
 
         protected override void AwakeTurret(List<AEnemy> enemies)
         {
+            // 効果音再生
+            audioSource.PlayOneShot(awakeSound);
+            
             // 最も近い敵に対して攻撃
             AEnemy target = null;
             var minDistance = float.MaxValue;
@@ -54,6 +63,9 @@ namespace Turrets
                 ObjectDuration,
                 () =>
                 {
+                    // 効果音が残っている場合は止める
+                    audioSource.Stop();
+                    
                     // 敵にダメージを与える
                     target.Damage(GetDamage());
 
