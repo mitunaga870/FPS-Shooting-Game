@@ -14,7 +14,7 @@ namespace ScriptableObjects.S2SDataObjects
     public abstract class AS2SData : ScriptableObject, ISerializationCallbackReceiver
     {
         public abstract override string ToString();
-        public abstract void OnBeforeSerialize();
+        public virtual void OnBeforeSerialize() { }
         public abstract void OnAfterDeserialize();
     }
 }
