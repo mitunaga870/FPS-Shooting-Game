@@ -326,10 +326,10 @@ MonoBehaviour:
   deckController: {fileID: 1766966375}
   mapController: {fileID: 210013744}
   shopUI: {fileID: 7798519001121184098, guid: fba33cf6932e2ce49bb202a8563c2114, type: 3}
-  soundController: {fileID: 0}
-  defaultBgm: {fileID: 0}
-  bossBgm: {fileID: 0}
-  RewardBgm: {fileID: 0}
+  soundController: {fileID: 1803095591}
+  defaultBgm: {fileID: 8300000, guid: 0acee7fe04e45bc428ebec6b1cef56ac, type: 3}
+  bossBgm: {fileID: 8300000, guid: 0e0bd60037ec00841bd2e8c5c6ab7f31, type: 3}
+  RewardBgm: {fileID: 8300000, guid: 7507c7b292daf964cb33a89c438a4237, type: 3}
   rewardUIController: {fileID: 206745848}
 --- !u!1 &140573161
 GameObject:
@@ -2475,7 +2475,7 @@ MonoBehaviour:
   generalS2SData: {fileID: 11400000, guid: 13c6bbfa80854634893e1fb6d49eaea5, type: 2}
   createToInvasionData: {fileID: 11400000, guid: 66aec002291057341bcb6f1da637634b, type: 2}
   mapController: {fileID: 210013744}
-  detailViewerController: {fileID: 2133126458}
+  detailViewerController: {fileID: 0}
   createPhaseTilePrefab: {fileID: -5516297106693624721, guid: abd90deeafc55a44ea812a9e246a2a13, type: 3}
   sceneController: {fileID: 58310725}
   enemyController: {fileID: 225140041}

@@ -77,8 +77,8 @@ namespace UI
             // 倍率を対数に変換
             var realFactor = _bgmSlider.value;
             var dbFactor =
-                realFactor != 0 ? Math.Log10(realFactor) * 10 : -100;
-            
+                realFactor != 0 ? Math.Log10(realFactor) * 20 : -100;
+
             PlayerPrefs.SetFloat("BGMVolume", (float) dbFactor);
             PlayerPrefs.Save();
             
@@ -90,7 +90,7 @@ namespace UI
             // 倍率を対数に変換
             var realFactor = _seSlider.value;
             var dbFactor =
-                realFactor != 0 ? Math.Log10(realFactor) * 10 : -100;
+                realFactor != 0 ? Math.Log10(realFactor) * 20 : -100;
             
             PlayerPrefs.SetFloat("SEVolume", (float) dbFactor);
             PlayerPrefs.Save();
